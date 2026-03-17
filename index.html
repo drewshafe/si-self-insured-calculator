@@ -298,13 +298,28 @@
 
             <div class="field-row">
                 <div class="field orange">
-                    <label>Premium Type</label>
-                    <select id="selfPremiumType">
-                        <option value="pct">% of AOV</option>
-                        <option value="flat">Flat $ Amount</option>
+                    <label>Pricing Template</label>
+                    <select id="selfPricingTemplate">
+                        <option value="born_primitive">Born Prim</option>
+                        <option value="percentage">%-Based</option>
+                        <option value="1.5_accurate">1.5% Acc</option>
+                        <option value="2_accurate">2% Acc</option>
+                        <option value="2_round_50">2% Round</option>
+                        <option value="2.5_accurate">2.5% Acc</option>
+                        <option value="3_accurate">3% Acc</option>
+                        <option value="3.5_accurate">3.5% Acc</option>
+                        <option value="static_1.50_300_2.00">Static $1.50/$2</option>
+                        <option value="flat_1.50">Flat $1.50</option>
+                        <option value="flat_5.95">Flat $5.95</option>
+                        <option value="2_flat_0.98">2% Min $0.98</option>
+                        <option value="3_accurate_100_1.95">3% Min $1.95</option>
+                        <option value="3.25_1.55">3.25% Min $1.55</option>
+                        <option value="2.5_1.95">2.5% Min $1.95</option>
+                        <option value="og_6.5_19.99_3">OG 6.5%/$19.99/3%</option>
+                        <option value="flat_custom">Flat $ (Custom)</option>
                     </select>
                 </div>
-                <div class="field orange" id="selfPremiumPctField">
+                <div class="field orange" id="selfPremiumPctField" style="display:none;">
                     <label>Protection Premium %</label>
                     <div class="input-wrap">
                         <input type="text" id="selfPremiumPct" placeholder="3.00" inputmode="decimal" class="suf-pad">
@@ -629,14 +644,19 @@
         const costPerClaim  = cogsPerOrder + csPerClaim;
 
         // ── SELF-FUNDED ──
-        const selfPremiumType = document.getElementById('selfPremiumType').value;
-        const selfAttachP     = gv('selfAttach') / 100;
-        const claimsHandler   = document.getElementById('claimsHandler').value;
-        const processorFeeP   = gv('processorFee') / 100;
+        const selfTemplate  = document.getElementById('selfPricingTemplate').value;
+        const selfAttachP   = gv('selfAttach') / 100;
+        const claimsHandler = document.getElementById('claimsHandler').value;
+        const processorFeeP = gv('processorFee') / 100;
 
-        const selfAvgPremium = selfPremiumType === 'pct'
-            ? aov * (gv('selfPremiumPct') / 100)
-            : gv('selfPremiumFlat');
+        let selfAvgPremium;
+        if (selfTemplate === 'percentage') {
+            selfAvgPremium = aov * (gv('selfPremiumPct') / 100);
+        } else if (selfTemplate === 'flat_custom') {
+            selfAvgPremium = gv('selfPremiumFlat');
+        } else {
+            selfAvgPremium = getTieredPremium(aov, selfTemplate);
+        }
 
         const selfProtectedOrders   = orders * selfAttachP;
         const selfUnprotectedOrders = orders - selfProtectedOrders;
@@ -801,9 +821,9 @@
     }
 
     function toggleSelfPremiumFields() {
-        const type = document.getElementById('selfPremiumType').value;
-        document.getElementById('selfPremiumPctField').style.display  = type === 'pct'  ? '' : 'none';
-        document.getElementById('selfPremiumFlatField').style.display = type === 'flat' ? '' : 'none';
+        const tmpl = document.getElementById('selfPricingTemplate').value;
+        document.getElementById('selfPremiumPctField').style.display  = tmpl === 'percentage'  ? '' : 'none';
+        document.getElementById('selfPremiumFlatField').style.display = tmpl === 'flat_custom' ? '' : 'none';
     }
 
     function toggleProcessorField() {
@@ -831,7 +851,7 @@
 
     document.getElementById('timeframe').addEventListener('change', calculate);
     document.getElementById('pricingTemplate').addEventListener('change', () => { toggleSiPremiumField(); calculate(); });
-    document.getElementById('selfPremiumType').addEventListener('change', () => { toggleSelfPremiumFields(); calculate(); });
+    document.getElementById('selfPricingTemplate').addEventListener('change', () => { toggleSelfPremiumFields(); calculate(); });
     document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
 
     document.getElementById('generateLink').addEventListener('click', () => {
@@ -841,7 +861,7 @@
             cogs: rc(document.getElementById('cogs').value),
             cr: rc(document.getElementById('claimsRate').value),
             cs: rc(document.getElementById('csPerClaim').value),
-            spt: document.getElementById('selfPremiumType').value,
+            stmpl: document.getElementById('selfPricingTemplate').value,
             spp: rc(document.getElementById('selfPremiumPct').value),
             spf: rc(document.getElementById('selfPremiumFlat').value),
             sa: rc(document.getElementById('selfAttach').value),
@@ -877,7 +897,7 @@
         };
         s('orders','orders'); s('aov','aov'); s('cogs','cogs');
         s('claimsRate','cr'); s('csPerClaim','cs');
-        s('selfPremiumType','spt','pct');
+        s('selfPricingTemplate','stmpl','born_primitive');
         s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
         s('selfAttach','sa','55');
         s('claimsHandler','ch','self'); s('processorFee','pf','70');
