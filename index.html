@@ -513,13 +513,13 @@
                     </div>
                 </div>
 
-                <!-- Returns (conditional) -->
+                <!-- Returns (conditional) — DIY pays full cost, no offset -->
                 <div class="psec" id="diy-returns-psec" style="display:none;">
-                    <div class="psec-label"><span class="psec-icon">↩️</span> Returns</div>
+                    <div class="psec-label"><span class="psec-icon">↩️</span> Returns — Paid Out of Pocket</div>
                     <div class="metrics">
-                        <div class="m c-r" id="diy-labelsCostRow" style="display:none;"><div class="ml" id="diy-labelsLabel">Return Labels</div><div class="mv" id="d-returnLabelsCost">$0</div></div>
-                        <div class="m c-r" id="diy-portalCostRow" style="display:none;"><div class="ml">Customer Returns Portal (Monthly)</div><div class="mv" id="d-returnPortalCost">$0</div></div>
-                        <div class="m c-r s2"><div class="ml">Total Returns Cost</div><div class="mv" id="d-totalReturnsCost">$0</div></div>
+                        <div class="m c-r" id="diy-labelsCostRow" style="display:none;"><div class="ml" id="diy-labelsLabel">Return Labels (Full Cost)</div><div class="mv" id="d-returnLabelsCost">$0</div></div>
+                        <div class="m c-r" id="diy-portalCostRow" style="display:none;"><div class="ml">Returns Portal Cost (Monthly)</div><div class="mv" id="d-returnPortalCost">$0</div></div>
+                        <div class="m c-r s2"><div class="ml">Total Returns Cost (Not Offset)</div><div class="mv" id="d-totalReturnsCost">$0</div></div>
                     </div>
                 </div>
 
@@ -747,43 +747,44 @@ function calculate() {
     const siClaimsResolved = Math.round(siUnprotClaims);
 
     // ── RETURNS ──
+    // Returns — DIY pays full cost on ALL returns, SI offsets only protected returns from premiums
     let diyReturnLabelsCost = 0, diyPortalCost = 0, diyTotalReturnsCost = 0;
     let siReturnLabelsCovered = 0, siPortalCovered = 0, siTotalReturnsOffset = 0;
 
     if (returnsEnabled) {
-        const coverage     = document.getElementById('returnsCoverage').value;
-        const returnsRateP = gv('returnsRate') / 100;
+        const coverage      = document.getElementById('returnsCoverage').value;
+        const returnsRateP  = gv('returnsRate') / 100;
         const monthlyPortal = gv('returnsPortalCost');
-        const labelCost    = gv('returnsLabelCost');
-        const optinRateP   = gv('returnsOptinRate') / 100;
-        const periodPortal = monthlyPortal * mult;
+        const labelCost     = gv('returnsLabelCost');
+        const optinRateP    = gv('returnsOptinRate') / 100;
+        const periodPortal  = monthlyPortal * mult;
 
-        const totalReturns       = orders * returnsRateP;
-        const diyProtReturns     = diyProtOrders * returnsRateP;
-        const siProtReturns      = siProtOrders * returnsRateP;
+        // DIY: pays for ALL returns at full cost (no offset program)
+        const totalReturns   = orders * returnsRateP;
+        // SI: only offsets protected orders' returns from premiums
+        const siProtReturns  = siProtOrders * returnsRateP;
 
         if (coverage === 'portal') {
-            diyPortalCost        = periodPortal;
-            siPortalCovered      = periodPortal;
+            // Portal is a fixed monthly cost — DIY pays it, SI covers it
+            diyPortalCost   = periodPortal;
+            siPortalCovered = periodPortal;
         } else if (coverage === 'labels_optin') {
-            const diyLabelReturns = diyProtReturns * optinRateP;
-            const siLabelReturns  = siProtReturns  * optinRateP;
-            diyReturnLabelsCost   = diyLabelReturns * labelCost;
-            siReturnLabelsCovered = siLabelReturns  * labelCost;
+            // Opt-in labels: DIY pays for all orders that opt in, SI covers only protected that opt in
+            diyReturnLabelsCost   = totalReturns  * optinRateP * labelCost;
+            siReturnLabelsCovered = siProtReturns * optinRateP * labelCost;
         } else if (coverage === 'labels_all') {
-            diyReturnLabelsCost   = diyProtReturns * labelCost;
-            siReturnLabelsCovered = siProtReturns  * labelCost;
+            // All return labels: DIY pays for all returns, SI covers protected returns
+            diyReturnLabelsCost   = totalReturns  * labelCost;
+            siReturnLabelsCovered = siProtReturns * labelCost;
         } else if (coverage === 'portal_labels') {
             diyPortalCost         = periodPortal;
-            const diyLabelReturns = diyProtReturns * optinRateP;
-            const siLabelReturns  = siProtReturns  * optinRateP;
-            diyReturnLabelsCost   = diyLabelReturns * labelCost;
-            siReturnLabelsCovered = siLabelReturns  * labelCost;
+            diyReturnLabelsCost   = totalReturns  * optinRateP * labelCost;
             siPortalCovered       = periodPortal;
+            siReturnLabelsCovered = siProtReturns * optinRateP * labelCost;
         }
 
-        diyTotalReturnsCost   = diyReturnLabelsCost + diyPortalCost;
-        siTotalReturnsOffset  = siReturnLabelsCovered + siPortalCovered;
+        diyTotalReturnsCost  = diyReturnLabelsCost + diyPortalCost;
+        siTotalReturnsOffset = siReturnLabelsCovered + siPortalCovered;
     }
 
     // ── NET P&L ──
