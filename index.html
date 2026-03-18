@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ShipInsure vs. Self-Funded Protection | Comparison</title>
+    <title>ShipInsure vs. Self-Funded Protection | Program Comparison</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -16,179 +16,180 @@
             --muted: #6b7280;
             --si-blue: #4f7cff;
             --si-blue-dim: rgba(79,124,255,0.12);
-            --si-blue-glow: rgba(79,124,255,0.25);
+            --si-blue-glow: rgba(79,124,255,0.3);
             --self-orange: #f97316;
             --self-orange-dim: rgba(249,115,22,0.12);
             --green: #22c55e;
             --green-dim: rgba(34,197,94,0.12);
+            --green-glow: rgba(34,197,94,0.25);
             --red: #ef4444;
             --red-dim: rgba(239,68,68,0.10);
             --yellow: #eab308;
             --yellow-dim: rgba(234,179,8,0.12);
         }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* HEADER */
+        .header { background:var(--surface); border-bottom:1px solid var(--border); padding:16px 40px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+        .header-left { display:flex; align-items:center; gap:16px; }
+        .header-left img { height:40px; width:auto; }
+        .hdiv { width:1px; height:32px; background:var(--border); }
+        .header-title h1 { font-family:'Syne',sans-serif; font-size:1.15em; font-weight:700; letter-spacing:-0.3px; }
+        .header-title p { font-size:0.76em; color:var(--muted); margin-top:2px; }
+        .header-right { display:flex; align-items:center; gap:10px; }
+        .ctrl { display:flex; align-items:center; gap:7px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:6px 12px; }
+        .ctrl label { font-size:0.7em; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+        .ctrl select { background:transparent; border:none; color:var(--si-blue); font-family:'DM Sans',sans-serif; font-size:0.83em; font-weight:600; cursor:pointer; outline:none; }
+        .ctrl select option { background:var(--surface2); color:var(--text); }
+        .btn-share { display:flex; align-items:center; gap:6px; padding:8px 16px; background:var(--si-blue-dim); border:1px solid var(--si-blue); border-radius:8px; color:var(--si-blue); font-family:'DM Sans',sans-serif; font-size:0.82em; font-weight:600; cursor:pointer; transition:background 0.2s; }
+        .btn-share:hover { background:var(--si-blue-glow); }
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
+        /* PAGE */
+        .page { max-width:1440px; margin:0 auto; padding:28px 40px; }
 
-        .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 18px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-        .header-left { display: flex; align-items: center; gap: 16px; }
-        .header-left img { height: 42px; width: auto; }
-        .header-divider { width: 1px; height: 34px; background: var(--border); }
-        .header-title h1 { font-family: 'Syne', sans-serif; font-size: 1.2em; font-weight: 700; letter-spacing: -0.3px; }
-        .header-title p { font-size: 0.78em; color: var(--muted); margin-top: 2px; }
-        .header-controls { display: flex; align-items: center; gap: 10px; }
-        .ctrl-group { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; }
-        .ctrl-group label { font-size: 0.72em; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-        .ctrl-group select { background: transparent; border: none; color: var(--si-blue); font-family: 'DM Sans', sans-serif; font-size: 0.85em; font-weight: 600; cursor: pointer; outline: none; }
-        .ctrl-group select option { background: var(--surface2); color: var(--text); }
-        .btn-share { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--si-blue-dim); border: 1px solid var(--si-blue); border-radius: 8px; color: var(--si-blue); font-family: 'DM Sans', sans-serif; font-size: 0.82em; font-weight: 600; cursor: pointer; }
-        .btn-share:hover { background: var(--si-blue-glow); }
-
-        .page { max-width: 1440px; margin: 0 auto; padding: 28px 40px; }
-
-        .link-box { display: none; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; }
-        .link-box.visible { display: flex; }
-        .link-box input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.75em; outline: none; }
-        .btn-copy { padding: 8px 16px; background: var(--green-dim); border: 1px solid var(--green); border-radius: 6px; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 0.8em; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        /* LINK BOX */
+        .link-box { display:none; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:20px; }
+        .link-box.visible { display:flex; }
+        .link-box input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.75em; outline:none; }
+        .btn-copy { padding:8px 16px; background:var(--green-dim); border:1px solid var(--green); border-radius:6px; color:var(--green); font-family:'DM Sans',sans-serif; font-size:0.8em; font-weight:600; cursor:pointer; white-space:nowrap; }
 
         /* INPUTS */
-        .inputs-grid {
-            display: grid;
-            grid-template-columns: 1fr 1px 1fr 1px 1fr;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 28px;
+        .inputs-grid { display:grid; grid-template-columns:1fr 1px 1fr 1px 1fr; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-bottom:24px; }
+        .inputs-col { padding:22px 26px; }
+        .vdiv { background:var(--border); }
+        .col-tag { display:inline-flex; align-items:center; padding:3px 11px; border-radius:20px; font-family:'Syne',sans-serif; font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:14px; }
+        .col-tag.shared { background:var(--surface2); border:1px solid var(--border); color:var(--muted); }
+        .col-tag.self { background:var(--self-orange-dim); border:1px solid var(--self-orange); color:var(--self-orange); }
+        .col-tag.si { background:var(--si-blue-dim); border:1px solid var(--si-blue); color:var(--si-blue); }
+        .col-heading { font-family:'Syne',sans-serif; font-size:0.92em; font-weight:700; color:var(--text); margin-bottom:16px; }
+        .frow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:11px; margin-bottom:11px; }
+        .field { display:flex; flex-direction:column; gap:5px; }
+        .field label { font-size:0.67em; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+        .iw { position:relative; }
+        .iw .pre { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-family:'DM Mono',monospace; font-size:0.87em; color:var(--muted); pointer-events:none; }
+        .iw .suf { position:absolute; right:10px; top:50%; transform:translateY(-50%); font-family:'DM Mono',monospace; font-size:0.87em; color:var(--muted); pointer-events:none; }
+        .field input, .field select { width:100%; padding:9px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'DM Mono',monospace; font-size:0.87em; transition:border-color 0.2s,box-shadow 0.2s; outline:none; }
+        .field input.pp { padding-left:22px; }
+        .field input.sp { padding-right:24px; }
+        .field input:focus { border-color:var(--si-blue); box-shadow:0 0 0 3px var(--si-blue-dim); }
+        .field.orange input:focus, .field.orange select:focus { border-color:var(--self-orange); box-shadow:0 0 0 3px var(--self-orange-dim); }
+        .field input::placeholder { color:var(--muted); opacity:0.55; }
+        .field select { cursor:pointer; }
+        .subdiv { border:none; border-top:1px dashed var(--border); margin:14px 0 12px; }
+        .sublabel { font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:11px; }
+
+        /* COMBINED IMPACT BANNER */
+        .impact-banner {
+            background:linear-gradient(135deg, rgba(79,124,255,0.15) 0%, rgba(34,197,94,0.1) 100%);
+            border:1px solid var(--si-blue);
+            border-radius:14px;
+            padding:24px 32px;
+            margin-bottom:24px;
+            display:grid;
+            grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
+            align-items:center;
+            gap:0;
         }
-        .inputs-col { padding: 24px 28px; }
-        .inputs-vdivider { background: var(--border); }
+        .impact-item { text-align:center; padding:0 16px; }
+        .impact-item .i-label { font-size:0.65em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:6px; }
+        .impact-item .i-value { font-family:'DM Mono',monospace; font-size:1.8em; font-weight:500; line-height:1; }
+        .impact-item .i-sub { font-size:0.7em; color:var(--muted); margin-top:4px; }
+        .impact-divider { width:1px; height:48px; background:var(--border); }
+        .impact-item.total .i-value { font-size:2.4em; color:var(--green); }
+        .impact-item.total .i-label { color:var(--green); }
+        .plus-sign { font-family:'Syne',sans-serif; font-size:1.4em; color:var(--border); padding:0 4px; }
 
-        .col-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 11px; border-radius: 20px; font-family: 'Syne', sans-serif; font-size: 0.68em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; }
-        .col-tag.shared { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
-        .col-tag.self { background: var(--self-orange-dim); border: 1px solid var(--self-orange); color: var(--self-orange); }
-        .col-tag.si { background: var(--si-blue-dim); border: 1px solid var(--si-blue); color: var(--si-blue); }
+        /* SIDE-BY-SIDE PANELS */
+        .panels { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:24px; }
+        .panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+        .panel-hdr { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+        .panel-hdr.self { background:linear-gradient(90deg,var(--self-orange-dim),transparent); }
+        .panel-hdr.si { background:linear-gradient(90deg,var(--si-blue-dim),transparent); }
+        .panel-hdr-left { display:flex; flex-direction:column; gap:3px; }
+        .panel-hdr-title { font-family:'Syne',sans-serif; font-size:0.8em; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
+        .panel-hdr-title.self { color:var(--self-orange); }
+        .panel-hdr-title.si { color:var(--si-blue); }
+        .panel-hdr-attach { font-size:0.7em; color:var(--muted); }
+        .panel-hdr-total { font-family:'DM Mono',monospace; font-size:1.5em; font-weight:500; }
+        .panel-body { padding:16px 20px; }
+        .psec-label { font-size:0.63em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin:12px 0 8px; padding-top:10px; border-top:1px dashed var(--border); }
+        .psec-label:first-child { margin-top:0; padding-top:0; border-top:none; }
+        .metrics { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+        .m { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:11px; }
+        .m .ml { font-size:0.63em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:4px; }
+        .m .mv { font-family:'DM Mono',monospace; font-size:0.95em; font-weight:500; color:var(--text); }
+        .m.s2 { grid-column:span 2; }
+        .m.c-o { border-color:var(--self-orange); background:var(--self-orange-dim); }
+        .m.c-o .mv { color:var(--self-orange); }
+        .m.c-b { border-color:var(--si-blue); background:var(--si-blue-dim); }
+        .m.c-b .mv { color:var(--si-blue); }
+        .m.c-g { border-color:var(--green); background:var(--green-dim); }
+        .m.c-g .mv { color:var(--green); }
+        .m.c-r { border-color:var(--red); background:var(--red-dim); }
+        .m.c-r .mv { color:var(--red); }
+        .m.c-y { border-color:var(--yellow); background:var(--yellow-dim); }
+        .m.c-y .mv { color:var(--yellow); }
 
-        .col-heading { font-family: 'Syne', sans-serif; font-size: 0.95em; font-weight: 700; color: var(--text); margin-bottom: 18px; }
-
-        .field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
-        .field { display: flex; flex-direction: column; gap: 5px; }
-        .field label { font-size: 0.68em; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-wrap { position: relative; }
-        .input-wrap .pre { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-family: 'DM Mono', monospace; font-size: 0.88em; color: var(--muted); pointer-events: none; }
-        .input-wrap .suf { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-family: 'DM Mono', monospace; font-size: 0.88em; color: var(--muted); pointer-events: none; }
-        .field input, .field select { width: 100%; padding: 9px 11px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.88em; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
-        .field input.pre-pad { padding-left: 24px; }
-        .field input.suf-pad { padding-right: 26px; }
-        .field input:focus { border-color: var(--si-blue); box-shadow: 0 0 0 3px var(--si-blue-dim); }
-        .field.orange input:focus, .field.orange select:focus { border-color: var(--self-orange); box-shadow: 0 0 0 3px var(--self-orange-dim); }
-        .field input::placeholder { color: var(--muted); opacity: 0.6; }
-        .field select { cursor: pointer; }
-
-        .sub-divider { border: none; border-top: 1px dashed var(--border); margin: 16px 0 14px; }
-        .sub-label { font-size: 0.68em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 12px; }
-
-        /* STATS STRIP */
-        .stats-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 24px; }
-        .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-align: center; }
-        .stat .st-lbl { font-size: 0.63em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 5px; }
-        .stat .st-val { font-family: 'DM Mono', monospace; font-size: 1em; font-weight: 500; color: var(--text); }
-
-        /* VERDICT */
-        .verdict { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; padding: 22px 32px; margin-bottom: 24px; }
-        .v-side { display: flex; flex-direction: column; gap: 4px; }
-        .v-side.right { align-items: flex-end; text-align: right; }
-        .v-side .v-tag { font-size: 0.65em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
-        .v-side .v-num { font-family: 'DM Mono', monospace; font-size: 2em; font-weight: 500; line-height: 1; }
-        .v-side .v-sub { font-size: 0.72em; color: var(--muted); margin-top: 2px; }
-        .v-center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .verdict-pill { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: 30px; font-family: 'Syne', sans-serif; font-size: 0.82em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-        .verdict-pill.si { background: var(--si-blue-dim); border: 1.5px solid var(--si-blue); color: var(--si-blue); }
-        .verdict-pill.self { background: var(--self-orange-dim); border: 1.5px solid var(--self-orange); color: var(--self-orange); }
-        .verdict-pill.even { background: var(--yellow-dim); border: 1.5px solid var(--yellow); color: var(--yellow); }
-        .v-delta { font-size: 0.72em; color: var(--muted); }
-
-        /* PANELS */
-        .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-        .panel-hdr { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .panel-hdr.self { background: linear-gradient(90deg, var(--self-orange-dim), transparent); }
-        .panel-hdr.si { background: linear-gradient(90deg, var(--si-blue-dim), transparent); }
-        .panel-hdr-title { font-family: 'Syne', sans-serif; font-size: 0.82em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
-        .panel-hdr-title.self { color: var(--self-orange); }
-        .panel-hdr-title.si { color: var(--si-blue); }
-        .panel-hdr-total { font-family: 'DM Mono', monospace; font-size: 1.6em; font-weight: 500; }
-
-        .panel-body { padding: 18px 22px; }
-        .panel-section-label { font-size: 0.65em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 14px 0 10px; padding-top: 12px; border-top: 1px dashed var(--border); }
-        .panel-section-label:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-        .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .m { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-        .m .m-lbl { font-size: 0.65em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 5px; }
-        .m .m-val { font-family: 'DM Mono', monospace; font-size: 0.98em; font-weight: 500; color: var(--text); }
-        .m.span2 { grid-column: span 2; }
-        .m.c-orange { border-color: var(--self-orange); background: var(--self-orange-dim); }
-        .m.c-orange .m-val { color: var(--self-orange); }
-        .m.c-blue { border-color: var(--si-blue); background: var(--si-blue-dim); }
-        .m.c-blue .m-val { color: var(--si-blue); }
-        .m.c-green { border-color: var(--green); background: var(--green-dim); }
-        .m.c-green .m-val { color: var(--green); }
-        .m.c-red { border-color: var(--red); background: var(--red-dim); }
-        .m.c-red .m-val { color: var(--red); }
-        .m.c-yellow { border-color: var(--yellow); background: var(--yellow-dim); }
-        .m.c-yellow .m-val { color: var(--yellow); }
-
-        /* BREAK-EVEN */
-        .breakeven { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; }
-        .be-heading { font-family: 'Syne', sans-serif; font-size: 0.9em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .be-heading::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-        .be-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-        .be-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
-        .be-card .bc-lbl { font-size: 0.65em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 10px; }
-        .be-card .bc-val { font-family: 'DM Mono', monospace; font-size: 1.9em; font-weight: 500; line-height: 1; margin-bottom: 6px; }
-        .be-card .bc-sub { font-size: 0.73em; color: var(--muted); line-height: 1.4; }
-
-        .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 12px 0 5px; }
-        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
-        .bar-fill.blue { background: linear-gradient(90deg, var(--si-blue), #7aa3ff); }
-        .bar-labels { display: flex; justify-content: space-between; font-size: 0.62em; color: var(--muted); font-family: 'DM Mono', monospace; }
-
-        .cpc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-        .cpc-item .cpc-lbl { font-size: 0.65em; font-weight: 600; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-        .cpc-track { height: 30px; background: var(--border); border-radius: 6px; overflow: hidden; }
-        .cpc-fill { height: 100%; display: flex; align-items: center; padding-left: 10px; font-family: 'DM Mono', monospace; font-size: 0.82em; font-weight: 500; color: white; border-radius: 6px; transition: width 0.5s ease; white-space: nowrap; min-width: 20px; }
-        .cpc-fill.orange { background: var(--self-orange); }
-        .cpc-fill.blue { background: var(--si-blue); }
-
-        @media (max-width: 1100px) {
-            .inputs-grid { grid-template-columns: 1fr; }
-            .inputs-vdivider { height: 1px; width: 100%; }
-            .stats-strip { grid-template-columns: repeat(4, 1fr); }
-            .be-grid { grid-template-columns: 1fr 1fr; }
+        /* OVERHEAD CALLOUT */
+        .overhead-callout {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:14px;
+            padding:22px 28px;
+            margin-bottom:24px;
+            display:grid;
+            grid-template-columns:1fr 1px 1fr 1px 1fr;
+            gap:0;
+            align-items:center;
         }
-        @media (max-width: 768px) {
-            .page { padding: 20px 16px; }
-            .header { padding: 14px 16px; }
-            .panels { grid-template-columns: 1fr; }
-            .verdict { grid-template-columns: 1fr; }
-            .v-side.right { align-items: flex-start; text-align: left; }
-            .stats-strip { grid-template-columns: repeat(2, 1fr); }
-            .be-grid { grid-template-columns: 1fr; }
-            .header-controls { display: none; }
+        .oc-item { padding:0 20px; text-align:center; }
+        .oc-item .oc-label { font-size:0.65em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:8px; }
+        .oc-item .oc-value { font-family:'DM Mono',monospace; font-size:1.6em; font-weight:500; color:var(--green); line-height:1; }
+        .oc-item .oc-sub { font-size:0.72em; color:var(--muted); margin-top:5px; line-height:1.4; }
+        .oc-divider { background:var(--border); height:100%; min-height:60px; width:1px; }
+
+        /* ATTACH LIFT VISUAL */
+        .attach-section {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:14px;
+            padding:22px 28px;
+            margin-bottom:24px;
+        }
+        .attach-heading { font-family:'Syne',sans-serif; font-size:0.88em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+        .attach-heading::after { content:''; flex:1; height:1px; background:var(--border); }
+        .attach-bars { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .attach-bar-item {}
+        .ab-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+        .ab-label { font-size:0.7em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+        .ab-label.self { color:var(--self-orange); }
+        .ab-label.si { color:var(--si-blue); }
+        .ab-pct { font-family:'DM Mono',monospace; font-size:1.3em; font-weight:500; }
+        .ab-track { height:20px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:6px; }
+        .ab-fill { height:100%; border-radius:6px; transition:width 0.5s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:10px; font-family:'DM Mono',monospace; font-size:0.75em; font-weight:500; color:white; white-space:nowrap; }
+        .ab-fill.orange { background:var(--self-orange); }
+        .ab-fill.blue { background:linear-gradient(90deg,var(--si-blue),#7aa3ff); }
+        .ab-stats { display:flex; gap:16px; margin-top:8px; }
+        .ab-stat { font-size:0.7em; color:var(--muted); }
+        .ab-stat span { font-family:'DM Mono',monospace; color:var(--text); font-weight:500; }
+        .lift-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; background:var(--green-dim); border:1px solid var(--green); border-radius:20px; font-size:0.72em; font-weight:700; color:var(--green); font-family:'Syne',sans-serif; }
+
+        @media (max-width:1100px) {
+            .inputs-grid { grid-template-columns:1fr; }
+            .vdiv { height:1px; width:100%; }
+            .impact-banner { grid-template-columns:1fr 1fr; gap:16px; }
+            .impact-divider, .plus-sign { display:none; }
+            .overhead-callout { grid-template-columns:1fr; gap:16px; }
+            .oc-divider { display:none; }
+            .attach-bars { grid-template-columns:1fr; }
+        }
+        @media (max-width:768px) {
+            .page { padding:18px 16px; }
+            .header { padding:14px 16px; }
+            .panels { grid-template-columns:1fr; }
+            .impact-banner { grid-template-columns:1fr 1fr; }
+            .header-right { display:none; }
         }
     </style>
 </head>
@@ -197,14 +198,14 @@
 <div class="header">
     <div class="header-left">
         <img src="https://raw.githubusercontent.com/drewshafe/si-roi-calculator/main/2026si.png" alt="ShipInsure">
-        <div class="header-divider"></div>
+        <div class="hdiv"></div>
         <div class="header-title">
             <h1>Self-Funded Protection vs. ShipInsure</h1>
-            <p>Side-by-side program economics comparison</p>
+            <p>Attach lift · Overhead savings · Rev share on gross</p>
         </div>
     </div>
-    <div class="header-controls">
-        <div class="ctrl-group">
+    <div class="header-right">
+        <div class="ctrl">
             <label>Timeframe</label>
             <select id="timeframe">
                 <option value="monthly">Monthly</option>
@@ -222,63 +223,51 @@
         <button class="btn-copy" id="copyLink">Copy</button>
     </div>
 
+    <!-- INPUTS -->
     <div class="inputs-grid">
 
         <!-- COL 1: Shared -->
         <div class="inputs-col">
             <div class="col-tag shared">Shared Inputs</div>
             <div class="col-heading">Business Baseline</div>
-            <div class="field-row">
+            <div class="frow">
                 <div class="field">
                     <label id="ordersLabel">Monthly Orders</label>
                     <input type="text" id="orders" placeholder="25,000" inputmode="numeric">
                 </div>
                 <div class="field">
                     <label>Avg Order Value</label>
-                    <div class="input-wrap">
-                        <span class="pre">$</span>
-                        <input type="text" id="aov" placeholder="60" inputmode="decimal" class="pre-pad">
-                    </div>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="aov" placeholder="60" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
-            <div class="field-row">
+            <div class="frow">
                 <div class="field">
                     <label>COGS %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="cogs" placeholder="38" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                    <div class="iw"><input type="text" id="cogs" placeholder="38" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
                 <div class="field">
                     <label>Claims Rate %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="claimsRate" placeholder="0.86" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                    <div class="iw"><input type="text" id="claimsRate" placeholder="0.86" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
-            <div class="field-row">
+            <div class="frow">
                 <div class="field">
                     <label>CS Cost / Claim</label>
-                    <div class="input-wrap">
-                        <span class="pre">$</span>
-                        <input type="text" id="csPerClaim" placeholder="15" inputmode="decimal" class="pre-pad">
-                    </div>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="csPerClaim" placeholder="15" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
         </div>
 
-        <div class="inputs-vdivider"></div>
+        <div class="vdiv"></div>
 
         <!-- COL 2: Self-Funded -->
         <div class="inputs-col">
             <div class="col-tag self">Their Current Program</div>
             <div class="col-heading">Self-Funded Protection</div>
-
-            <div class="field-row">
+            <div class="frow">
                 <div class="field orange">
                     <label>Pricing Template</label>
-                    <select id="selfPricingTemplate">
+                    <select id="selfTemplate">
                         <option value="percentage">%-Based</option>
                         <option value="1.5_accurate">1.5% Acc</option>
                         <option value="2_accurate">2% Acc</option>
@@ -295,67 +284,57 @@
                         <option value="2.5_1.95">2.5% Min $1.95</option>
                         <option value="born_primitive">Born Prim</option>
                         <option value="og_6.5_19.99_3">OG 6.5%/$19.99/3%</option>
-                        <option value="flat_custom">Flat $ (Custom)</option>
+                        <option value="flat_custom">Flat $ Custom</option>
                     </select>
                 </div>
-                <div class="field orange" id="selfPremiumPctField" style="display:none;">
-                    <label>Protection Premium %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="selfPremiumPct" placeholder="3.00" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                <div class="field orange" id="selfPctField" style="display:none;">
+                    <label>Premium %</label>
+                    <div class="iw"><input type="text" id="selfPremiumPct" placeholder="3.00" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
-                <div class="field orange" id="selfPremiumFlatField" style="display:none;">
-                    <label>Protection Premium $</label>
-                    <div class="input-wrap">
-                        <span class="pre">$</span>
-                        <input type="text" id="selfPremiumFlat" placeholder="2.50" inputmode="decimal" class="pre-pad">
-                    </div>
+                <div class="field orange" id="selfFlatField" style="display:none;">
+                    <label>Premium $</label>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="selfPremiumFlat" placeholder="2.50" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
-
-            <div class="field-row">
+            <div class="frow">
                 <div class="field orange">
                     <label>Current Attach Rate %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="selfAttach" placeholder="55" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                    <div class="iw"><input type="text" id="selfAttach" placeholder="55" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
-
-            <hr class="sub-divider">
-            <div class="sub-label">Claims Handling</div>
-
-            <div class="field-row">
+            <hr class="subdiv">
+            <div class="sublabel">Claims Handling</div>
+            <div class="frow">
                 <div class="field orange">
-                    <label>Who Pays Claims?</label>
+                    <label>Who Handles Claims?</label>
                     <select id="claimsHandler">
-                        <option value="self">Merchant (from reserve)</option>
+                        <option value="self">Merchant (internal)</option>
                         <option value="3p">3rd Party Processor</option>
                     </select>
                 </div>
                 <div class="field orange" id="processorFeeField" style="display:none;">
                     <label>Processor Fee % of Premiums</label>
-                    <div class="input-wrap">
-                        <input type="text" id="processorFee" placeholder="70" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                    <div class="iw"><input type="text" id="processorFee" placeholder="70" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+            </div>
+            <div class="frow" id="overheadRow">
+                <div class="field orange">
+                    <label>Monthly Claims Overhead $</label>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="claimsOverhead" placeholder="500" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
         </div>
 
-        <div class="inputs-vdivider"></div>
+        <div class="vdiv"></div>
 
         <!-- COL 3: ShipInsure -->
         <div class="inputs-col">
             <div class="col-tag si">ShipInsure</div>
             <div class="col-heading">ShipInsure Program</div>
-
-            <div class="field-row">
+            <div class="frow">
                 <div class="field">
                     <label>Pricing Template</label>
-                    <select id="pricingTemplate">
+                    <select id="siTemplate">
                         <option value="percentage">%-Based</option>
                         <option value="1.5_accurate">1.5% Acc</option>
                         <option value="2_accurate">2% Acc</option>
@@ -374,543 +353,452 @@
                         <option value="og_6.5_19.99_3">OG 6.5%/$19.99/3%</option>
                     </select>
                 </div>
-                <div class="field" id="siPremiumPctField">
-                    <label>Protection Premium %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="siPremiumPct" value="3.00" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Expected Attach Rate %</label>
-                    <div class="input-wrap">
-                        <input type="text" id="siAttach" value="60" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                <div class="field" id="siPctField">
+                    <label>Premium %</label>
+                    <div class="iw"><input type="text" id="siPremiumPct" value="3.00" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
-
-            <div class="field-row">
+            <div class="frow">
                 <div class="field">
-                    <label>Rev Share % (Post-Claims)</label>
-                    <div class="input-wrap">
-                        <input type="text" id="revShare" value="30" inputmode="decimal" class="suf-pad">
-                        <span class="suf">%</span>
-                    </div>
+                    <label>Projected Attach Rate %</label>
+                    <div class="iw"><input type="text" id="siAttach" value="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+                <div class="field">
+                    <label>Rev Share % (Gross)</label>
+                    <div class="iw"><input type="text" id="revShare" value="30" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
-
-            <hr class="sub-divider">
-            <div class="sub-label">SI handles all claims — no overhead</div>
-            <div style="font-size: 0.78em; color: var(--muted); line-height: 1.5;">
-                ShipInsure funds all reships and refunds on protected orders. Revenue share returned monthly from post-claim premium balance.
+            <hr class="subdiv">
+            <div class="sublabel">SI handles everything</div>
+            <div style="font-size:0.76em; color:var(--muted); line-height:1.55;">
+                No claims management, no program maintenance. SI funds all reships &amp; refunds on protected orders. Revenue share paid monthly on <strong style="color:var(--si-blue);">gross premiums collected</strong>.
             </div>
         </div>
     </div>
 
-    <!-- STATS STRIP -->
-    <div class="stats-strip">
-        <div class="stat"><div class="st-lbl">Total Orders</div><div class="st-val" id="s-orders">—</div></div>
-        <div class="stat"><div class="st-lbl">Total Claims</div><div class="st-val" id="s-claims">—</div></div>
-        <div class="stat"><div class="st-lbl" id="s-selfProtectedLbl">Self Protected</div><div class="st-val" id="s-selfProtected">—</div></div>
-        <div class="stat"><div class="st-lbl" id="s-siProtectedLbl">SI Protected</div><div class="st-val" id="s-siProtected">—</div></div>
-        <div class="stat"><div class="st-lbl">Self Premiums In</div><div class="st-val" id="s-selfPremiums">—</div></div>
-        <div class="stat"><div class="st-lbl">SI Premiums Out</div><div class="st-val" id="s-siPremiums">—</div></div>
-        <div class="stat"><div class="st-lbl">Avg SI Premium</div><div class="st-val" id="s-avgPremium">—</div></div>
-    </div>
-
-    <!-- VERDICT -->
-    <div class="verdict">
-        <div class="v-side">
-            <div class="v-tag">Self-Funded Net P&L</div>
-            <div class="v-num" id="v-selfNet">$0</div>
-            <div class="v-sub">Premiums collected − claims paid</div>
+    <!-- COMBINED IMPACT BANNER -->
+    <div class="impact-banner">
+        <div class="impact-item">
+            <div class="i-label">Attach Lift Revenue</div>
+            <div class="i-value" id="imp-attachLift" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub" id="imp-attachLiftSub">additional premiums</div>
         </div>
-        <div class="v-center">
-            <div class="verdict-pill si" id="verdictPill">SI Better</div>
-            <div class="v-delta" id="verdictDelta">—</div>
+        <div class="plus-sign">+</div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+            <div class="i-label">Overhead Eliminated</div>
+            <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub" id="imp-overheadSub">claims mgmt saved</div>
         </div>
-        <div class="v-side right">
-            <div class="v-tag">ShipInsure Net P&L</div>
-            <div class="v-num" id="v-siNet">$0</div>
-            <div class="v-sub">Rev share + SI-funded claims − premiums paid</div>
+        <div class="plus-sign">+</div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+            <div class="i-label">Rev Share Gained</div>
+            <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
+        </div>
+        <div class="impact-divider"></div>
+        <div class="impact-item total">
+            <div class="i-label">Total SI Advantage</div>
+            <div class="i-value" id="imp-total">$0</div>
+            <div class="i-sub" id="imp-totalSub">vs. current program</div>
         </div>
     </div>
 
     <!-- PANELS -->
     <div class="panels">
 
+        <!-- SELF PANEL -->
         <div class="panel">
             <div class="panel-hdr self">
-                <span class="panel-hdr-title self">Self-Funded Program</span>
-                <span class="panel-hdr-total" id="p-selfNet">$0</span>
+                <div class="panel-hdr-left">
+                    <span class="panel-hdr-title self">Self-Funded Program</span>
+                    <span class="panel-hdr-attach" id="p-selfAttachLabel">— attach rate</span>
+                </div>
+                <span class="panel-hdr-total" id="p-selfPnl" style="color:var(--self-orange);">$0</span>
             </div>
             <div class="panel-body">
-                <div class="panel-section-label">Revenue In</div>
+                <div class="psec-label">Premiums Collected</div>
                 <div class="metrics">
-                    <div class="m">
-                        <div class="m-lbl">Avg Premium Charged</div>
-                        <div class="m-val" id="m-selfAvgPremium">$0</div>
-                    </div>
-                    <div class="m">
-                        <div class="m-lbl">Protected Orders</div>
-                        <div class="m-val" id="m-selfProtectedOrders">0</div>
-                    </div>
-                    <div class="m c-orange span2">
-                        <div class="m-lbl">Total Premiums Collected</div>
-                        <div class="m-val" id="m-selfPremiums">$0</div>
-                    </div>
+                    <div class="m"><div class="ml">Avg Premium</div><div class="mv" id="m-selfAvgP">$0</div></div>
+                    <div class="m"><div class="ml">Protected Orders</div><div class="mv" id="m-selfProtOrders">0</div></div>
+                    <div class="m c-o s2"><div class="ml">Total Premiums In</div><div class="mv" id="m-selfPremiums">$0</div></div>
                 </div>
-
-                <div class="panel-section-label">Costs Out</div>
+                <div class="psec-label">Claims Costs</div>
                 <div class="metrics">
-                    <div class="m">
-                        <div class="m-lbl" id="m-selfClaimsLbl">Protected Claims Paid</div>
-                        <div class="m-val" id="m-selfClaims">$0</div>
-                    </div>
-                    <div class="m" id="m-processorFeeWrap" style="display:none;">
-                        <div class="m-lbl">Processor Fee</div>
-                        <div class="m-val" id="m-processorFeeAmt">$0</div>
-                    </div>
-                    <div class="m">
-                        <div class="m-lbl">Unprotected Claims Cost</div>
-                        <div class="m-val" id="m-selfUnprotectedCost">$0</div>
-                    </div>
-                    <div class="m c-red span2">
-                        <div class="m-lbl">Total Claims Exposure</div>
-                        <div class="m-val" id="m-selfTotalCost">$0</div>
-                    </div>
+                    <div class="m" id="m-selfClaimsWrap"><div class="ml" id="m-selfClaimsLbl">Protected Claims Paid</div><div class="mv" id="m-selfClaimsCost">$0</div></div>
+                    <div class="m" id="m-processorWrap" style="display:none;"><div class="ml">Processor Fee</div><div class="mv" id="m-processorAmt">$0</div></div>
+                    <div class="m"><div class="ml">Unprotected Claim Cost</div><div class="mv" id="m-selfUnprotCost">$0</div></div>
+                    <div class="m c-r s2"><div class="ml">Total Claims Exposure</div><div class="mv" id="m-selfTotalClaims">$0</div></div>
                 </div>
-
-                <div class="panel-section-label">Program P&L</div>
+                <div class="psec-label">Overhead &amp; P&L</div>
                 <div class="metrics">
-                    <div class="m c-yellow span2">
-                        <div class="m-lbl">Net P&L (Premiums − Total Claims Exposure)</div>
-                        <div class="m-val" id="m-selfPnl">$0</div>
-                    </div>
+                    <div class="m"><div class="ml">Claims Overhead</div><div class="mv" id="m-selfOverhead">$0</div></div>
+                    <div class="m c-y s2"><div class="ml">Net Program P&L</div><div class="mv" id="m-selfNetPnl">$0</div></div>
                 </div>
             </div>
         </div>
 
+        <!-- SI PANEL -->
         <div class="panel">
             <div class="panel-hdr si">
-                <span class="panel-hdr-title si">ShipInsure Program</span>
-                <span class="panel-hdr-total" id="p-siNet">$0</span>
+                <div class="panel-hdr-left">
+                    <span class="panel-hdr-title si">ShipInsure Program</span>
+                    <span class="panel-hdr-attach" id="p-siAttachLabel">— projected attach</span>
+                </div>
+                <span class="panel-hdr-total" id="p-siPnl" style="color:var(--si-blue);">$0</span>
             </div>
             <div class="panel-body">
-                <div class="panel-section-label">Premiums Paid to SI</div>
+                <div class="psec-label">Premiums Collected</div>
                 <div class="metrics">
-                    <div class="m">
-                        <div class="m-lbl">Avg SI Premium</div>
-                        <div class="m-val" id="m-siAvgPremium">$0</div>
-                    </div>
-                    <div class="m">
-                        <div class="m-lbl">Protected Orders</div>
-                        <div class="m-val" id="m-siProtectedOrders">0</div>
-                    </div>
-                    <div class="m c-blue span2">
-                        <div class="m-lbl">Total Premiums to SI</div>
-                        <div class="m-val" id="m-siPremiums">$0</div>
-                    </div>
+                    <div class="m"><div class="ml">Avg SI Premium</div><div class="mv" id="m-siAvgP">$0</div></div>
+                    <div class="m"><div class="ml">Protected Orders</div><div class="mv" id="m-siProtOrders">0</div></div>
+                    <div class="m c-b s2"><div class="ml">Total Premiums to SI</div><div class="mv" id="m-siPremiums">$0</div></div>
                 </div>
-
-                <div class="panel-section-label">What You Get Back</div>
+                <div class="psec-label">What You Get Back</div>
                 <div class="metrics">
-                    <div class="m c-green">
-                        <div class="m-lbl">SI Funds Reships/Refunds</div>
-                        <div class="m-val" id="m-siFunded">$0</div>
-                    </div>
-                    <div class="m c-green">
-                        <div class="m-lbl">Revenue Share Earned</div>
-                        <div class="m-val" id="m-siRevShare">$0</div>
-                    </div>
-                    <div class="m c-red span2">
-                        <div class="m-lbl">Unprotected Claims (Still Your Cost)</div>
-                        <div class="m-val" id="m-siUnprotectedCost">$0</div>
-                    </div>
+                    <div class="m c-g"><div class="ml">Rev Share (Gross ×<span id="m-revSharePctLabel">30</span>%)</div><div class="mv" id="m-siRevShare">$0</div></div>
+                    <div class="m c-g"><div class="ml">SI Funds All Claims</div><div class="mv" id="m-siFunded">$0</div></div>
+                    <div class="m c-r s2"><div class="ml">Unprotected Claims (Your Cost)</div><div class="mv" id="m-siUnprotCost">$0</div></div>
                 </div>
-
-                <div class="panel-section-label">Program P&L</div>
+                <div class="psec-label">Overhead &amp; P&L</div>
                 <div class="metrics">
-                    <div class="m c-blue span2">
-                        <div class="m-lbl">Net P&L (Funded + Rev Share − Premiums − Unprotected)</div>
-                        <div class="m-val" id="m-siPnl">$0</div>
-                    </div>
+                    <div class="m c-g"><div class="ml">Claims Overhead</div><div class="mv">$0 — SI managed</div></div>
+                    <div class="m c-b s2"><div class="ml">Net Program P&L</div><div class="mv" id="m-siNetPnl">$0</div></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- BREAK-EVEN -->
-    <div class="breakeven">
-        <div class="be-heading">Break-Even Analysis</div>
-        <div class="be-grid">
-
-            <div class="be-card">
-                <div class="bc-lbl">Effective Cost Per Claim</div>
-                <div class="cpc-row">
-                    <div class="cpc-item">
-                        <div class="cpc-lbl" style="color: var(--self-orange);">Self-Funded</div>
-                        <div class="cpc-track"><div class="cpc-fill orange" id="cpc-self-bar"><span id="cpc-self-val">$0</span></div></div>
-                    </div>
-                    <div class="cpc-item">
-                        <div class="cpc-lbl" style="color: var(--si-blue);">ShipInsure</div>
-                        <div class="cpc-track"><div class="cpc-fill blue" id="cpc-si-bar"><span id="cpc-si-val">$0</span></div></div>
-                    </div>
+    <!-- ATTACH LIFT VISUAL -->
+    <div class="attach-section">
+        <div class="attach-heading">Attach Rate Comparison</div>
+        <div class="attach-bars">
+            <div class="attach-bar-item">
+                <div class="ab-top">
+                    <span class="ab-label self">Current Program</span>
+                    <span class="ab-pct" id="ab-selfPct" style="color:var(--self-orange);">0%</span>
                 </div>
-                <div class="bc-sub" id="cpc-sub" style="margin-top: 10px;"></div>
-            </div>
-
-            <div class="be-card">
-                <div class="bc-lbl">SI Break-Even Attach Rate</div>
-                <div class="bc-val" id="be-attach" style="color: var(--si-blue);">—</div>
-                <div class="bc-sub" id="be-attachSub">At this attach rate, SI P&L matches self-funded P&L</div>
-                <div class="bar-track"><div class="bar-fill blue" id="be-attachBar" style="width: 0%;"></div></div>
-                <div class="bar-labels"><span>0%</span><span id="be-attachCurrent" style="color: var(--si-blue);"></span><span>100%</span></div>
-            </div>
-
-            <div class="be-card">
-                <div class="bc-lbl" id="be-savingsLabel">Annual P&L Advantage</div>
-                <div class="bc-val" id="be-savings" style="color: var(--green);">$0</div>
-                <div class="bc-sub" id="be-savingsSub"></div>
-                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border);">
-                    <div style="font-size: 0.63em; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px;">Monthly Delta</div>
-                    <div style="font-family: 'DM Mono', monospace; font-size: 1em; color: var(--text);" id="be-monthly">$0 / mo</div>
+                <div class="ab-track"><div class="ab-fill orange" id="ab-selfBar" style="width:0%;"></div></div>
+                <div class="ab-stats">
+                    <div class="ab-stat">Protected orders: <span id="ab-selfProtOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-selfPremiums">$0</span></div>
                 </div>
             </div>
-
+            <div class="attach-bar-item">
+                <div class="ab-top">
+                    <span class="ab-label si">ShipInsure Projected</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="lift-badge" id="ab-liftBadge" style="display:none;">↑ +0pts</span>
+                        <span class="ab-pct" id="ab-siPct" style="color:var(--si-blue);">0%</span>
+                    </div>
+                </div>
+                <div class="ab-track"><div class="ab-fill blue" id="ab-siBar" style="width:0%;"></div></div>
+                <div class="ab-stats">
+                    <div class="ab-stat">Protected orders: <span id="ab-siProtOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-siPremiums">$0</span></div>
+                    <div class="ab-stat">Additional vs current: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
 </div>
 
 <script>
-    const pricingTemplates = {
-        "1.5_accurate": [{min:1,max:77,premium:0.98},{min:77,max:88,premium:1.23},{min:88,max:100,premium:1.40},{min:100,max:114,premium:1.60},{min:115,max:131,premium:1.83},{min:131,max:150,premium:2.09},{min:150,max:171,premium:2.39},{min:171,max:195,premium:2.74},{min:195,max:223,premium:3.13},{min:223,max:255,premium:3.57},{min:255,max:292,premium:4.08},{min:292,max:333,premium:4.67},{min:333,max:381,premium:5.33},{min:381,max:435,premium:6.10},{min:435,max:498,premium:6.97},{min:498,max:569,premium:7.96},{min:569,max:650,premium:9.10},{min:650,max:743,premium:10.40},{min:743,max:849,premium:11.89},{min:849,max:970,premium:13.59},{min:970,max:1109,premium:15.53},{min:1109,max:1267,premium:17.74},{min:1267,max:1449,premium:20.28},{min:1449,max:1655,premium:23.18},{min:1655,max:1892,premium:26.49},{min:1892,max:2162,premium:30.27},{min:2162,max:2471,premium:34.60},{min:2471,max:2824,premium:39.54},{min:2824,max:3228,premium:45.19},{min:3228,max:3689,premium:51.64},{min:3689,max:4216,premium:59.02},{min:4216,max:10000,premium:67.45}],
-        "2_accurate": [{min:1,max:54,premium:0.98},{min:54,max:60,premium:1.14},{min:60,max:66,premium:1.26},{min:66,max:73,premium:1.39},{min:73,max:81,premium:1.54},{min:81,max:89,premium:1.70},{min:89,max:99,premium:1.88},{min:99,max:109,premium:2.08},{min:109,max:121,premium:2.29},{min:121,max:133,premium:2.54},{min:133,max:148,premium:2.80},{min:148,max:163,premium:3.10},{min:163,max:180,premium:3.43},{min:180,max:199,premium:3.79},{min:199,max:220,premium:4.18},{min:220,max:243,premium:4.63},{min:243,max:269,premium:5.11},{min:269,max:297,premium:5.65},{min:297,max:329,premium:6.25},{min:329,max:363,premium:6.90},{min:363,max:402,premium:7.63},{min:402,max:444,premium:8.43},{min:444,max:491,premium:9.32},{min:491,max:542,premium:10.30},{min:542,max:599,premium:11.39},{min:599,max:662,premium:12.59},{min:662,max:732,premium:13.91},{min:732,max:809,premium:15.38},{min:809,max:894,premium:16.99},{min:894,max:989,premium:18.78},{min:989,max:1093,premium:20.76},{min:1093,max:1208,premium:22.95},{min:1208,max:1335,premium:25.36},{min:1335,max:1475,premium:28.03},{min:1475,max:1631,premium:30.98},{min:1631,max:1802,premium:34.25},{min:1802,max:1992,premium:37.85},{min:1992,max:2202,premium:41.83},{min:2202,max:2434,premium:46.24},{min:2434,max:2690,premium:51.11},{min:2690,max:2973,premium:56.49},{min:2973,max:3286,premium:62.43},{min:3286,max:3632,premium:69.00},{min:3632,max:4014,premium:76.27},{min:4014,max:4437,premium:84.30},{min:4437,max:10000,premium:93.17}],
-        "2_round_50": [{min:1,max:50,premium:1.00},{min:50,max:80,premium:1.50},{min:80,max:110,premium:2.00},{min:110,max:140,premium:2.50},{min:140,max:160,premium:3.00},{min:160,max:180,premium:3.50},{min:180,max:210,premium:4.00},{min:210,max:300,premium:5.00},{min:300,max:400,premium:8.00},{min:400,max:500,premium:10.00},{min:500,max:600,premium:12.00},{min:600,max:700,premium:14.00},{min:700,max:800,premium:16.00},{min:800,max:900,premium:18.00},{min:900,max:10000,premium:20.00}],
-        "2.5_accurate": [{min:1,max:41,premium:0.98},{min:41,max:44,premium:1.06},{min:44,max:48,premium:1.15},{min:48,max:52,premium:1.25},{min:52,max:56,premium:1.35},{min:56,max:61,premium:1.47},{min:61,max:66,premium:1.59},{min:66,max:72,premium:1.72},{min:72,max:78,premium:1.87},{min:78,max:84,premium:2.02},{min:84,max:91,premium:2.19},{min:91,max:99,premium:2.37},{min:99,max:107,premium:2.57},{min:107,max:116,premium:2.79},{min:116,max:126,premium:3.02},{min:126,max:136,premium:3.27},{min:136,max:148,premium:3.54},{min:148,max:160,premium:3.84},{min:160,max:173,premium:4.16},{min:173,max:188,premium:4.51},{min:188,max:203,premium:4.88},{min:203,max:220,premium:5.29},{min:220,max:239,premium:5.73},{min:239,max:259,premium:6.21},{min:259,max:280,premium:6.73},{min:280,max:304,premium:7.29},{min:304,max:329,premium:7.90},{min:329,max:356,premium:8.55},{min:356,max:386,premium:9.27},{min:386,max:418,premium:10.04},{min:418,max:453,premium:10.88},{min:453,max:491,premium:11.78},{min:491,max:532,premium:12.76},{min:532,max:576,premium:13.83},{min:576,max:624,premium:14.98},{min:624,max:676,premium:16.23},{min:676,max:733,premium:17.58},{min:733,max:794,premium:19.05},{min:794,max:860,premium:20.64},{min:860,max:931,premium:22.36},{min:931,max:1009,premium:24.22},{min:1009,max:1093,premium:26.24},{min:1093,max:1184,premium:28.42},{min:1184,max:1283,premium:30.79},{min:1283,max:1390,premium:33.36},{min:1390,max:1506,premium:36.14},{min:1506,max:1631,premium:39.15},{min:1631,max:1767,premium:42.41},{min:1767,max:1915,premium:45.95},{min:1915,max:2074,premium:49.78},{min:2074,max:2247,premium:53.93},{min:2247,max:2434,premium:58.42},{min:2434,max:2637,premium:63.29},{min:2637,max:2857,premium:68.56},{min:2857,max:3095,premium:74.28},{min:3095,max:3353,premium:80.47},{min:3353,max:3632,premium:87.17},{min:3632,max:3935,premium:94.44},{min:3935,max:4263,premium:102.31},{min:4263,max:4618,premium:110.83},{min:4618,max:10000,premium:120.07}],
-        "born_primitive": [{min:1,max:50,premium:2.25},{min:50,max:100,premium:2.75},{min:100,max:150,premium:3.25},{min:150,max:200,premium:3.75},{min:200,max:300,premium:4.95},{min:300,max:500,premium:5.95},{min:500,max:10000,premium:6.95}],
-        "og_6.5_19.99_3": [{min:0,max:310,pct:0.065},{min:310,max:670,premium:19.99},{min:670,max:10000,pct:0.03}],
-        "static_1.50_300_2.00": [{min:1,max:300,premium:1.50},{min:300,max:10000,premium:2.00}],
-        "flat_1.50": [{min:1,max:10000,premium:1.50}],
-        "flat_5.95": [{min:0,max:10000,premium:5.95}],
-        "2_flat_0.98": "USE_PERCENTAGE_2.0_MIN_0.98",
-        "3_accurate": "USE_PERCENTAGE_3.0",
-        "3.5_accurate": "USE_PERCENTAGE_3.5",
-        "3_accurate_100_1.95": "USE_PERCENTAGE_3.0_MIN_1.95",
-        "3.25_1.55": "USE_PERCENTAGE_3.25_MIN_1.55",
-        "2.5_1.95": "USE_PERCENTAGE_2.5_MIN_1.95"
-    };
+const pricingTemplates = {
+    "1.5_accurate":[{min:1,max:77,premium:0.98},{min:77,max:88,premium:1.23},{min:88,max:100,premium:1.40},{min:100,max:114,premium:1.60},{min:115,max:131,premium:1.83},{min:131,max:150,premium:2.09},{min:150,max:171,premium:2.39},{min:171,max:195,premium:2.74},{min:195,max:223,premium:3.13},{min:223,max:255,premium:3.57},{min:255,max:292,premium:4.08},{min:292,max:333,premium:4.67},{min:333,max:381,premium:5.33},{min:381,max:435,premium:6.10},{min:435,max:498,premium:6.97},{min:498,max:569,premium:7.96},{min:569,max:650,premium:9.10},{min:650,max:743,premium:10.40},{min:743,max:849,premium:11.89},{min:849,max:970,premium:13.59},{min:970,max:1109,premium:15.53},{min:1109,max:1267,premium:17.74},{min:1267,max:1449,premium:20.28},{min:1449,max:1655,premium:23.18},{min:1655,max:1892,premium:26.49},{min:1892,max:2162,premium:30.27},{min:2162,max:2471,premium:34.60},{min:2471,max:2824,premium:39.54},{min:2824,max:3228,premium:45.19},{min:3228,max:3689,premium:51.64},{min:3689,max:4216,premium:59.02},{min:4216,max:10000,premium:67.45}],
+    "2_accurate":[{min:1,max:54,premium:0.98},{min:54,max:60,premium:1.14},{min:60,max:66,premium:1.26},{min:66,max:73,premium:1.39},{min:73,max:81,premium:1.54},{min:81,max:89,premium:1.70},{min:89,max:99,premium:1.88},{min:99,max:109,premium:2.08},{min:109,max:121,premium:2.29},{min:121,max:133,premium:2.54},{min:133,max:148,premium:2.80},{min:148,max:163,premium:3.10},{min:163,max:180,premium:3.43},{min:180,max:199,premium:3.79},{min:199,max:220,premium:4.18},{min:220,max:243,premium:4.63},{min:243,max:269,premium:5.11},{min:269,max:297,premium:5.65},{min:297,max:329,premium:6.25},{min:329,max:363,premium:6.90},{min:363,max:402,premium:7.63},{min:402,max:444,premium:8.43},{min:444,max:491,premium:9.32},{min:491,max:542,premium:10.30},{min:542,max:599,premium:11.39},{min:599,max:662,premium:12.59},{min:662,max:732,premium:13.91},{min:732,max:809,premium:15.38},{min:809,max:894,premium:16.99},{min:894,max:989,premium:18.78},{min:989,max:1093,premium:20.76},{min:1093,max:1208,premium:22.95},{min:1208,max:1335,premium:25.36},{min:1335,max:1475,premium:28.03},{min:1475,max:1631,premium:30.98},{min:1631,max:1802,premium:34.25},{min:1802,max:1992,premium:37.85},{min:1992,max:2202,premium:41.83},{min:2202,max:2434,premium:46.24},{min:2434,max:2690,premium:51.11},{min:2690,max:2973,premium:56.49},{min:2973,max:3286,premium:62.43},{min:3286,max:3632,premium:69.00},{min:3632,max:4014,premium:76.27},{min:4014,max:4437,premium:84.30},{min:4437,max:10000,premium:93.17}],
+    "2_round_50":[{min:1,max:50,premium:1.00},{min:50,max:80,premium:1.50},{min:80,max:110,premium:2.00},{min:110,max:140,premium:2.50},{min:140,max:160,premium:3.00},{min:160,max:180,premium:3.50},{min:180,max:210,premium:4.00},{min:210,max:300,premium:5.00},{min:300,max:400,premium:8.00},{min:400,max:500,premium:10.00},{min:500,max:600,premium:12.00},{min:600,max:700,premium:14.00},{min:700,max:800,premium:16.00},{min:800,max:900,premium:18.00},{min:900,max:10000,premium:20.00}],
+    "2.5_accurate":[{min:1,max:41,premium:0.98},{min:41,max:44,premium:1.06},{min:44,max:48,premium:1.15},{min:48,max:52,premium:1.25},{min:52,max:56,premium:1.35},{min:56,max:61,premium:1.47},{min:61,max:66,premium:1.59},{min:66,max:72,premium:1.72},{min:72,max:78,premium:1.87},{min:78,max:84,premium:2.02},{min:84,max:91,premium:2.19},{min:91,max:99,premium:2.37},{min:99,max:107,premium:2.57},{min:107,max:116,premium:2.79},{min:116,max:126,premium:3.02},{min:126,max:136,premium:3.27},{min:136,max:148,premium:3.54},{min:148,max:160,premium:3.84},{min:160,max:173,premium:4.16},{min:173,max:188,premium:4.51},{min:188,max:203,premium:4.88},{min:203,max:220,premium:5.29},{min:220,max:239,premium:5.73},{min:239,max:259,premium:6.21},{min:259,max:280,premium:6.73},{min:280,max:304,premium:7.29},{min:304,max:329,premium:7.90},{min:329,max:356,premium:8.55},{min:356,max:386,premium:9.27},{min:386,max:418,premium:10.04},{min:418,max:453,premium:10.88},{min:453,max:491,premium:11.78},{min:491,max:532,premium:12.76},{min:532,max:576,premium:13.83},{min:576,max:624,premium:14.98},{min:624,max:676,premium:16.23},{min:676,max:733,premium:17.58},{min:733,max:794,premium:19.05},{min:794,max:860,premium:20.64},{min:860,max:931,premium:22.36},{min:931,max:1009,premium:24.22},{min:1009,max:1093,premium:26.24},{min:1093,max:1184,premium:28.42},{min:1184,max:1283,premium:30.79},{min:1283,max:1390,premium:33.36},{min:1390,max:1506,premium:36.14},{min:1506,max:1631,premium:39.15},{min:1631,max:1767,premium:42.41},{min:1767,max:1915,premium:45.95},{min:1915,max:2074,premium:49.78},{min:2074,max:2247,premium:53.93},{min:2247,max:2434,premium:58.42},{min:2434,max:2637,premium:63.29},{min:2637,max:2857,premium:68.56},{min:2857,max:3095,premium:74.28},{min:3095,max:3353,premium:80.47},{min:3353,max:3632,premium:87.17},{min:3632,max:3935,premium:94.44},{min:3935,max:4263,premium:102.31},{min:4263,max:4618,premium:110.83},{min:4618,max:10000,premium:120.07}],
+    "born_primitive":[{min:1,max:50,premium:2.25},{min:50,max:100,premium:2.75},{min:100,max:150,premium:3.25},{min:150,max:200,premium:3.75},{min:200,max:300,premium:4.95},{min:300,max:500,premium:5.95},{min:500,max:10000,premium:6.95}],
+    "og_6.5_19.99_3":[{min:0,max:310,pct:0.065},{min:310,max:670,premium:19.99},{min:670,max:10000,pct:0.03}],
+    "static_1.50_300_2.00":[{min:1,max:300,premium:1.50},{min:300,max:10000,premium:2.00}],
+    "flat_1.50":[{min:1,max:10000,premium:1.50}],
+    "flat_5.95":[{min:0,max:10000,premium:5.95}],
+    "2_flat_0.98":"USE_PERCENTAGE_2.0_MIN_0.98",
+    "3_accurate":"USE_PERCENTAGE_3.0",
+    "3.5_accurate":"USE_PERCENTAGE_3.5",
+    "3_accurate_100_1.95":"USE_PERCENTAGE_3.0_MIN_1.95",
+    "3.25_1.55":"USE_PERCENTAGE_3.25_MIN_1.55",
+    "2.5_1.95":"USE_PERCENTAGE_2.5_MIN_1.95"
+};
 
-    function getTieredPremium(aov, template) {
-        const tiers = pricingTemplates[template];
-        if (!tiers) return 0;
-        if (typeof tiers === 'string') {
-            const parts = tiers.replace('USE_PERCENTAGE_', '').split('_MIN_');
-            const pct = parseFloat(parts[0]) / 100;
-            const calc = aov * pct;
-            return parts.length > 1 ? Math.max(calc, parseFloat(parts[1])) : calc;
-        }
-        for (const tier of tiers) {
-            if (aov >= tier.min && aov < tier.max)
-                return tier.pct ? aov * tier.pct : tier.premium;
-        }
-        const last = tiers[tiers.length - 1];
-        return last.pct ? aov * last.pct : last.premium;
+function getAvgPremium(aov, template, pctOverride, flatOverride) {
+    if (template === 'percentage') return aov * (pctOverride / 100);
+    if (template === 'flat_custom') return flatOverride;
+    const tiers = pricingTemplates[template];
+    if (!tiers) return 0;
+    if (typeof tiers === 'string') {
+        const parts = tiers.replace('USE_PERCENTAGE_','').split('_MIN_');
+        const calc = aov * (parseFloat(parts[0]) / 100);
+        return parts.length > 1 ? Math.max(calc, parseFloat(parts[1])) : calc;
+    }
+    for (const t of tiers) {
+        if (aov >= t.min && aov < t.max) return t.pct ? aov * t.pct : t.premium;
+    }
+    const last = tiers[tiers.length-1];
+    return last.pct ? aov * last.pct : last.premium;
+}
+
+const fc  = v => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0}).format(v);
+const fcc = v => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
+const fn  = v => new Intl.NumberFormat('en-US').format(Math.round(v));
+const rc  = s => s.replace(/,/g,'');
+const fmtC = v => v ? v.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',') : '';
+const gv  = id => parseFloat(rc(document.getElementById(id).value)) || 0;
+const set = (id,v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+
+function calculate() {
+    const tf   = document.getElementById('timeframe').value;
+    const mult = tf === 'annual' ? 12 : 1;
+    const period = tf === 'annual' ? 'annually' : 'monthly';
+
+    // Shared
+    const monthlyOrders = gv('orders');
+    const aov           = gv('aov');
+    const cogsP         = gv('cogs') / 100;
+    const claimsP       = gv('claimsRate') / 100;
+    const csPerClaim    = gv('csPerClaim');
+    const orders        = monthlyOrders * mult;
+    const totalClaims   = orders * claimsP;
+    const costPerClaim  = (aov * cogsP) + csPerClaim;
+
+    // ── SELF ──
+    const selfTemplate    = document.getElementById('selfTemplate').value;
+    const selfAttachP     = gv('selfAttach') / 100;
+    const claimsHandler   = document.getElementById('claimsHandler').value;
+    const processorFeeP   = gv('processorFee') / 100;
+    const monthlyOverhead = gv('claimsOverhead');
+    const overhead        = monthlyOverhead * mult;
+
+    const selfAvgP          = getAvgPremium(aov, selfTemplate, gv('selfPremiumPct'), gv('selfPremiumFlat'));
+    const selfProtOrders    = orders * selfAttachP;
+    const selfUnprotOrders  = orders - selfProtOrders;
+    const selfPremiumsIn    = selfProtOrders * selfAvgP;
+    const selfProtClaims    = selfProtOrders * claimsP;
+    const selfUnprotClaims  = selfUnprotOrders * claimsP;
+
+    let selfClaimsPaid, processorAmt;
+    if (claimsHandler === 'self') {
+        selfClaimsPaid = selfProtClaims * costPerClaim;
+        processorAmt   = 0;
+    } else {
+        processorAmt   = selfPremiumsIn * processorFeeP;
+        selfClaimsPaid = processorAmt;
     }
 
-    const fc  = v => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:0}).format(v);
-    const fcc = v => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
-    const fn  = v => new Intl.NumberFormat('en-US').format(Math.round(v));
-    const rc  = s => s.replace(/,/g,'');
-    const fmtC = v => v ? v.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',') : '';
-    const gv  = id => parseFloat(rc(document.getElementById(id).value)) || 0;
-    const set = (id,v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const selfUnprotCost  = selfUnprotClaims * costPerClaim;
+    const selfTotalClaims = selfClaimsPaid + selfUnprotCost;
+    const selfNetPnl      = selfPremiumsIn - selfTotalClaims - overhead;
 
-    function calculate() {
-        const timeframe = document.getElementById('timeframe').value;
-        const template  = document.getElementById('pricingTemplate').value;
-        const mult      = timeframe === 'annual' ? 12 : 1;
+    // ── SI ──
+    const siTemplate   = document.getElementById('siTemplate').value;
+    const siAttachP    = gv('siAttach') / 100;
+    const revShareP    = gv('revShare') / 100;
 
-        const monthlyOrders = gv('orders');
-        const aov           = gv('aov');
-        const cogsP         = gv('cogs') / 100;
-        const claimsP       = gv('claimsRate') / 100;
-        const csPerClaim    = gv('csPerClaim');
-        const orders        = monthlyOrders * mult;
-        const totalClaims   = orders * claimsP;
-        const cogsPerOrder  = aov * cogsP;
-        const costPerClaim  = cogsPerOrder + csPerClaim;
+    const siAvgP         = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), 0);
+    const siProtOrders   = orders * siAttachP;
+    const siUnprotOrders = orders - siProtOrders;
+    const siPremiumsOut  = siProtOrders * siAvgP;
+    const siProtClaims   = siProtOrders * claimsP;
+    const siUnprotClaims = siUnprotOrders * claimsP;
+    const siFunded       = siProtClaims * aov;         // SI pays full claim value
+    const siRevShare     = siPremiumsOut * revShareP;  // rev share on GROSS premiums
+    const siUnprotCost   = siUnprotClaims * costPerClaim;
+    // Merchant P&L: they collect nothing (SI collects premiums), but get rev share back, SI covers their protected claims, still absorb unprotected
+    const siNetPnl       = siRevShare - siUnprotCost;  // + no overhead
 
-        // ── SELF-FUNDED ──
-        const selfTemplate  = document.getElementById('selfPricingTemplate').value;
-        const selfAttachP   = gv('selfAttach') / 100;
-        const claimsHandler = document.getElementById('claimsHandler').value;
-        const processorFeeP = gv('processorFee') / 100;
+    // ── COMBINED IMPACT ──
+    // 1. Attach lift: additional premiums at SI attach vs self attach × avg premium
+    //    (using self avg premium as baseline since same product, SI may differ)
+    const attachLiftOrders   = Math.max(0, siProtOrders - selfProtOrders);
+    const attachLiftRevenue  = attachLiftOrders * siAvgP; // extra premiums generated by higher attach
 
-        let selfAvgPremium;
-        if (selfTemplate === 'percentage') {
-            selfAvgPremium = aov * (gv('selfPremiumPct') / 100);
-        } else if (selfTemplate === 'flat_custom') {
-            selfAvgPremium = gv('selfPremiumFlat');
-        } else {
-            selfAvgPremium = getTieredPremium(aov, selfTemplate);
-        }
+    // 2. Overhead eliminated
+    const overheadSaved = overhead;
 
-        const selfProtectedOrders   = orders * selfAttachP;
-        const selfUnprotectedOrders = orders - selfProtectedOrders;
-        const selfPremiumsIn        = selfProtectedOrders * selfAvgPremium;
-        const selfProtectedClaims   = selfProtectedOrders * claimsP;
-        const selfUnprotectedClaims = selfUnprotectedOrders * claimsP;
+    // 3. Rev share gained: SI rev share they're now earning (self-funded program has no rev share)
+    const revShareGained = siRevShare;
 
-        let selfClaimsPaid, processorFeeAmt;
-        if (claimsHandler === 'self') {
-            selfClaimsPaid  = selfProtectedClaims * costPerClaim;
-            processorFeeAmt = 0;
-        } else {
-            processorFeeAmt = selfPremiumsIn * processorFeeP;
-            selfClaimsPaid  = processorFeeAmt;
-        }
+    // 4. Total
+    const totalAdvantage = attachLiftRevenue + overheadSaved + revShareGained;
 
-        const selfUnprotectedCost = selfUnprotectedClaims * costPerClaim;
-        const selfTotalCost       = selfClaimsPaid + selfUnprotectedCost;
-        const selfPnl             = selfPremiumsIn - selfTotalCost;
+    // ── RENDER IMPACT BANNER ──
+    set('imp-attachLift',    fc(attachLiftRevenue));
+    set('imp-attachLiftSub', `${fn(attachLiftOrders)} more protected orders`);
+    set('imp-overhead',      fc(overheadSaved));
+    set('imp-overheadSub',   overheadSaved > 0 ? `${fc(overheadSaved)} in claims mgmt` : 'claims mgmt eliminated');
+    set('imp-revShare',      fc(revShareGained));
+    set('imp-revSharePct',   (revShareP * 100).toFixed(0));
+    set('imp-total',         fc(totalAdvantage));
+    set('imp-totalSub',      `${period} advantage vs. current`);
 
-        // ── SHIPINSURE ──
-        const siAttachP = gv('siAttach') / 100;
-        const revShareP = gv('revShare') / 100;
+    // ── RENDER SELF PANEL ──
+    set('p-selfAttachLabel', `${(selfAttachP*100).toFixed(0)}% attach rate`);
+    set('p-selfPnl',         fc(selfNetPnl));
+    document.getElementById('p-selfPnl').style.color = selfNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('m-selfAvgP',        fcc(selfAvgP));
+    set('m-selfProtOrders',  fn(selfProtOrders));
+    set('m-selfPremiums',    fc(selfPremiumsIn));
 
-        const siAvgPremium = template === 'percentage'
-            ? aov * (gv('siPremiumPct') / 100)
-            : getTieredPremium(aov, template);
+    if (claimsHandler === 'self') {
+        document.getElementById('m-selfClaimsLbl').textContent = 'Protected Claims Paid (COGS+CS)';
+        document.getElementById('m-processorWrap').style.display = 'none';
+    } else {
+        document.getElementById('m-selfClaimsLbl').textContent = 'Claims via 3rd Party';
+        document.getElementById('m-processorWrap').style.display = 'block';
+        set('m-processorAmt', fc(processorAmt));
+    }
+    set('m-selfClaimsCost',   fc(selfClaimsPaid));
+    set('m-selfUnprotCost',   fc(selfUnprotCost));
+    set('m-selfTotalClaims',  fc(selfTotalClaims));
+    set('m-selfOverhead',     fc(overhead));
+    set('m-selfNetPnl',       fc(selfNetPnl));
+    document.getElementById('m-selfNetPnl').style.color = selfNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
 
-        const siProtectedOrders   = orders * siAttachP;
-        const siUnprotectedOrders = orders - siProtectedOrders;
-        const siPremiumsOut       = siProtectedOrders * siAvgPremium;
-        const siProtectedClaims   = siProtectedOrders * claimsP;
-        const siUnprotectedClaims = siUnprotectedOrders * claimsP;
-        const siFunded            = siProtectedClaims * aov;
-        const postClaimBalance    = siPremiumsOut - siFunded;
-        const siRevShare          = Math.max(0, postClaimBalance * revShareP);
-        const siUnprotectedCost   = siUnprotectedClaims * costPerClaim;
-        const siPnl               = -siPremiumsOut + siFunded + siRevShare - siUnprotectedCost;
+    // ── RENDER SI PANEL ──
+    set('p-siAttachLabel',  `${(siAttachP*100).toFixed(0)}% projected attach`);
+    set('p-siPnl',          fc(siNetPnl));
+    document.getElementById('p-siPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('m-siAvgP',         fcc(siAvgP));
+    set('m-siProtOrders',   fn(siProtOrders));
+    set('m-siPremiums',     fc(siPremiumsOut));
+    set('m-revSharePctLabel', (revShareP*100).toFixed(0));
+    set('m-siRevShare',     fc(siRevShare));
+    set('m-siFunded',       fc(siFunded));
+    set('m-siUnprotCost',   fc(siUnprotCost));
+    set('m-siNetPnl',       fc(siNetPnl));
+    document.getElementById('m-siNetPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
 
-        const diff = siPnl - selfPnl;
-        const period = timeframe === 'annual' ? 'annually' : 'monthly';
+    // ── ATTACH BAR VISUAL ──
+    const maxAttach = Math.max(selfAttachP, siAttachP, 0.01);
+    document.getElementById('ab-selfBar').style.width = Math.min((selfAttachP / 1) * 100, 100) + '%';
+    document.getElementById('ab-siBar').style.width   = Math.min((siAttachP   / 1) * 100, 100) + '%';
+    set('ab-selfPct', (selfAttachP*100).toFixed(0)+'%');
+    set('ab-siPct',   (siAttachP*100).toFixed(0)+'%');
+    set('ab-selfProtOrders',  fn(selfProtOrders));
+    set('ab-siProtOrders',    fn(siProtOrders));
+    set('ab-selfPremiums',    fc(selfPremiumsIn));
+    set('ab-siPremiums',      fc(siPremiumsOut));
+    set('ab-extraPremiums',   fc(Math.max(0, siPremiumsOut - selfPremiumsIn)));
 
-        // ── STATS ──
-        set('s-orders', fn(orders));
-        set('s-claims', fn(totalClaims));
-        set('s-selfProtected', fn(selfProtectedOrders));
-        set('s-siProtected', fn(siProtectedOrders));
-        set('s-selfPremiums', fc(selfPremiumsIn));
-        set('s-siPremiums', fc(siPremiumsOut));
-        set('s-avgPremium', fcc(siAvgPremium));
-        document.getElementById('s-selfProtectedLbl').textContent = `Self Protected (${(selfAttachP*100).toFixed(0)}%)`;
-        document.getElementById('s-siProtectedLbl').textContent   = `SI Protected (${(siAttachP*100).toFixed(0)}%)`;
-
-        // ── VERDICT ──
-        const selfNumEl = document.getElementById('v-selfNet');
-        const siNumEl   = document.getElementById('v-siNet');
-        selfNumEl.textContent = fc(selfPnl);
-        siNumEl.textContent   = fc(siPnl);
-        selfNumEl.style.color = selfPnl >= 0 ? 'var(--green)' : 'var(--red)';
-        siNumEl.style.color   = siPnl   >= 0 ? 'var(--green)' : 'var(--red)';
-
-        const pill = document.getElementById('verdictPill');
-        if (diff > 100) {
-            pill.textContent = '⚡ ShipInsure Wins';
-            pill.className = 'verdict-pill si';
-            set('verdictDelta', `SI P&L is ${fc(Math.abs(diff))} better ${period}`);
-        } else if (diff < -100) {
-            pill.textContent = '🔒 Self-Fund Wins';
-            pill.className = 'verdict-pill self';
-            set('verdictDelta', `Self-funded P&L is ${fc(Math.abs(diff))} better ${period}`);
-        } else {
-            pill.textContent = '≈ Break-Even';
-            pill.className = 'verdict-pill even';
-            set('verdictDelta', 'Programs are economically equivalent');
-        }
-
-        // ── SELF PANEL ──
-        set('m-selfAvgPremium', fcc(selfAvgPremium));
-        set('m-selfProtectedOrders', fn(selfProtectedOrders));
-        set('m-selfPremiums', fc(selfPremiumsIn));
-        set('p-selfNet', fc(selfPnl));
-        document.getElementById('p-selfNet').style.color = selfPnl >= 0 ? 'var(--green)' : 'var(--red)';
-
-        if (claimsHandler === 'self') {
-            document.getElementById('m-selfClaimsLbl').textContent = 'Protected Claims Paid (COGS + CS)';
-            document.getElementById('m-processorFeeWrap').style.display = 'none';
-        } else {
-            document.getElementById('m-selfClaimsLbl').textContent = 'Claims via 3rd Party Processor';
-            document.getElementById('m-processorFeeWrap').style.display = 'block';
-            set('m-processorFeeAmt', fc(processorFeeAmt));
-        }
-        set('m-selfClaims', fc(selfClaimsPaid));
-        set('m-selfUnprotectedCost', fc(selfUnprotectedCost));
-        set('m-selfTotalCost', fc(selfTotalCost));
-        set('m-selfPnl', fc(selfPnl));
-        document.getElementById('m-selfPnl').style.color = selfPnl >= 0 ? 'var(--green)' : 'var(--red)';
-
-        // ── SI PANEL ──
-        set('m-siAvgPremium', fcc(siAvgPremium));
-        set('m-siProtectedOrders', fn(siProtectedOrders));
-        set('m-siPremiums', fc(siPremiumsOut));
-        set('m-siFunded', fc(siFunded));
-        set('m-siRevShare', fc(siRevShare));
-        set('m-siUnprotectedCost', fc(siUnprotectedCost));
-        set('m-siPnl', fc(siPnl));
-        set('p-siNet', fc(siPnl));
-        document.getElementById('m-siPnl').style.color = siPnl >= 0 ? 'var(--green)' : 'var(--red)';
-        document.getElementById('p-siNet').style.color  = siPnl >= 0 ? 'var(--green)' : 'var(--red)';
-
-        // ── CPC ──
-        const selfEffCPC = totalClaims > 0 ? Math.abs(selfTotalCost - selfPremiumsIn) / totalClaims : 0;
-        const siEffCPC   = totalClaims > 0 ? Math.abs(siPremiumsOut - siFunded - siRevShare + siUnprotectedCost) / totalClaims : 0;
-        const maxCPC     = Math.max(selfEffCPC, siEffCPC, 1);
-        document.getElementById('cpc-self-bar').style.width = Math.min((selfEffCPC / maxCPC) * 100, 100) + '%';
-        document.getElementById('cpc-si-bar').style.width   = Math.max(Math.min((siEffCPC / maxCPC) * 100, 100), 4) + '%';
-        set('cpc-self-val', fc(selfEffCPC));
-        set('cpc-si-val',   fc(siEffCPC));
-        const cpcDiff = selfEffCPC - siEffCPC;
-        set('cpc-sub', cpcDiff > 0
-            ? `SI is ${fc(Math.abs(cpcDiff))} cheaper per claim net`
-            : cpcDiff < 0
-            ? `Self-funded is ${fc(Math.abs(cpcDiff))} cheaper per claim net`
-            : 'Equal net cost per claim');
-
-        // ── BREAK-EVEN ATTACH ──
-        let beAttach = null;
-        for (let a = 0; a <= 1.001; a += 0.001) {
-            const pO   = orders * a;
-            const uO   = orders - pO;
-            const prem = pO * siAvgPremium;
-            const siF  = pO * claimsP * aov;
-            const pcb  = prem - siF;
-            const rs   = Math.max(0, pcb * revShareP);
-            const uC   = uO * claimsP * costPerClaim;
-            const net  = -prem + siF + rs - uC;
-            if (net >= selfPnl) { beAttach = a * 100; break; }
-        }
-
-        if (beAttach !== null) {
-            set('be-attach', beAttach.toFixed(1) + '%');
-            set('be-attachSub', `At ${beAttach.toFixed(1)}% attach, SI P&L matches self-funded`);
-            document.getElementById('be-attachBar').style.width = Math.min(beAttach, 100) + '%';
-            set('be-attachCurrent', `Current: ${(siAttachP*100).toFixed(0)}%`);
-        } else {
-            set('be-attach', 'N/A');
-            set('be-attachSub', 'SI does not reach self-funded P&L at any attach rate with these inputs');
-            document.getElementById('be-attachBar').style.width = '0%';
-        }
-
-        // ── ANNUAL SAVINGS ──
-        const annualDiff  = timeframe === 'annual' ? diff : diff * 12;
-        const monthlyDiff = timeframe === 'annual' ? diff / 12 : diff;
-        const savEl = document.getElementById('be-savings');
-        savEl.textContent = fc(Math.abs(annualDiff));
-        savEl.style.color = annualDiff >= 0 ? 'var(--green)' : 'var(--self-orange)';
-        set('be-savingsSub', annualDiff >= 0
-            ? `ShipInsure P&L advantage annually`
-            : `Self-funded P&L advantage annually`);
-        set('be-monthly', fc(Math.abs(monthlyDiff)) + ' / mo');
-
-        document.getElementById('ordersLabel').textContent = timeframe === 'annual' ? 'Annual Orders' : 'Monthly Orders';
+    const liftBadge = document.getElementById('ab-liftBadge');
+    const liftPts = ((siAttachP - selfAttachP) * 100);
+    if (liftPts > 0) {
+        liftBadge.style.display = 'inline-flex';
+        liftBadge.textContent = `↑ +${liftPts.toFixed(0)}pts`;
+    } else if (liftPts < 0) {
+        liftBadge.style.display = 'inline-flex';
+        liftBadge.textContent = `↓ ${liftPts.toFixed(0)}pts`;
+        liftBadge.style.background = 'var(--red-dim)';
+        liftBadge.style.borderColor = 'var(--red)';
+        liftBadge.style.color = 'var(--red)';
+    } else {
+        liftBadge.style.display = 'none';
     }
 
-    function toggleSelfPremiumFields() {
-        const tmpl = document.getElementById('selfPricingTemplate').value;
-        document.getElementById('selfPremiumPctField').style.display  = tmpl === 'percentage'  ? '' : 'none';
-        document.getElementById('selfPremiumFlatField').style.display = tmpl === 'flat_custom' ? '' : 'none';
-    }
+    document.getElementById('ordersLabel').textContent = tf === 'annual' ? 'Annual Orders' : 'Monthly Orders';
+}
 
-    function toggleProcessorField() {
-        document.getElementById('processorFeeField').style.display =
-            document.getElementById('claimsHandler').value === '3p' ? '' : 'none';
-    }
+function toggleSelfFields() {
+    const t = document.getElementById('selfTemplate').value;
+    document.getElementById('selfPctField').style.display  = t === 'percentage'  ? '' : 'none';
+    document.getElementById('selfFlatField').style.display = t === 'flat_custom' ? '' : 'none';
+}
 
-    function toggleSiPremiumField() {
-        document.getElementById('siPremiumPctField').style.display =
-            document.getElementById('pricingTemplate').value === 'percentage' ? '' : 'none';
-    }
+function toggleSiFields() {
+    document.getElementById('siPctField').style.display =
+        document.getElementById('siTemplate').value === 'percentage' ? '' : 'none';
+}
 
-    document.getElementById('orders').addEventListener('input', function() {
-        const pos = this.selectionStart, oldLen = this.value.length;
-        const raw = rc(this.value);
-        this.value = raw ? fmtC(raw) : '';
-        const diff = this.value.length - oldLen;
-        this.setSelectionRange(pos + diff, pos + diff);
-        calculate();
-    });
+function toggleProcessorField() {
+    const is3p = document.getElementById('claimsHandler').value === '3p';
+    document.getElementById('processorFeeField').style.display = is3p ? '' : 'none';
+    document.getElementById('overheadRow').style.display       = is3p ? 'none' : '';
+}
 
-    document.querySelectorAll('input[type="text"]').forEach(inp => {
-        if (inp.id !== 'orders') inp.addEventListener('input', calculate);
-    });
-
-    document.getElementById('timeframe').addEventListener('change', calculate);
-    document.getElementById('pricingTemplate').addEventListener('change', () => { toggleSiPremiumField(); calculate(); });
-    document.getElementById('selfPricingTemplate').addEventListener('change', () => { toggleSelfPremiumFields(); calculate(); });
-    document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
-
-    document.getElementById('generateLink').addEventListener('click', () => {
-        const p = new URLSearchParams({
-            orders: rc(document.getElementById('orders').value),
-            aov: rc(document.getElementById('aov').value),
-            cogs: rc(document.getElementById('cogs').value),
-            cr: rc(document.getElementById('claimsRate').value),
-            cs: rc(document.getElementById('csPerClaim').value),
-            stmpl: document.getElementById('selfPricingTemplate').value,
-            spp: rc(document.getElementById('selfPremiumPct').value),
-            spf: rc(document.getElementById('selfPremiumFlat').value),
-            sa: rc(document.getElementById('selfAttach').value),
-            ch: document.getElementById('claimsHandler').value,
-            pf: rc(document.getElementById('processorFee').value),
-            sipp: rc(document.getElementById('siPremiumPct').value),
-            sia: rc(document.getElementById('siAttach').value),
-            rs: rc(document.getElementById('revShare').value),
-            tf: document.getElementById('timeframe').value,
-            tmpl: document.getElementById('pricingTemplate').value
-        });
-        document.getElementById('shareableLink').value = `${window.location.origin}${window.location.pathname}?${p}`;
-        document.getElementById('linkBox').classList.add('visible');
-    });
-
-    document.getElementById('copyLink').addEventListener('click', function() {
-        const inp = document.getElementById('shareableLink');
-        inp.select();
-        navigator.clipboard.writeText(inp.value).then(() => {
-            this.textContent = '✓ Copied';
-            setTimeout(() => this.textContent = 'Copy', 2000);
-        });
-    });
-
-    function loadFromUrl() {
-        const p = new URLSearchParams(window.location.search);
-        if (!p.toString()) return;
-        const s = (id, key, def='') => {
-            const el = document.getElementById(id); if (!el) return;
-            const v = p.get(key) !== null ? p.get(key) : def;
-            if (el.tagName === 'SELECT') el.value = v;
-            else el.value = id === 'orders' ? fmtC(v) : v;
-        };
-        s('orders','orders'); s('aov','aov'); s('cogs','cogs');
-        s('claimsRate','cr'); s('csPerClaim','cs');
-        s('selfPricingTemplate','stmpl','percentage');
-        s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
-        s('selfAttach','sa','55');
-        s('claimsHandler','ch','self'); s('processorFee','pf','70');
-        s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
-        s('revShare','rs','30');
-        s('timeframe','tf','monthly'); s('pricingTemplate','tmpl','percentage');
-    }
-
-    loadFromUrl();
-    toggleSelfPremiumFields();
-    toggleProcessorField();
-    toggleSiPremiumField();
+// Orders comma input
+document.getElementById('orders').addEventListener('input', function() {
+    const pos = this.selectionStart, old = this.value.length;
+    const raw = rc(this.value);
+    this.value = raw ? fmtC(raw) : '';
+    const diff = this.value.length - old;
+    this.setSelectionRange(pos+diff, pos+diff);
     calculate();
+});
+
+document.querySelectorAll('input[type="text"]').forEach(inp => {
+    if (inp.id !== 'orders') inp.addEventListener('input', calculate);
+});
+
+document.getElementById('timeframe').addEventListener('change', calculate);
+document.getElementById('selfTemplate').addEventListener('change', () => { toggleSelfFields(); calculate(); });
+document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
+document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
+
+// Share link
+document.getElementById('generateLink').addEventListener('click', () => {
+    const p = new URLSearchParams({
+        orders: rc(document.getElementById('orders').value),
+        aov:    rc(document.getElementById('aov').value),
+        cogs:   rc(document.getElementById('cogs').value),
+        cr:     rc(document.getElementById('claimsRate').value),
+        cs:     rc(document.getElementById('csPerClaim').value),
+        stmpl:  document.getElementById('selfTemplate').value,
+        spp:    rc(document.getElementById('selfPremiumPct').value),
+        spf:    rc(document.getElementById('selfPremiumFlat').value),
+        sa:     rc(document.getElementById('selfAttach').value),
+        ch:     document.getElementById('claimsHandler').value,
+        pf:     rc(document.getElementById('processorFee').value),
+        oh:     rc(document.getElementById('claimsOverhead').value),
+        sitm:   document.getElementById('siTemplate').value,
+        sipp:   rc(document.getElementById('siPremiumPct').value),
+        sia:    rc(document.getElementById('siAttach').value),
+        rs:     rc(document.getElementById('revShare').value),
+        tf:     document.getElementById('timeframe').value
+    });
+    document.getElementById('shareableLink').value = `${location.origin}${location.pathname}?${p}`;
+    document.getElementById('linkBox').classList.add('visible');
+});
+
+document.getElementById('copyLink').addEventListener('click', function() {
+    const inp = document.getElementById('shareableLink');
+    inp.select();
+    navigator.clipboard.writeText(inp.value).then(() => {
+        this.textContent = '✓ Copied';
+        setTimeout(() => this.textContent = 'Copy', 2000);
+    });
+});
+
+// URL load
+function loadFromUrl() {
+    const p = new URLSearchParams(location.search);
+    if (!p.toString()) return;
+    const s = (id, key, def='') => {
+        const el = document.getElementById(id); if (!el) return;
+        const v = p.get(key) !== null ? p.get(key) : def;
+        if (el.tagName === 'SELECT') el.value = v;
+        else el.value = id === 'orders' ? fmtC(v) : v;
+    };
+    s('orders','orders'); s('aov','aov'); s('cogs','cogs');
+    s('claimsRate','cr'); s('csPerClaim','cs');
+    s('selfTemplate','stmpl','percentage');
+    s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
+    s('selfAttach','sa','55');
+    s('claimsHandler','ch','self'); s('processorFee','pf','70');
+    s('claimsOverhead','oh','500');
+    s('siTemplate','sitm','percentage');
+    s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
+    s('revShare','rs','30');
+    s('timeframe','tf','monthly');
+}
+
+loadFromUrl();
+toggleSelfFields();
+toggleSiFields();
+toggleProcessorField();
+calculate();
 </script>
 </body>
 </html>
