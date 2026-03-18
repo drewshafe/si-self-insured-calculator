@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ShipInsure vs. Self-Funded Protection | Program Comparison</title>
+    <title>DIY vs. ShipInsure | Program Comparison</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -21,11 +21,12 @@
             --self-orange-dim: rgba(249,115,22,0.12);
             --green: #22c55e;
             --green-dim: rgba(34,197,94,0.12);
-            --green-glow: rgba(34,197,94,0.25);
             --red: #ef4444;
             --red-dim: rgba(239,68,68,0.10);
             --yellow: #eab308;
             --yellow-dim: rgba(234,179,8,0.12);
+            --teal: #14b8a6;
+            --teal-dim: rgba(20,184,166,0.12);
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
@@ -45,10 +46,8 @@
         .btn-share { display:flex; align-items:center; gap:6px; padding:8px 16px; background:var(--si-blue-dim); border:1px solid var(--si-blue); border-radius:8px; color:var(--si-blue); font-family:'DM Sans',sans-serif; font-size:0.82em; font-weight:600; cursor:pointer; transition:background 0.2s; }
         .btn-share:hover { background:var(--si-blue-glow); }
 
-        /* PAGE */
         .page { max-width:1440px; margin:0 auto; padding:28px 40px; }
 
-        /* LINK BOX */
         .link-box { display:none; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:20px; }
         .link-box.visible { display:flex; }
         .link-box input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px 12px; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.75em; outline:none; }
@@ -60,7 +59,7 @@
         .vdiv { background:var(--border); }
         .col-tag { display:inline-flex; align-items:center; padding:3px 11px; border-radius:20px; font-family:'Syne',sans-serif; font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:14px; }
         .col-tag.shared { background:var(--surface2); border:1px solid var(--border); color:var(--muted); }
-        .col-tag.self { background:var(--self-orange-dim); border:1px solid var(--self-orange); color:var(--self-orange); }
+        .col-tag.diy { background:var(--self-orange-dim); border:1px solid var(--self-orange); color:var(--self-orange); }
         .col-tag.si { background:var(--si-blue-dim); border:1px solid var(--si-blue); color:var(--si-blue); }
         .col-heading { font-family:'Syne',sans-serif; font-size:0.92em; font-weight:700; color:var(--text); margin-bottom:16px; }
         .frow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:11px; margin-bottom:11px; }
@@ -79,46 +78,82 @@
         .subdiv { border:none; border-top:1px dashed var(--border); margin:14px 0 12px; }
         .sublabel { font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:11px; }
 
+        /* RETURNS TOGGLE */
+        .returns-toggle-bar {
+            display:flex; align-items:center; gap:14px;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:12px; padding:14px 22px; margin-bottom:24px;
+        }
+        .returns-toggle-btn {
+            display:inline-flex; align-items:center; gap:8px;
+            padding:9px 18px; border-radius:8px;
+            border:1.5px solid var(--teal); background:transparent;
+            color:var(--teal); font-family:'Syne',sans-serif;
+            font-size:0.78em; font-weight:700; text-transform:uppercase;
+            letter-spacing:0.5px; cursor:pointer; transition:all 0.2s;
+        }
+        .returns-toggle-btn:hover { background:var(--teal-dim); }
+        .returns-toggle-btn.active { background:var(--teal-dim); }
+        .returns-toggle-label { font-size:0.8em; color:var(--muted); }
+        .returns-toggle-label strong { color:var(--teal); }
+
+        /* RETURNS INPUTS (extra row) */
+        .returns-inputs {
+            display:none; background:var(--surface);
+            border:1px solid var(--teal); border-radius:14px;
+            overflow:hidden; margin-bottom:24px;
+        }
+        .returns-inputs.visible { display:block; }
+        .returns-inputs-inner { padding:20px 26px; }
+        .returns-col-tag { display:inline-flex; align-items:center; padding:3px 11px; border-radius:20px; font-family:'Syne',sans-serif; font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:14px; background:var(--teal-dim); border:1px solid var(--teal); color:var(--teal); }
+        .field.teal input:focus, .field.teal select:focus { border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-dim); }
+
         /* COMBINED IMPACT BANNER */
         .impact-banner {
-            background:linear-gradient(135deg, rgba(79,124,255,0.15) 0%, rgba(34,197,94,0.1) 100%);
-            border:1px solid var(--si-blue);
-            border-radius:14px;
-            padding:24px 32px;
-            margin-bottom:24px;
-            display:grid;
-            grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
-            align-items:center;
-            gap:0;
+            background:linear-gradient(135deg, rgba(79,124,255,0.12) 0%, rgba(34,197,94,0.08) 100%);
+            border:1px solid var(--si-blue); border-radius:14px;
+            padding:22px 28px; margin-bottom:24px;
+            display:grid; grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
+            align-items:center; gap:0;
         }
-        .impact-item { text-align:center; padding:0 16px; }
-        .impact-item .i-label { font-size:0.65em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:6px; }
-        .impact-item .i-value { font-family:'DM Mono',monospace; font-size:1.8em; font-weight:500; line-height:1; }
-        .impact-item .i-sub { font-size:0.7em; color:var(--muted); margin-top:4px; }
-        .impact-divider { width:1px; height:48px; background:var(--border); }
-        .impact-item.total .i-value { font-size:2.4em; color:var(--green); }
+        .impact-item { text-align:center; padding:0 14px; }
+        .impact-item .i-label { font-size:0.63em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:5px; }
+        .impact-item .i-value { font-family:'DM Mono',monospace; font-size:1.7em; font-weight:500; line-height:1; }
+        .impact-item .i-sub { font-size:0.68em; color:var(--muted); margin-top:4px; }
+        .impact-divider { width:1px; height:44px; background:var(--border); }
+        .impact-item.total .i-value { font-size:2.2em; color:var(--green); }
         .impact-item.total .i-label { color:var(--green); }
-        .plus-sign { font-family:'Syne',sans-serif; font-size:1.4em; color:var(--border); padding:0 4px; }
+        .plus-sign { font-family:'Syne',sans-serif; font-size:1.2em; color:var(--border); padding:0 4px; }
 
-        /* SIDE-BY-SIDE PANELS */
+        /* PANELS */
         .panels { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:24px; }
         .panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
         .panel-hdr { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-        .panel-hdr.self { background:linear-gradient(90deg,var(--self-orange-dim),transparent); }
-        .panel-hdr.si { background:linear-gradient(90deg,var(--si-blue-dim),transparent); }
+        .panel-hdr.diy { background:linear-gradient(90deg,var(--self-orange-dim),transparent); }
+        .panel-hdr.si  { background:linear-gradient(90deg,var(--si-blue-dim),transparent); }
         .panel-hdr-left { display:flex; flex-direction:column; gap:3px; }
-        .panel-hdr-title { font-family:'Syne',sans-serif; font-size:0.8em; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
-        .panel-hdr-title.self { color:var(--self-orange); }
-        .panel-hdr-title.si { color:var(--si-blue); }
-        .panel-hdr-attach { font-size:0.7em; color:var(--muted); }
-        .panel-hdr-total { font-family:'DM Mono',monospace; font-size:1.5em; font-weight:500; }
+        .panel-hdr-title { font-family:'Syne',sans-serif; font-size:0.82em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+        .panel-hdr-title.diy { color:var(--self-orange); }
+        .panel-hdr-title.si  { color:var(--si-blue); }
+        .panel-hdr-sub { font-size:0.68em; color:var(--muted); }
+        .panel-hdr-total { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+        .panel-hdr-total .ht-label { font-size:0.62em; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
+        .panel-hdr-total .ht-value { font-family:'DM Mono',monospace; font-size:1.45em; font-weight:500; }
+
         .panel-body { padding:16px 20px; }
-        .psec-label { font-size:0.63em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin:12px 0 8px; padding-top:10px; border-top:1px dashed var(--border); }
-        .psec-label:first-child { margin-top:0; padding-top:0; border-top:none; }
-        .metrics { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-        .m { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:11px; }
-        .m .ml { font-size:0.63em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:4px; }
-        .m .mv { font-family:'DM Mono',monospace; font-size:0.95em; font-weight:500; color:var(--text); }
+        .psec { margin-bottom:14px; }
+        .psec:last-child { margin-bottom:0; }
+        .psec-label {
+            font-family:'Syne',sans-serif; font-size:0.68em; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.7px; color:var(--muted);
+            padding:8px 10px; background:var(--surface2); border-radius:6px;
+            margin-bottom:8px; display:flex; align-items:center; gap:8px;
+        }
+        .psec-label .psec-icon { font-size:0.9em; }
+        .metrics { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .m { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:11px 12px; }
+        .m .ml { font-size:0.62em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:4px; }
+        .m .mv { font-family:'DM Mono',monospace; font-size:0.93em; font-weight:500; color:var(--text); }
         .m.s2 { grid-column:span 2; }
         .m.c-o { border-color:var(--self-orange); background:var(--self-orange-dim); }
         .m.c-o .mv { color:var(--self-orange); }
@@ -130,65 +165,56 @@
         .m.c-r .mv { color:var(--red); }
         .m.c-y { border-color:var(--yellow); background:var(--yellow-dim); }
         .m.c-y .mv { color:var(--yellow); }
+        .m.c-t { border-color:var(--teal); background:var(--teal-dim); }
+        .m.c-t .mv { color:var(--teal); }
 
-        /* OVERHEAD CALLOUT */
-        .overhead-callout {
-            background:var(--surface);
-            border:1px solid var(--border);
-            border-radius:14px;
-            padding:22px 28px;
-            margin-bottom:24px;
-            display:grid;
-            grid-template-columns:1fr 1px 1fr 1px 1fr;
-            gap:0;
-            align-items:center;
+        /* NET PROFIT ROW — spans both panels */
+        .net-row {
+            display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:24px;
         }
-        .oc-item { padding:0 20px; text-align:center; }
-        .oc-item .oc-label { font-size:0.65em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:8px; }
-        .oc-item .oc-value { font-family:'DM Mono',monospace; font-size:1.6em; font-weight:500; color:var(--green); line-height:1; }
-        .oc-item .oc-sub { font-size:0.72em; color:var(--muted); margin-top:5px; line-height:1.4; }
-        .oc-divider { background:var(--border); height:100%; min-height:60px; width:1px; }
+        .net-card {
+            border-radius:12px; padding:18px 22px;
+            display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:center;
+        }
+        .net-card.diy { background:var(--self-orange-dim); border:1.5px solid var(--self-orange); }
+        .net-card.si  { background:var(--si-blue-dim); border:1.5px solid var(--si-blue); }
+        .net-card .nc-label { font-size:0.65em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:4px; }
+        .net-card .nc-value { font-family:'DM Mono',monospace; font-size:1.6em; font-weight:500; line-height:1; }
+        .net-card.diy .nc-value { color:var(--self-orange); }
+        .net-card.si  .nc-value { color:var(--si-blue); }
+        .net-card .nc-time { display:flex; flex-direction:column; gap:4px; padding-left:14px; border-left:1px solid var(--border); }
+        .net-card .nc-time .nt-label { font-size:0.62em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); }
+        .net-card .nc-time .nt-value { font-family:'DM Mono',monospace; font-size:1em; font-weight:500; color:var(--green); }
 
-        /* ATTACH LIFT VISUAL */
-        .attach-section {
-            background:var(--surface);
-            border:1px solid var(--border);
-            border-radius:14px;
-            padding:22px 28px;
-            margin-bottom:24px;
-        }
-        .attach-heading { font-family:'Syne',sans-serif; font-size:0.88em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+        /* ATTACH VISUAL */
+        .attach-section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 26px; }
+        .attach-heading { font-family:'Syne',sans-serif; font-size:0.85em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
         .attach-heading::after { content:''; flex:1; height:1px; background:var(--border); }
         .attach-bars { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-        .attach-bar-item {}
-        .ab-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
-        .ab-label { font-size:0.7em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
-        .ab-label.self { color:var(--self-orange); }
-        .ab-label.si { color:var(--si-blue); }
-        .ab-pct { font-family:'DM Mono',monospace; font-size:1.3em; font-weight:500; }
-        .ab-track { height:20px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:6px; }
-        .ab-fill { height:100%; border-radius:6px; transition:width 0.5s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:10px; font-family:'DM Mono',monospace; font-size:0.75em; font-weight:500; color:white; white-space:nowrap; }
+        .ab-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px; }
+        .ab-label { font-size:0.68em; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
+        .ab-label.diy { color:var(--self-orange); }
+        .ab-label.si  { color:var(--si-blue); }
+        .ab-pct { font-family:'DM Mono',monospace; font-size:1.25em; font-weight:500; }
+        .ab-track { height:18px; background:var(--border); border-radius:6px; overflow:hidden; margin-bottom:8px; }
+        .ab-fill { height:100%; border-radius:6px; transition:width 0.5s ease; }
         .ab-fill.orange { background:var(--self-orange); }
         .ab-fill.blue { background:linear-gradient(90deg,var(--si-blue),#7aa3ff); }
-        .ab-stats { display:flex; gap:16px; margin-top:8px; }
-        .ab-stat { font-size:0.7em; color:var(--muted); }
+        .ab-stats { display:flex; gap:14px; flex-wrap:wrap; }
+        .ab-stat { font-size:0.68em; color:var(--muted); }
         .ab-stat span { font-family:'DM Mono',monospace; color:var(--text); font-weight:500; }
-        .lift-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; background:var(--green-dim); border:1px solid var(--green); border-radius:20px; font-size:0.72em; font-weight:700; color:var(--green); font-family:'Syne',sans-serif; }
+        .lift-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 9px; background:var(--green-dim); border:1px solid var(--green); border-radius:20px; font-size:0.7em; font-weight:700; color:var(--green); font-family:'Syne',sans-serif; }
 
         @media (max-width:1100px) {
             .inputs-grid { grid-template-columns:1fr; }
             .vdiv { height:1px; width:100%; }
-            .impact-banner { grid-template-columns:1fr 1fr; gap:16px; }
-            .impact-divider, .plus-sign { display:none; }
-            .overhead-callout { grid-template-columns:1fr; gap:16px; }
-            .oc-divider { display:none; }
-            .attach-bars { grid-template-columns:1fr; }
+            .impact-banner { grid-template-columns:1fr 1fr; gap:14px; }
+            .impact-divider,.plus-sign { display:none; }
+            .attach-bars,.panels,.net-row { grid-template-columns:1fr; }
         }
         @media (max-width:768px) {
             .page { padding:18px 16px; }
             .header { padding:14px 16px; }
-            .panels { grid-template-columns:1fr; }
-            .impact-banner { grid-template-columns:1fr 1fr; }
             .header-right { display:none; }
         }
     </style>
@@ -200,8 +226,8 @@
         <img src="https://raw.githubusercontent.com/drewshafe/si-roi-calculator/main/2026si.png" alt="ShipInsure">
         <div class="hdiv"></div>
         <div class="header-title">
-            <h1>Self-Funded Protection vs. ShipInsure</h1>
-            <p>Attach lift · Overhead savings · Rev share on gross</p>
+            <h1>DIY vs. ShipInsure</h1>
+            <p>Attach lift · Overhead savings · Rev share on gross premiums</p>
         </div>
     </div>
     <div class="header-right">
@@ -260,10 +286,10 @@
 
         <div class="vdiv"></div>
 
-        <!-- COL 2: Self-Funded -->
+        <!-- COL 2: DIY -->
         <div class="inputs-col">
-            <div class="col-tag self">Their Current Program</div>
-            <div class="col-heading">Self-Funded Protection</div>
+            <div class="col-tag diy">DIY</div>
+            <div class="col-heading">DIY Insurance Program</div>
             <div class="frow">
                 <div class="field orange">
                     <label>Pricing Template</label>
@@ -303,7 +329,7 @@
                 </div>
             </div>
             <hr class="subdiv">
-            <div class="sublabel">Claims Handling</div>
+            <div class="sublabel">Claims Management (You Handle All)</div>
             <div class="frow">
                 <div class="field orange">
                     <label>Who Handles Claims?</label>
@@ -319,11 +345,11 @@
             </div>
             <div class="frow" id="overheadRow">
                 <div class="field orange">
-                    <label>Hrs/Week on Program</label>
+                    <label>Hrs/Week on Claims</label>
                     <div class="iw"><input type="text" id="claimsHours" placeholder="5" inputmode="decimal" class="sp"><span class="suf">hrs</span></div>
                 </div>
                 <div class="field orange">
-                    <label>Avg Hourly Rate $</label>
+                    <label>Avg Hourly Rate</label>
                     <div class="iw"><span class="pre">$</span><input type="text" id="claimsHourlyRate" placeholder="35" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
@@ -373,9 +399,50 @@
                 </div>
             </div>
             <hr class="subdiv">
-            <div class="sublabel">SI handles everything</div>
             <div style="font-size:0.76em; color:var(--muted); line-height:1.55;">
-                No claims management, no program maintenance. SI funds all reships &amp; refunds on protected orders. Revenue share paid monthly on <strong style="color:var(--si-blue);">gross premiums collected</strong>.
+                SI proactively receives and resolves all claims directly with customers. No merchant involvement on protected orders. Rev share on <strong style="color:var(--si-blue);">gross premiums</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- RETURNS TOGGLE BAR -->
+    <div class="returns-toggle-bar">
+        <button class="returns-toggle-btn" id="returnsToggleBtn">
+            <span id="returnsToggleIcon">＋</span> Returns Offset
+        </button>
+        <span class="returns-toggle-label" id="returnsToggleLabel">Enable to model AfterShip Returns Offset — covered from premiums</span>
+    </div>
+
+    <!-- RETURNS INPUTS -->
+    <div class="returns-inputs" id="returnsInputsBlock">
+        <div class="returns-inputs-inner">
+            <div class="returns-col-tag">AfterShip Returns Offset</div>
+            <div class="frow">
+                <div class="field teal">
+                    <label>Returns Coverage</label>
+                    <select id="returnsCoverage">
+                        <option value="portal">Returns Portal</option>
+                        <option value="labels_optin">Return Labels (Opt-in)</option>
+                        <option value="labels_all">All Return Labels</option>
+                        <option value="portal_labels">Portal + Labels (Opt-in)</option>
+                    </select>
+                </div>
+                <div class="field teal">
+                    <label>Returns Rate %</label>
+                    <div class="iw"><input type="text" id="returnsRate" placeholder="8" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+                <div class="field teal" id="returnsPortalCostField">
+                    <label>Returns Portal Cost / mo</label>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="returnsPortalCost" placeholder="300" inputmode="decimal" class="pp"></div>
+                </div>
+                <div class="field teal" id="returnsLabelCostField" style="display:none;">
+                    <label>Avg Return Label Cost</label>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="returnsLabelCost" placeholder="8" inputmode="decimal" class="pp"></div>
+                </div>
+                <div class="field teal" id="returnsOptinRateField" style="display:none;">
+                    <label>Return Label Opt-in Rate %</label>
+                    <div class="iw"><input type="text" id="returnsOptinRate" placeholder="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
             </div>
         </div>
     </div>
@@ -385,14 +452,14 @@
         <div class="impact-item">
             <div class="i-label">Attach Lift Revenue</div>
             <div class="i-value" id="imp-attachLift" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-attachLiftSub">additional premiums</div>
+            <div class="i-sub" id="imp-attachLiftSub">more opt-in orders</div>
         </div>
         <div class="plus-sign">+</div>
         <div class="impact-divider"></div>
         <div class="impact-item">
             <div class="i-label">Time Savings</div>
             <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-overheadSub">claims mgmt saved</div>
+            <div class="i-sub" id="imp-overheadSub">claims mgmt eliminated</div>
         </div>
         <div class="plus-sign">+</div>
         <div class="impact-divider"></div>
@@ -405,41 +472,57 @@
         <div class="impact-item total">
             <div class="i-label">Total SI Advantage</div>
             <div class="i-value" id="imp-total">$0</div>
-            <div class="i-sub" id="imp-totalSub">vs. current program</div>
+            <div class="i-sub" id="imp-totalSub">vs. DIY program</div>
         </div>
     </div>
 
     <!-- PANELS -->
     <div class="panels">
 
-        <!-- SELF PANEL -->
+        <!-- DIY PANEL -->
         <div class="panel">
-            <div class="panel-hdr self">
+            <div class="panel-hdr diy">
                 <div class="panel-hdr-left">
-                    <span class="panel-hdr-title self">Self-Funded Program</span>
-                    <span class="panel-hdr-attach" id="p-selfAttachLabel">— attach rate</span>
+                    <span class="panel-hdr-title diy">DIY Insurance Program</span>
+                    <span class="panel-hdr-sub" id="p-diyAttachSub">— attach rate · you resolve all claims</span>
                 </div>
-                <span class="panel-hdr-total" id="p-selfPnl" style="color:var(--self-orange);">$0</span>
+                <div class="panel-hdr-total">
+                    <span class="ht-label">Net Profit</span>
+                    <span class="ht-value" id="p-diyPnl" style="color:var(--self-orange);">$0</span>
+                </div>
             </div>
             <div class="panel-body">
-                <div class="psec-label">Premiums Collected</div>
-                <div class="metrics">
-                    <div class="m"><div class="ml">Avg Premium</div><div class="mv" id="m-selfAvgP">$0</div></div>
-                    <div class="m"><div class="ml">Protected Orders</div><div class="mv" id="m-selfProtOrders">0</div></div>
-                    <div class="m c-o s2"><div class="ml">Total Premiums In</div><div class="mv" id="m-selfPremiums">$0</div></div>
+
+                <!-- Premiums Collected -->
+                <div class="psec">
+                    <div class="psec-label"><span class="psec-icon">💰</span> Premiums Collected</div>
+                    <div class="metrics">
+                        <div class="m"><div class="ml">Avg Premium $</div><div class="mv" id="d-avgP">$0</div></div>
+                        <div class="m"><div class="ml">Covered Orders (Opt-ins)</div><div class="mv" id="d-coveredOrders">0</div></div>
+                        <div class="m c-o s2"><div class="ml">Total Premiums In $</div><div class="mv" id="d-totalPremiums">$0</div></div>
+                    </div>
                 </div>
-                <div class="psec-label">Claims Costs</div>
-                <div class="metrics">
-                    <div class="m" id="m-selfClaimsWrap"><div class="ml" id="m-selfClaimsLbl">Protected Claims Paid</div><div class="mv" id="m-selfClaimsCost">$0</div></div>
-                    <div class="m" id="m-processorWrap" style="display:none;"><div class="ml">Processor Fee</div><div class="mv" id="m-processorAmt">$0</div></div>
-                    <div class="m"><div class="ml">Unprotected Claim Cost</div><div class="mv" id="m-selfUnprotCost">$0</div></div>
-                    <div class="m c-r s2"><div class="ml">Total Claims Exposure</div><div class="mv" id="m-selfTotalClaims">$0</div></div>
+
+                <!-- Claims -->
+                <div class="psec">
+                    <div class="psec-label"><span class="psec-icon">📦</span> Claims</div>
+                    <div class="metrics">
+                        <div class="m c-r"><div class="ml">Protected Claims Covered $</div><div class="mv" id="d-protClaimsCost">$0</div></div>
+                        <div class="m c-r"><div class="ml">Unprotected Claims Not Covered $</div><div class="mv" id="d-unprotClaimsCost">$0</div></div>
+                        <div class="m s2"><div class="ml">Total Claims Resolved by You</div><div class="mv" id="d-totalClaimsCount">0 claims</div></div>
+                    </div>
                 </div>
-                <div class="psec-label">Overhead &amp; P&L</div>
-                <div class="metrics">
-                    <div class="m"><div class="ml">Program Time Cost</div><div class="mv" id="m-selfOverhead">$0</div></div>
-                    <div class="m c-y s2"><div class="ml">Net Program P&L</div><div class="mv" id="m-selfNetPnl">$0</div></div>
+
+                <!-- Returns (conditional) -->
+                <div class="psec" id="diy-returns-psec" style="display:none;">
+                    <div class="psec-label"><span class="psec-icon">↩️</span> Returns</div>
+                    <div class="metrics">
+                        <div class="m c-r" id="diy-labelsCostRow" style="display:none;"><div class="ml" id="diy-labelsLabel">Return Labels</div><div class="mv" id="d-returnLabelsCost">$0</div></div>
+                        <div class="m c-r" id="diy-portalCostRow" style="display:none;"><div class="ml">Customer Returns Portal (Monthly)</div><div class="mv" id="d-returnPortalCost">$0</div></div>
+                        <div class="m c-r s2"><div class="ml">Total Returns Cost</div><div class="mv" id="d-totalReturnsCost">$0</div></div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -448,48 +531,93 @@
             <div class="panel-hdr si">
                 <div class="panel-hdr-left">
                     <span class="panel-hdr-title si">ShipInsure Program</span>
-                    <span class="panel-hdr-attach" id="p-siAttachLabel">— projected attach</span>
+                    <span class="panel-hdr-sub" id="p-siAttachSub">— projected attach · SI resolves all protected claims</span>
                 </div>
-                <span class="panel-hdr-total" id="p-siPnl" style="color:var(--si-blue);">$0</span>
+                <div class="panel-hdr-total">
+                    <span class="ht-label">Net Profit</span>
+                    <span class="ht-value" id="p-siPnl" style="color:var(--si-blue);">$0</span>
+                </div>
             </div>
             <div class="panel-body">
-                <div class="psec-label">Premiums Collected</div>
-                <div class="metrics">
-                    <div class="m"><div class="ml">Avg SI Premium</div><div class="mv" id="m-siAvgP">$0</div></div>
-                    <div class="m"><div class="ml">Protected Orders</div><div class="mv" id="m-siProtOrders">0</div></div>
-                    <div class="m c-b s2"><div class="ml">Total Premiums In</div><div class="mv" id="m-siPremiums">$0</div></div>
+
+                <!-- Premiums Collected -->
+                <div class="psec">
+                    <div class="psec-label"><span class="psec-icon">💰</span> Premiums Collected</div>
+                    <div class="metrics">
+                        <div class="m"><div class="ml">Avg Premium $</div><div class="mv" id="s-avgP">$0</div></div>
+                        <div class="m"><div class="ml">Covered Orders (Opt-ins)</div><div class="mv" id="s-coveredOrders">0</div></div>
+                        <div class="m c-b s2"><div class="ml">Total Premiums In $</div><div class="mv" id="s-totalPremiums">$0</div></div>
+                    </div>
                 </div>
-                <div class="psec-label">What You Keep</div>
-                <div class="metrics">
-                    <div class="m c-g"><div class="ml">Rev Share (Gross ×<span id="m-revSharePctLabel">30</span>%)</div><div class="mv" id="m-siRevShare">$0</div></div>
-                    <div class="m c-g"><div class="ml">SI Funds All Claims</div><div class="mv" id="m-siFunded">$0</div></div>
-                    <div class="m c-r s2"><div class="ml">Unprotected Claims (Your Cost)</div><div class="mv" id="m-siUnprotCost">$0</div></div>
+
+                <!-- Claims -->
+                <div class="psec">
+                    <div class="psec-label"><span class="psec-icon">📦</span> Claims</div>
+                    <div class="metrics">
+                        <div class="m c-g"><div class="ml">Protected Claims Covered $</div><div class="mv" id="s-protClaimsCost">$0</div></div>
+                        <div class="m c-r"><div class="ml">Unprotected Claims Not Covered $</div><div class="mv" id="s-unprotClaimsCost">$0</div></div>
+                        <div class="m c-g s2"><div class="ml">Total Claims Resolved by You</div><div class="mv" id="s-totalClaimsCount">0 claims — SI handles protected</div></div>
+                    </div>
                 </div>
-                <div class="psec-label">Overhead &amp; P&L</div>
-                <div class="metrics">
-                    <div class="m c-g"><div class="ml">Claims Overhead</div><div class="mv">$0 — SI managed</div></div>
-                    <div class="m c-b s2"><div class="ml">Net Program P&L</div><div class="mv" id="m-siNetPnl">$0</div></div>
+
+                <!-- Returns (conditional) -->
+                <div class="psec" id="si-returns-psec" style="display:none;">
+                    <div class="psec-label"><span class="psec-icon">↩️</span> Returns Offset (AfterShip)</div>
+                    <div class="metrics">
+                        <div class="m c-g" id="si-labelsCostRow" style="display:none;"><div class="ml" id="si-labelsLabel">Return Labels Covered</div><div class="mv" id="s-returnLabelsCovered">$0</div></div>
+                        <div class="m c-g" id="si-portalCostRow" style="display:none;"><div class="ml">Returns Portal Covered</div><div class="mv" id="s-returnPortalCovered">$0</div></div>
+                        <div class="m c-g s2"><div class="ml">Total Returns Offset</div><div class="mv" id="s-totalReturnsOffset">$0</div></div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- ATTACH LIFT VISUAL -->
+    <!-- NET PROFIT + TIME ROW -->
+    <div class="net-row">
+        <div class="net-card diy">
+            <div>
+                <div class="nc-label">DIY Net Profit</div>
+                <div class="nc-value" id="nc-diyPnl">$0</div>
+            </div>
+            <div class="nc-time">
+                <div class="nt-label">Time Spent on Claims</div>
+                <div class="nt-value" id="nc-diyTime" style="color:var(--self-orange);">0 hrs/mo</div>
+                <div class="nt-label" style="margin-top:6px;">Est. Time Cost</div>
+                <div class="nt-value" id="nc-diyTimeCost" style="color:var(--self-orange);">$0/mo</div>
+            </div>
+        </div>
+        <div class="net-card si">
+            <div>
+                <div class="nc-label">ShipInsure Net Profit</div>
+                <div class="nc-value" id="nc-siPnl">$0</div>
+            </div>
+            <div class="nc-time">
+                <div class="nt-label">Time Spent on Claims</div>
+                <div class="nt-value">0 hrs — SI managed</div>
+                <div class="nt-label" style="margin-top:6px;">Time Returned to You</div>
+                <div class="nt-value" id="nc-timeSaved">0 hrs/mo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ATTACH VISUAL -->
     <div class="attach-section">
         <div class="attach-heading">Attach Rate Comparison</div>
         <div class="attach-bars">
-            <div class="attach-bar-item">
+            <div>
                 <div class="ab-top">
-                    <span class="ab-label self">Current Program</span>
-                    <span class="ab-pct" id="ab-selfPct" style="color:var(--self-orange);">0%</span>
+                    <span class="ab-label diy">DIY Current</span>
+                    <span class="ab-pct" id="ab-diyPct" style="color:var(--self-orange);">0%</span>
                 </div>
-                <div class="ab-track"><div class="ab-fill orange" id="ab-selfBar" style="width:0%;"></div></div>
+                <div class="ab-track"><div class="ab-fill orange" id="ab-diyBar" style="width:0%;"></div></div>
                 <div class="ab-stats">
-                    <div class="ab-stat">Protected orders: <span id="ab-selfProtOrders">0</span></div>
-                    <div class="ab-stat">Premiums: <span id="ab-selfPremiums">$0</span></div>
+                    <div class="ab-stat">Opt-ins: <span id="ab-diyOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-diyPremiums">$0</span></div>
                 </div>
             </div>
-            <div class="attach-bar-item">
+            <div>
                 <div class="ab-top">
                     <span class="ab-label si">ShipInsure Projected</span>
                     <div style="display:flex;align-items:center;gap:8px;">
@@ -499,9 +627,9 @@
                 </div>
                 <div class="ab-track"><div class="ab-fill blue" id="ab-siBar" style="width:0%;"></div></div>
                 <div class="ab-stats">
-                    <div class="ab-stat">Protected orders: <span id="ab-siProtOrders">0</span></div>
+                    <div class="ab-stat">Opt-ins: <span id="ab-siOrders">0</span></div>
                     <div class="ab-stat">Premiums: <span id="ab-siPremiums">$0</span></div>
-                    <div class="ab-stat">Additional vs current: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
+                    <div class="ab-stat">Additional vs. DIY: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
                 </div>
             </div>
         </div>
@@ -552,6 +680,9 @@ const rc  = s => s.replace(/,/g,'');
 const fmtC = v => v ? v.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',') : '';
 const gv  = id => parseFloat(rc(document.getElementById(id).value)) || 0;
 const set = (id,v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+const show = (id, visible) => { const el = document.getElementById(id); if(el) el.style.display = visible ? '' : 'none'; };
+
+let returnsEnabled = false;
 
 function calculate() {
     const tf   = document.getElementById('timeframe').value;
@@ -568,131 +699,195 @@ function calculate() {
     const totalClaims   = orders * claimsP;
     const costPerClaim  = (aov * cogsP) + csPerClaim;
 
-    // ── SELF ──
-    const selfTemplate    = document.getElementById('selfTemplate').value;
-    const selfAttachP     = gv('selfAttach') / 100;
-    const claimsHandler   = document.getElementById('claimsHandler').value;
-    const processorFeeP   = gv('processorFee') / 100;
-    const weeklyHours     = gv('claimsHours');
-    const hourlyRate      = gv('claimsHourlyRate');
-    const overhead        = weeklyHours * hourlyRate * 4.33 * mult; // hrs/wk -> monthly
+    // ── DIY ──
+    const selfTemplate  = document.getElementById('selfTemplate').value;
+    const selfAttachP   = gv('selfAttach') / 100;
+    const claimsHandler = document.getElementById('claimsHandler').value;
+    const processorFeeP = gv('processorFee') / 100;
+    const weeklyHours   = gv('claimsHours');
+    const hourlyRate    = gv('claimsHourlyRate');
+    const monthlyTimeCost = weeklyHours * hourlyRate * 4.33;
+    const timeCost      = monthlyTimeCost * mult;
 
-    const selfAvgP          = getAvgPremium(aov, selfTemplate, gv('selfPremiumPct'), gv('selfPremiumFlat'));
-    const selfProtOrders    = orders * selfAttachP;
-    const selfUnprotOrders  = orders - selfProtOrders;
-    const selfPremiumsIn    = selfProtOrders * selfAvgP;
-    const selfProtClaims    = selfProtOrders * claimsP;
-    const selfUnprotClaims  = selfUnprotOrders * claimsP;
+    const diyAvgP         = getAvgPremium(aov, selfTemplate, gv('selfPremiumPct'), gv('selfPremiumFlat'));
+    const diyProtOrders   = orders * selfAttachP;
+    const diyUnprotOrders = orders - diyProtOrders;
+    const diyPremiumsIn   = diyProtOrders * diyAvgP;
+    const diyProtClaims   = diyProtOrders * claimsP;
+    const diyUnprotClaims = diyUnprotOrders * claimsP;
 
-    let selfClaimsPaid, processorAmt;
+    let diyClaimsPaid, processorAmt;
     if (claimsHandler === 'self') {
-        selfClaimsPaid = selfProtClaims * costPerClaim;
-        processorAmt   = 0;
+        diyClaimsPaid = diyProtClaims * costPerClaim;
+        processorAmt  = 0;
     } else {
-        processorAmt   = selfPremiumsIn * processorFeeP;
-        selfClaimsPaid = processorAmt;
+        processorAmt  = diyPremiumsIn * processorFeeP;
+        diyClaimsPaid = processorAmt;
     }
-
-    const selfUnprotCost  = selfUnprotClaims * costPerClaim;
-    const selfTotalClaims = selfClaimsPaid + selfUnprotCost;
-    const selfNetPnl      = selfPremiumsIn - selfTotalClaims - overhead;
+    const diyUnprotCost   = diyUnprotClaims * costPerClaim;
+    const diyTotalClaims  = diyClaimsPaid + diyUnprotCost;
+    // DIY resolves ALL claims (protected + unprotected)
+    const diyClaimsResolved = Math.round(totalClaims);
 
     // ── SI ──
-    const siTemplate   = document.getElementById('siTemplate').value;
-    const siAttachP    = gv('siAttach') / 100;
-    const revShareP    = gv('revShare') / 100;
+    const siTemplate  = document.getElementById('siTemplate').value;
+    const siAttachP   = gv('siAttach') / 100;
+    const revShareP   = gv('revShare') / 100;
 
     const siAvgP         = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), 0);
     const siProtOrders   = orders * siAttachP;
     const siUnprotOrders = orders - siProtOrders;
-    const siPremiumsOut  = siProtOrders * siAvgP;
+    const siPremiumsIn   = siProtOrders * siAvgP;
     const siProtClaims   = siProtOrders * claimsP;
     const siUnprotClaims = siUnprotOrders * claimsP;
-    const siFunded       = siProtClaims * aov;         // SI pays full claim value
-    const siRevShare     = siPremiumsOut * revShareP;  // rev share on GROSS premiums
+    const siFunded       = siProtClaims * aov;
+    const siRevShare     = siPremiumsIn * revShareP;  // gross
     const siUnprotCost   = siUnprotClaims * costPerClaim;
-    // Merchant P&L: they collect nothing (SI collects premiums), but get rev share back, SI covers their protected claims, still absorb unprotected
-    const siNetPnl       = siRevShare - siUnprotCost;  // + no overhead
+    // Merchant only handles unprotected claims
+    const siClaimsResolved = Math.round(siUnprotClaims);
+
+    // ── RETURNS ──
+    let diyReturnLabelsCost = 0, diyPortalCost = 0, diyTotalReturnsCost = 0;
+    let siReturnLabelsCovered = 0, siPortalCovered = 0, siTotalReturnsOffset = 0;
+
+    if (returnsEnabled) {
+        const coverage     = document.getElementById('returnsCoverage').value;
+        const returnsRateP = gv('returnsRate') / 100;
+        const monthlyPortal = gv('returnsPortalCost');
+        const labelCost    = gv('returnsLabelCost');
+        const optinRateP   = gv('returnsOptinRate') / 100;
+        const periodPortal = monthlyPortal * mult;
+
+        const totalReturns       = orders * returnsRateP;
+        const diyProtReturns     = diyProtOrders * returnsRateP;
+        const siProtReturns      = siProtOrders * returnsRateP;
+
+        if (coverage === 'portal') {
+            diyPortalCost        = periodPortal;
+            siPortalCovered      = periodPortal;
+        } else if (coverage === 'labels_optin') {
+            const diyLabelReturns = diyProtReturns * optinRateP;
+            const siLabelReturns  = siProtReturns  * optinRateP;
+            diyReturnLabelsCost   = diyLabelReturns * labelCost;
+            siReturnLabelsCovered = siLabelReturns  * labelCost;
+        } else if (coverage === 'labels_all') {
+            diyReturnLabelsCost   = diyProtReturns * labelCost;
+            siReturnLabelsCovered = siProtReturns  * labelCost;
+        } else if (coverage === 'portal_labels') {
+            diyPortalCost         = periodPortal;
+            const diyLabelReturns = diyProtReturns * optinRateP;
+            const siLabelReturns  = siProtReturns  * optinRateP;
+            diyReturnLabelsCost   = diyLabelReturns * labelCost;
+            siReturnLabelsCovered = siLabelReturns  * labelCost;
+            siPortalCovered       = periodPortal;
+        }
+
+        diyTotalReturnsCost   = diyReturnLabelsCost + diyPortalCost;
+        siTotalReturnsOffset  = siReturnLabelsCovered + siPortalCovered;
+    }
+
+    // ── NET P&L ──
+    const diyNetPnl = diyPremiumsIn - diyTotalClaims - diyTotalReturnsCost;
+    const siNetPnl  = siRevShare - siUnprotCost - siTotalReturnsOffset;  // what merchant keeps
 
     // ── COMBINED IMPACT ──
-    // 1. Attach lift: additional premiums at SI attach vs self attach × avg premium
-    //    (using self avg premium as baseline since same product, SI may differ)
-    const attachLiftOrders   = Math.max(0, siProtOrders - selfProtOrders);
-    const attachLiftRevenue  = attachLiftOrders * siAvgP; // extra premiums generated by higher attach
-
-    // 2. Overhead eliminated
-    const overheadSaved = overhead;
-
-    // 3. Rev share gained: SI rev share they're now earning (self-funded program has no rev share)
-    const revShareGained = siRevShare;
-
-    // 4. Total
-    const totalAdvantage = attachLiftRevenue + overheadSaved + revShareGained;
+    const attachLiftOrders  = Math.max(0, siProtOrders - diyProtOrders);
+    const attachLiftRevenue = attachLiftOrders * siAvgP;
+    const overheadSaved     = timeCost;
+    const revShareGained    = siRevShare;
+    const totalAdvantage    = attachLiftRevenue + overheadSaved + revShareGained;
 
     // ── RENDER IMPACT BANNER ──
     set('imp-attachLift',    fc(attachLiftRevenue));
-    set('imp-attachLiftSub', `${fn(attachLiftOrders)} more protected orders`);
+    set('imp-attachLiftSub', `${fn(attachLiftOrders)} more opt-in orders`);
     set('imp-overhead',      fc(overheadSaved));
-    set('imp-overheadSub',   overheadSaved > 0 ? `${fc(overheadSaved)} in claims mgmt` : 'claims mgmt eliminated');
+    set('imp-overheadSub',   weeklyHours > 0 ? `${weeklyHours} hrs/wk × ${fc(hourlyRate)}/hr` : 'claims mgmt eliminated');
     set('imp-revShare',      fc(revShareGained));
-    set('imp-revSharePct',   (revShareP * 100).toFixed(0));
+    set('imp-revSharePct',   (revShareP*100).toFixed(0));
     set('imp-total',         fc(totalAdvantage));
-    set('imp-totalSub',      `${period} advantage vs. current`);
+    set('imp-totalSub',      `${period} advantage vs. DIY`);
 
-    // ── RENDER SELF PANEL ──
-    set('p-selfAttachLabel', `${(selfAttachP*100).toFixed(0)}% attach rate`);
-    set('p-selfPnl',         fc(selfNetPnl));
-    document.getElementById('p-selfPnl').style.color = selfNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
-    set('m-selfAvgP',        fcc(selfAvgP));
-    set('m-selfProtOrders',  fn(selfProtOrders));
-    set('m-selfPremiums',    fc(selfPremiumsIn));
+    // ── RENDER DIY PANEL ──
+    set('p-diyAttachSub',   `${(selfAttachP*100).toFixed(0)}% attach · you resolve all claims`);
+    set('p-diyPnl',         fc(diyNetPnl));
+    document.getElementById('p-diyPnl').style.color = diyNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('d-avgP',           fcc(diyAvgP));
+    set('d-coveredOrders',  fn(diyProtOrders));
+    set('d-totalPremiums',  fc(diyPremiumsIn));
+    set('d-protClaimsCost', fc(diyClaimsPaid));
+    set('d-unprotClaimsCost', fc(diyUnprotCost));
+    set('d-totalClaimsCount', fn(diyClaimsResolved) + ' claims');
 
-    if (claimsHandler === 'self') {
-        document.getElementById('m-selfClaimsLbl').textContent = 'Protected Claims Paid (COGS+CS)';
-        document.getElementById('m-processorWrap').style.display = 'none';
-    } else {
-        document.getElementById('m-selfClaimsLbl').textContent = 'Claims via 3rd Party';
-        document.getElementById('m-processorWrap').style.display = 'block';
-        set('m-processorAmt', fc(processorAmt));
+    // DIY returns
+    show('diy-returns-psec', returnsEnabled);
+    if (returnsEnabled) {
+        const coverage = document.getElementById('returnsCoverage').value;
+        const hasLabels = ['labels_optin','labels_all','portal_labels'].includes(coverage);
+        const hasPortal = ['portal','portal_labels'].includes(coverage);
+        show('diy-labelsCostRow', hasLabels);
+        show('diy-portalCostRow', hasPortal);
+        const labelLbl = coverage === 'labels_all' ? 'All Return Labels' : 'Return Labels (Opt-in)';
+        set('diy-labelsLabel', labelLbl);
+        set('d-returnLabelsCost',  fc(diyReturnLabelsCost));
+        set('d-returnPortalCost',  fc(diyPortalCost));
+        set('d-totalReturnsCost',  fc(diyTotalReturnsCost));
     }
-    set('m-selfClaimsCost',   fc(selfClaimsPaid));
-    set('m-selfUnprotCost',   fc(selfUnprotCost));
-    set('m-selfTotalClaims',  fc(selfTotalClaims));
-    set('m-selfOverhead',     fc(overhead));
-    set('m-selfNetPnl',       fc(selfNetPnl));
-    document.getElementById('m-selfNetPnl').style.color = selfNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
 
     // ── RENDER SI PANEL ──
-    set('p-siAttachLabel',  `${(siAttachP*100).toFixed(0)}% projected attach`);
+    set('p-siAttachSub',    `${(siAttachP*100).toFixed(0)}% projected attach · SI resolves protected`);
     set('p-siPnl',          fc(siNetPnl));
     document.getElementById('p-siPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
-    set('m-siAvgP',         fcc(siAvgP));
-    set('m-siProtOrders',   fn(siProtOrders));
-    set('m-siPremiums',     fc(siPremiumsOut));
-    set('m-revSharePctLabel', (revShareP*100).toFixed(0));
-    set('m-siRevShare',     fc(siRevShare));
-    set('m-siFunded',       fc(siFunded));
-    set('m-siUnprotCost',   fc(siUnprotCost));
-    set('m-siNetPnl',       fc(siNetPnl));
-    document.getElementById('m-siNetPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('s-avgP',           fcc(siAvgP));
+    set('s-coveredOrders',  fn(siProtOrders));
+    set('s-totalPremiums',  fc(siPremiumsIn));
+    set('s-protClaimsCost', fc(siFunded));
+    set('s-unprotClaimsCost', fc(siUnprotCost));
+    set('s-totalClaimsCount', fn(siClaimsResolved) + ' claims — SI handles protected');
 
-    // ── ATTACH BAR VISUAL ──
-    const maxAttach = Math.max(selfAttachP, siAttachP, 0.01);
-    document.getElementById('ab-selfBar').style.width = Math.min((selfAttachP / 1) * 100, 100) + '%';
-    document.getElementById('ab-siBar').style.width   = Math.min((siAttachP   / 1) * 100, 100) + '%';
-    set('ab-selfPct', (selfAttachP*100).toFixed(0)+'%');
+    // SI returns
+    show('si-returns-psec', returnsEnabled);
+    if (returnsEnabled) {
+        const coverage = document.getElementById('returnsCoverage').value;
+        const hasLabels = ['labels_optin','labels_all','portal_labels'].includes(coverage);
+        const hasPortal = ['portal','portal_labels'].includes(coverage);
+        show('si-labelsCostRow', hasLabels);
+        show('si-portalCostRow', hasPortal);
+        const siLabelLbl = coverage === 'labels_all' ? 'All Return Labels Covered' : 'Return Labels Covered (Opt-in)';
+        set('si-labelsLabel', siLabelLbl);
+        set('s-returnLabelsCovered', fc(siReturnLabelsCovered));
+        set('s-returnPortalCovered', fc(siPortalCovered));
+        set('s-totalReturnsOffset',  fc(siTotalReturnsOffset));
+    }
+
+    // ── NET ROW ──
+    set('nc-diyPnl',      fc(diyNetPnl));
+    document.getElementById('nc-diyPnl').style.color = diyNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('nc-siPnl',       fc(siNetPnl));
+    document.getElementById('nc-siPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
+    const monthlyHrs = weeklyHours * 4.33;
+    set('nc-diyTime',     monthlyHrs.toFixed(1) + ' hrs/mo');
+    set('nc-diyTimeCost', fc(monthlyTimeCost) + '/mo');
+    set('nc-timeSaved',   monthlyHrs.toFixed(1) + ' hrs/mo');
+
+    // ── ATTACH BARS ──
+    set('ab-diyPct',  (selfAttachP*100).toFixed(0)+'%');
     set('ab-siPct',   (siAttachP*100).toFixed(0)+'%');
-    set('ab-selfProtOrders',  fn(selfProtOrders));
-    set('ab-siProtOrders',    fn(siProtOrders));
-    set('ab-selfPremiums',    fc(selfPremiumsIn));
-    set('ab-siPremiums',      fc(siPremiumsOut));
-    set('ab-extraPremiums',   fc(Math.max(0, siPremiumsOut - selfPremiumsIn)));
+    document.getElementById('ab-diyBar').style.width = Math.min(selfAttachP*100,100)+'%';
+    document.getElementById('ab-siBar').style.width  = Math.min(siAttachP*100,100)+'%';
+    set('ab-diyOrders',     fn(diyProtOrders));
+    set('ab-siOrders',      fn(siProtOrders));
+    set('ab-diyPremiums',   fc(diyPremiumsIn));
+    set('ab-siPremiums',    fc(siPremiumsIn));
+    set('ab-extraPremiums', fc(Math.max(0, siPremiumsIn - diyPremiumsIn)));
 
     const liftBadge = document.getElementById('ab-liftBadge');
-    const liftPts = ((siAttachP - selfAttachP) * 100);
+    const liftPts = (siAttachP - selfAttachP) * 100;
     if (liftPts > 0) {
         liftBadge.style.display = 'inline-flex';
         liftBadge.textContent = `↑ +${liftPts.toFixed(0)}pts`;
+        liftBadge.style.background = 'var(--green-dim)';
+        liftBadge.style.borderColor = 'var(--green)';
+        liftBadge.style.color = 'var(--green)';
     } else if (liftPts < 0) {
         liftBadge.style.display = 'inline-flex';
         liftBadge.textContent = `↓ ${liftPts.toFixed(0)}pts`;
@@ -706,22 +901,47 @@ function calculate() {
     document.getElementById('ordersLabel').textContent = tf === 'annual' ? 'Annual Orders' : 'Monthly Orders';
 }
 
+// ── TOGGLE HELPERS ──
 function toggleSelfFields() {
     const t = document.getElementById('selfTemplate').value;
-    document.getElementById('selfPctField').style.display  = t === 'percentage'  ? '' : 'none';
-    document.getElementById('selfFlatField').style.display = t === 'flat_custom' ? '' : 'none';
+    show('selfPctField',  t === 'percentage');
+    show('selfFlatField', t === 'flat_custom');
 }
-
 function toggleSiFields() {
-    document.getElementById('siPctField').style.display =
-        document.getElementById('siTemplate').value === 'percentage' ? '' : 'none';
+    show('siPctField', document.getElementById('siTemplate').value === 'percentage');
 }
-
 function toggleProcessorField() {
     const is3p = document.getElementById('claimsHandler').value === '3p';
-    document.getElementById('processorFeeField').style.display = is3p ? '' : 'none';
-    document.getElementById('overheadRow').style.display       = is3p ? 'none' : '';
+    show('processorFeeField', is3p);
+    show('overheadRow', !is3p);
 }
+function toggleReturnsCoverageFields() {
+    const c = document.getElementById('returnsCoverage').value;
+    show('returnsPortalCostField', ['portal','portal_labels'].includes(c));
+    show('returnsLabelCostField',  ['labels_optin','labels_all','portal_labels'].includes(c));
+    show('returnsOptinRateField',  ['labels_optin','portal_labels'].includes(c));
+}
+
+// Returns toggle
+document.getElementById('returnsToggleBtn').addEventListener('click', () => {
+    returnsEnabled = !returnsEnabled;
+    const btn   = document.getElementById('returnsToggleBtn');
+    const label = document.getElementById('returnsToggleLabel');
+    const icon  = document.getElementById('returnsToggleIcon');
+    const block = document.getElementById('returnsInputsBlock');
+    if (returnsEnabled) {
+        btn.classList.add('active');
+        icon.textContent = '✓';
+        label.innerHTML = '<strong>Returns Offset enabled</strong> — covered from premiums via AfterShip';
+        block.classList.add('visible');
+    } else {
+        btn.classList.remove('active');
+        icon.textContent = '＋';
+        label.textContent = 'Enable to model AfterShip Returns Offset — covered from premiums';
+        block.classList.remove('visible');
+    }
+    calculate();
+});
 
 // Orders comma input
 document.getElementById('orders').addEventListener('input', function() {
@@ -741,6 +961,7 @@ document.getElementById('timeframe').addEventListener('change', calculate);
 document.getElementById('selfTemplate').addEventListener('change', () => { toggleSelfFields(); calculate(); });
 document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
 document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
+document.getElementById('returnsCoverage').addEventListener('change', () => { toggleReturnsCoverageFields(); calculate(); });
 
 // Share link
 document.getElementById('generateLink').addEventListener('click', () => {
@@ -756,13 +977,19 @@ document.getElementById('generateLink').addEventListener('click', () => {
         sa:     rc(document.getElementById('selfAttach').value),
         ch:     document.getElementById('claimsHandler').value,
         pf:     rc(document.getElementById('processorFee').value),
-        ch_hrs: rc(document.getElementById('claimsHours').value),
-        ch_rate: rc(document.getElementById('claimsHourlyRate').value),
+        hrs:    rc(document.getElementById('claimsHours').value),
+        hrate:  rc(document.getElementById('claimsHourlyRate').value),
         sitm:   document.getElementById('siTemplate').value,
         sipp:   rc(document.getElementById('siPremiumPct').value),
         sia:    rc(document.getElementById('siAttach').value),
         rs:     rc(document.getElementById('revShare').value),
-        tf:     document.getElementById('timeframe').value
+        tf:     document.getElementById('timeframe').value,
+        ren:    returnsEnabled ? '1' : '0',
+        rc:     document.getElementById('returnsCoverage').value,
+        rr:     rc(document.getElementById('returnsRate').value),
+        rpc:    rc(document.getElementById('returnsPortalCost').value),
+        rlc:    rc(document.getElementById('returnsLabelCost').value),
+        ror:    rc(document.getElementById('returnsOptinRate').value)
     });
     document.getElementById('shareableLink').value = `${location.origin}${location.pathname}?${p}`;
     document.getElementById('linkBox').classList.add('visible');
@@ -793,18 +1020,24 @@ function loadFromUrl() {
     s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
     s('selfAttach','sa','55');
     s('claimsHandler','ch','self'); s('processorFee','pf','70');
-    s('claimsHours','ch_hrs','5');
-    s('claimsHourlyRate','ch_rate','35');
+    s('claimsHours','hrs','5'); s('claimsHourlyRate','hrate','35');
     s('siTemplate','sitm','percentage');
     s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
-    s('revShare','rs','30');
-    s('timeframe','tf','monthly');
+    s('revShare','rs','30'); s('timeframe','tf','monthly');
+    s('returnsCoverage','rc','portal');
+    s('returnsRate','rr','8'); s('returnsPortalCost','rpc','300');
+    s('returnsLabelCost','rlc','8'); s('returnsOptinRate','ror','60');
+    if (p.get('ren') === '1') {
+        returnsEnabled = false; // force toggle
+        document.getElementById('returnsToggleBtn').click();
+    }
 }
 
 loadFromUrl();
 toggleSelfFields();
 toggleSiFields();
 toggleProcessorField();
+toggleReturnsCoverageFields();
 calculate();
 </script>
 </body>
