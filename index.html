@@ -319,8 +319,12 @@
             </div>
             <div class="frow" id="overheadRow">
                 <div class="field orange">
-                    <label>Monthly Claims Overhead $</label>
-                    <div class="iw"><span class="pre">$</span><input type="text" id="claimsOverhead" placeholder="500" inputmode="decimal" class="pp"></div>
+                    <label>Hrs/Week on Program</label>
+                    <div class="iw"><input type="text" id="claimsHours" placeholder="5" inputmode="decimal" class="sp"><span class="suf">hrs</span></div>
+                </div>
+                <div class="field orange">
+                    <label>Avg Hourly Rate $</label>
+                    <div class="iw"><span class="pre">$</span><input type="text" id="claimsHourlyRate" placeholder="35" inputmode="decimal" class="pp"></div>
                 </div>
             </div>
         </div>
@@ -386,7 +390,7 @@
         <div class="plus-sign">+</div>
         <div class="impact-divider"></div>
         <div class="impact-item">
-            <div class="i-label">Overhead Eliminated</div>
+            <div class="i-label">Time Savings</div>
             <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
             <div class="i-sub" id="imp-overheadSub">claims mgmt saved</div>
         </div>
@@ -433,7 +437,7 @@
                 </div>
                 <div class="psec-label">Overhead &amp; P&L</div>
                 <div class="metrics">
-                    <div class="m"><div class="ml">Claims Overhead</div><div class="mv" id="m-selfOverhead">$0</div></div>
+                    <div class="m"><div class="ml">Program Time Cost</div><div class="mv" id="m-selfOverhead">$0</div></div>
                     <div class="m c-y s2"><div class="ml">Net Program P&L</div><div class="mv" id="m-selfNetPnl">$0</div></div>
                 </div>
             </div>
@@ -453,9 +457,9 @@
                 <div class="metrics">
                     <div class="m"><div class="ml">Avg SI Premium</div><div class="mv" id="m-siAvgP">$0</div></div>
                     <div class="m"><div class="ml">Protected Orders</div><div class="mv" id="m-siProtOrders">0</div></div>
-                    <div class="m c-b s2"><div class="ml">Total Premiums to SI</div><div class="mv" id="m-siPremiums">$0</div></div>
+                    <div class="m c-b s2"><div class="ml">Total Premiums In</div><div class="mv" id="m-siPremiums">$0</div></div>
                 </div>
-                <div class="psec-label">What You Get Back</div>
+                <div class="psec-label">What You Keep</div>
                 <div class="metrics">
                     <div class="m c-g"><div class="ml">Rev Share (Gross ×<span id="m-revSharePctLabel">30</span>%)</div><div class="mv" id="m-siRevShare">$0</div></div>
                     <div class="m c-g"><div class="ml">SI Funds All Claims</div><div class="mv" id="m-siFunded">$0</div></div>
@@ -569,8 +573,9 @@ function calculate() {
     const selfAttachP     = gv('selfAttach') / 100;
     const claimsHandler   = document.getElementById('claimsHandler').value;
     const processorFeeP   = gv('processorFee') / 100;
-    const monthlyOverhead = gv('claimsOverhead');
-    const overhead        = monthlyOverhead * mult;
+    const weeklyHours     = gv('claimsHours');
+    const hourlyRate      = gv('claimsHourlyRate');
+    const overhead        = weeklyHours * hourlyRate * 4.33 * mult; // hrs/wk -> monthly
 
     const selfAvgP          = getAvgPremium(aov, selfTemplate, gv('selfPremiumPct'), gv('selfPremiumFlat'));
     const selfProtOrders    = orders * selfAttachP;
@@ -751,7 +756,8 @@ document.getElementById('generateLink').addEventListener('click', () => {
         sa:     rc(document.getElementById('selfAttach').value),
         ch:     document.getElementById('claimsHandler').value,
         pf:     rc(document.getElementById('processorFee').value),
-        oh:     rc(document.getElementById('claimsOverhead').value),
+        ch_hrs: rc(document.getElementById('claimsHours').value),
+        ch_rate: rc(document.getElementById('claimsHourlyRate').value),
         sitm:   document.getElementById('siTemplate').value,
         sipp:   rc(document.getElementById('siPremiumPct').value),
         sia:    rc(document.getElementById('siAttach').value),
@@ -787,7 +793,8 @@ function loadFromUrl() {
     s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
     s('selfAttach','sa','55');
     s('claimsHandler','ch','self'); s('processorFee','pf','70');
-    s('claimsOverhead','oh','500');
+    s('claimsHours','ch_hrs','5');
+    s('claimsHourlyRate','ch_rate','35');
     s('siTemplate','sitm','percentage');
     s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
     s('revShare','rs','30');
