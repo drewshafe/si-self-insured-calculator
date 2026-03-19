@@ -447,39 +447,36 @@
         </div>
     </div>
 
-    <!-- COMBINED IMPACT BANNER -->
-    <div class="impact-banner">
-        <div class="impact-item">
-            <div class="i-label">Attach Lift Revenue</div>
-            <div class="i-value" id="imp-attachLift" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-attachLiftSub">more opt-in orders</div>
-        </div>
-        <div class="plus-sign">+</div>
-        <div class="impact-divider"></div>
-        <div class="impact-item">
-            <div class="i-label">Time Savings</div>
-            <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-overheadSub">claims mgmt eliminated</div>
-        </div>
-        <div class="plus-sign">+</div>
-        <div class="impact-divider"></div>
-        <div class="impact-item">
-            <div class="i-label">Rev Share Gained</div>
-            <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
-        </div>
-        <div class="plus-sign" id="imp-returnsPlusSign" style="display:none;">+</div>
-        <div class="impact-divider" id="imp-returnsDivider" style="display:none;"></div>
-        <div class="impact-item" id="imp-returnsItem" style="display:none;">
-            <div class="i-label">Returns Offset</div>
-            <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
-            <div class="i-sub">covered from premiums</div>
-        </div>
-        <div class="impact-divider"></div>
-        <div class="impact-item total">
-            <div class="i-label">Total SI Advantage</div>
-            <div class="i-value" id="imp-total">$0</div>
-            <div class="i-sub" id="imp-totalSub">vs. DIY program</div>
+    <!-- ATTACH VISUAL -->
+    <div class="attach-section">
+        <div class="attach-heading">Attach Rate Comparison</div>
+        <div class="attach-bars">
+            <div>
+                <div class="ab-top">
+                    <span class="ab-label diy">DIY Current</span>
+                    <span class="ab-pct" id="ab-diyPct" style="color:var(--self-orange);">0%</span>
+                </div>
+                <div class="ab-track"><div class="ab-fill orange" id="ab-diyBar" style="width:0%;"></div></div>
+                <div class="ab-stats">
+                    <div class="ab-stat">Opt-ins: <span id="ab-diyOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-diyPremiums">$0</span></div>
+                </div>
+            </div>
+            <div>
+                <div class="ab-top">
+                    <span class="ab-label si">ShipInsure Projected</span>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="lift-badge" id="ab-liftBadge" style="display:none;">↑ +0pts</span>
+                        <span class="ab-pct" id="ab-siPct" style="color:var(--si-blue);">0%</span>
+                    </div>
+                </div>
+                <div class="ab-track"><div class="ab-fill blue" id="ab-siBar" style="width:0%;"></div></div>
+                <div class="ab-stats">
+                    <div class="ab-stat">Opt-ins: <span id="ab-siOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-siPremiums">$0</span></div>
+                    <div class="ab-stat">Additional vs. DIY: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -597,48 +594,51 @@
         </div>
         <div class="net-card si">
             <div>
-                <div class="nc-label">ShipInsure Net Profit</div>
+                <div class="nc-label">Your Net w/ ShipInsure</div>
                 <div class="nc-value" id="nc-siPnl">$0</div>
             </div>
             <div class="nc-time">
                 <div class="nt-label">Time Spent on Claims</div>
-                <div class="nt-value">0 hrs — SI managed</div>
+                <div class="nt-value" id="nc-siTime" style="color:var(--si-blue);">0 hrs/mo</div>
                 <div class="nt-label" style="margin-top:6px;">Time Returned to You</div>
-                <div class="nt-value" id="nc-timeSaved">0 hrs/mo</div>
+                <div class="nt-value" id="nc-timeSaved" style="color:var(--green);">0 hrs/mo</div>
             </div>
         </div>
     </div>
 
-    <!-- ATTACH VISUAL -->
-    <div class="attach-section">
-        <div class="attach-heading">Attach Rate Comparison</div>
-        <div class="attach-bars">
-            <div>
-                <div class="ab-top">
-                    <span class="ab-label diy">DIY Current</span>
-                    <span class="ab-pct" id="ab-diyPct" style="color:var(--self-orange);">0%</span>
-                </div>
-                <div class="ab-track"><div class="ab-fill orange" id="ab-diyBar" style="width:0%;"></div></div>
-                <div class="ab-stats">
-                    <div class="ab-stat">Opt-ins: <span id="ab-diyOrders">0</span></div>
-                    <div class="ab-stat">Premiums: <span id="ab-diyPremiums">$0</span></div>
-                </div>
-            </div>
-            <div>
-                <div class="ab-top">
-                    <span class="ab-label si">ShipInsure Projected</span>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span class="lift-badge" id="ab-liftBadge" style="display:none;">↑ +0pts</span>
-                        <span class="ab-pct" id="ab-siPct" style="color:var(--si-blue);">0%</span>
-                    </div>
-                </div>
-                <div class="ab-track"><div class="ab-fill blue" id="ab-siBar" style="width:0%;"></div></div>
-                <div class="ab-stats">
-                    <div class="ab-stat">Opt-ins: <span id="ab-siOrders">0</span></div>
-                    <div class="ab-stat">Premiums: <span id="ab-siPremiums">$0</span></div>
-                    <div class="ab-stat">Additional vs. DIY: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
-                </div>
-            </div>
+    <!-- COMBINED IMPACT BANNER -->
+    <div class="impact-banner">
+        <div class="impact-item">
+            <div class="i-label">Attach Lift Revenue</div>
+            <div class="i-value" id="imp-attachLift" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub" id="imp-attachLiftSub">more opt-in orders</div>
+        </div>
+        <div class="plus-sign">+</div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+            <div class="i-label">Time Savings</div>
+            <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub" id="imp-overheadSub">claims mgmt eliminated</div>
+        </div>
+        <div class="plus-sign">+</div>
+        <div class="impact-divider"></div>
+        <div class="impact-item">
+            <div class="i-label">Rev Share Gained</div>
+            <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
+            <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
+        </div>
+        <div class="plus-sign" id="imp-returnsPlusSign" style="display:none;">+</div>
+        <div class="impact-divider" id="imp-returnsDivider" style="display:none;"></div>
+        <div class="impact-item" id="imp-returnsItem" style="display:none;">
+            <div class="i-label">Returns Offset</div>
+            <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
+            <div class="i-sub">covered from premiums</div>
+        </div>
+        <div class="impact-divider"></div>
+        <div class="impact-item total">
+            <div class="i-label">Total SI Advantage</div>
+            <div class="i-value" id="imp-total">$0</div>
+            <div class="i-sub" id="imp-totalSub">vs. DIY program</div>
         </div>
     </div>
 
@@ -801,7 +801,8 @@ function calculate() {
     // ── COMBINED IMPACT ──
     const attachLiftOrders  = Math.max(0, siProtOrders - diyProtOrders);
     const attachLiftRevenue = attachLiftOrders * siAvgP;
-    const overheadSaved     = timeCost;
+    const siTimeFraction    = totalClaims > 0 ? siUnprotClaims / totalClaims : 0;
+    const overheadSaved     = timeCost * (1 - siTimeFraction);
     const revShareGained    = siRevShare;
     const totalAdvantage    = attachLiftRevenue + overheadSaved + revShareGained + siTotalReturnsOffset;
 
@@ -877,10 +878,13 @@ function calculate() {
     document.getElementById('nc-diyPnl').style.color = diyNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
     set('nc-siPnl',       fc(siNetPnl));
     document.getElementById('nc-siPnl').style.color = siNetPnl >= 0 ? 'var(--green)' : 'var(--red)';
-    const monthlyHrs = weeklyHours * 4.33;
+    const monthlyHrs     = weeklyHours * 4.33;
+    const siMonthlyHrs   = totalClaims > 0 ? monthlyHrs * (siUnprotClaims / totalClaims) : 0;
+    const timeSavedHrs   = monthlyHrs - siMonthlyHrs;
     set('nc-diyTime',     monthlyHrs.toFixed(1) + ' hrs/mo');
     set('nc-diyTimeCost', fc(monthlyTimeCost) + '/mo');
-    set('nc-timeSaved',   monthlyHrs.toFixed(1) + ' hrs/mo');
+    set('nc-siTime',      siMonthlyHrs > 0 ? siMonthlyHrs.toFixed(1) + ' hrs/mo (unprotected only)' : '0 hrs — SI managed all');
+    set('nc-timeSaved',   timeSavedHrs.toFixed(1) + ' hrs/mo');
 
     // ── ATTACH BARS ──
     set('ab-diyPct',  (selfAttachP*100).toFixed(0)+'%');
