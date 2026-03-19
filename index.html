@@ -187,6 +187,31 @@
         .net-card .nc-time .nt-label { font-size:0.62em; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); }
         .net-card .nc-time .nt-value { font-family:'DM Mono',monospace; font-size:1em; font-weight:500; color:var(--green); }
 
+        /* CALCULATION BREAKDOWN */
+        .calc-breakdown { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+        .calc-toggle { width:100%; padding:14px 22px; background:none; border:none; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.84em; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:10px; text-align:left; transition:background 0.15s; }
+        .calc-toggle:hover { background:var(--surface2); }
+        .calc-toggle-arrow { font-size:0.7em; color:var(--muted); transition:transform 0.2s; display:inline-block; }
+        .calc-toggle-arrow.open { transform:rotate(90deg); }
+        .calc-body { display:none; border-top:1px solid var(--border); }
+        .calc-body.visible { display:block; }
+        .calc-shared-wrap { padding:14px 22px; border-bottom:1px solid var(--border); }
+        .calc-cols { display:grid; grid-template-columns:1fr 1fr; }
+        .cb-col { padding:14px 22px; }
+        .cb-col:first-child { border-right:1px solid var(--border); }
+        .cb-title { font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+        .cb-title.diy { color:var(--self-orange); }
+        .cb-title.si  { color:var(--si-blue); }
+        .cb-title.shared { color:var(--muted); }
+        .cb-row { display:grid; grid-template-columns:160px 1fr auto; gap:8px; align-items:baseline; padding:3px 0; font-size:0.76em; border-bottom:1px solid rgba(255,255,255,0.025); }
+        .cb-lbl { color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cb-eq  { font-family:'DM Mono',monospace; color:var(--text); opacity:0.6; font-size:0.9em; }
+        .cb-val { font-family:'DM Mono',monospace; color:var(--text); font-weight:500; text-align:right; white-space:nowrap; }
+        .cb-row.sep { border-top:1px solid var(--border); margin-top:4px; padding-top:6px; border-bottom:none; }
+        .cb-row.sep .cb-lbl { color:var(--text); font-weight:600; }
+        .cb-row.sep .cb-val { color:var(--green); font-weight:700; }
+        @media(max-width:700px){ .calc-cols{grid-template-columns:1fr;} .cb-col:first-child{border-right:none;border-bottom:1px solid var(--border);} .cb-row{grid-template-columns:130px 1fr auto;} }
+
         /* ATTACH VISUAL */
         .attach-section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px 26px; }
         .attach-heading { font-family:'Syne',sans-serif; font-size:0.85em; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
@@ -643,6 +668,30 @@
         </div>
     </div>
 
+    <!-- CALCULATION BREAKDOWN -->
+    <div class="calc-breakdown">
+        <button class="calc-toggle" onclick="toggleCalcBreakdown(this)">
+            <span class="calc-toggle-arrow" id="calcArrow">▶</span>
+            📋 Show Calculation Breakdown
+        </button>
+        <div class="calc-body" id="calcBreakdown">
+            <div class="calc-shared-wrap">
+                <div class="cb-title shared">Shared Inputs &amp; Derived Values</div>
+                <div id="cb-shared"></div>
+            </div>
+            <div class="calc-cols">
+                <div class="cb-col">
+                    <div class="cb-title diy">DIY Insurance Program</div>
+                    <div id="cb-diy"></div>
+                </div>
+                <div class="cb-col">
+                    <div class="cb-title si">ShipInsure Program</div>
+                    <div id="cb-si"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -922,6 +971,20 @@ function calculate() {
     }
 
     document.getElementById('ordersLabel').textContent = tf === 'annual' ? 'Annual Orders' : 'Monthly Orders';
+
+    // ── STORE BREAKDOWN DATA & RE-RENDER IF OPEN ──
+    _breakdownData = {
+        ready: true,
+        orders, aov, cogsP, claimsP, csPerClaim, costPerClaim,
+        selfTemplate, diyAvgP, selfAttachP, diyProtOrders, diyUnprotOrders,
+        diyPremiumsIn, diyProtClaims, diyUnprotClaims, diyClaimsPaid, diyUnprotCost,
+        diyTotalClaims, diyTotalReturnsCost, diyNetPnl,
+        siTemplate, siAvgP, siAttachP, siProtOrders, siUnprotOrders,
+        siPremiumsIn, siProtClaims, siUnprotClaims, siFunded,
+        revShareP, revShareType, revShareBase, siRevShare, siUnprotCost,
+        siTotalReturnsOffset, siNetPnl, returnsEnabled
+    };
+    if (document.getElementById('calcBreakdown').classList.contains('visible')) renderBreakdown();
 }
 
 // ── TOGGLE HELPERS ──
@@ -1064,6 +1127,92 @@ toggleSiFields();
 toggleProcessorField();
 toggleReturnsCoverageFields();
 calculate();
+
+// ── CALCULATION BREAKDOWN ──
+function toggleCalcBreakdown(btn) {
+    const body  = document.getElementById('calcBreakdown');
+    const arrow = document.getElementById('calcArrow');
+    const open  = body.classList.toggle('visible');
+    arrow.classList.toggle('open', open);
+    btn.querySelector('.calc-toggle-arrow').textContent = open ? '▼' : '▶';
+    if (open) renderBreakdown();
+}
+
+let _breakdownData = {};
+
+function renderBreakdown() {
+    const d = _breakdownData;
+    if (!d.ready) return;
+
+    const row = (lbl, eq, val, cls='') =>
+        `<div class="cb-row ${cls}"><span class="cb-lbl">${lbl}</span><span class="cb-eq">${eq}</span><span class="cb-val">${val}</span></div>`;
+
+    const pct  = v => (v * 100).toFixed(2).replace(/\.?0+$/, '') + '%';
+    const tName = t => ({
+        'percentage':'% of AOV','flat_custom':'Flat $','born_primitive':'Born Prim',
+        'static_1.50_300_2.00':'$1.50/$2','flat_1.50':'Flat $1.50','flat_5.95':'Flat $5.95',
+        '1.5_accurate':'1.5% Acc','2_accurate':'2% Acc','2_round_50':'2% Round',
+        '2.5_accurate':'2.5% Acc','3_accurate':'3% Acc','3.5_accurate':'3.5% Acc',
+        '2_flat_0.98':'2% Min $0.98','3_accurate_100_1.95':'3% Min $1.95',
+        '3.25_1.55':'3.25% Min $1.55','2.5_1.95':'2.5% Min $1.95','og_6.5_19.99_3':'OG 6.5%'
+    }[t] || t);
+
+    // Shared
+    document.getElementById('cb-shared').innerHTML =
+        row('Orders (period)',    '',                                                           fn(d.orders)) +
+        row('Avg Order Value',   '',                                                           fcc(d.aov)) +
+        row('COGS %',            '',                                                           pct(d.cogsP)) +
+        row('Claims Rate',       '',                                                           pct(d.claimsP)) +
+        row('CS Cost / Claim',   '',                                                           fc(d.csPerClaim)) +
+        row('Cost per Claim',    `(${fcc(d.aov)} × ${pct(d.cogsP)}) + ${fc(d.csPerClaim)}`,   fc(d.costPerClaim), 'sep');
+
+    // DIY
+    const diyProtC = Math.round(d.diyProtClaims);
+    const diyUnprotC = Math.round(d.diyUnprotClaims);
+    let diyHTML =
+        row('Pricing Template',       '',                                                                       tName(d.selfTemplate)) +
+        row('Avg Premium',            `${tName(d.selfTemplate)} @ ${fcc(d.aov)}`,                              fcc(d.diyAvgP)) +
+        row('Attach Rate',            '',                                                                       pct(d.selfAttachP)) +
+        row('Protected Orders',       `${fn(d.orders)} × ${pct(d.selfAttachP)}`,                               fn(d.diyProtOrders)) +
+        row('Premiums Collected',     `${fn(d.diyProtOrders)} × ${fcc(d.diyAvgP)}`,                           fc(d.diyPremiumsIn)) +
+        row('Protected Claims',       `${fn(d.diyProtOrders)} × ${pct(d.claimsP)}`,                           `${diyProtC} claims`) +
+        row('Protected Claims Cost',  `${diyProtC} × ${fc(d.costPerClaim)}`,                                   fc(d.diyClaimsPaid)) +
+        row('Unprotected Orders',     `${fn(d.orders)} − ${fn(d.diyProtOrders)}`,                              fn(d.diyUnprotOrders)) +
+        row('Unprotected Claims',     `${fn(d.diyUnprotOrders)} × ${pct(d.claimsP)}`,                         `${diyUnprotC} claims`) +
+        row('Unprotected Claims Cost',`${diyUnprotC} × ${fc(d.costPerClaim)}`,                                 fc(d.diyUnprotCost));
+    if (d.returnsEnabled && d.diyTotalReturnsCost > 0)
+        diyHTML += row('Returns Cost (Out-of-Pocket)', 'portal + labels',                                      fc(d.diyTotalReturnsCost));
+    const diyFormula = `${fc(d.diyPremiumsIn)} − ${fc(d.diyTotalClaims)}` +
+        (d.returnsEnabled && d.diyTotalReturnsCost > 0 ? ` − ${fc(d.diyTotalReturnsCost)}` : '');
+    diyHTML += row('DIY Net P&L', diyFormula, fc(d.diyNetPnl), 'sep');
+    document.getElementById('cb-diy').innerHTML = diyHTML;
+
+    // SI
+    const siProtC  = Math.round(d.siProtClaims);
+    const siUnprotC = Math.round(d.siUnprotClaims);
+    const revBaseLabel = d.revShareType === 'net' ? 'Rev Share Base (Net)' : 'Rev Share Base (Gross)';
+    const revBaseEq    = d.revShareType === 'net'
+        ? `${fc(d.siPremiumsIn)} − ${fc(d.siFunded)} − ${fc(d.siTotalReturnsOffset)}`
+        : 'Gross premiums';
+    let siHTML =
+        row('Pricing Template',       '',                                                                       tName(d.siTemplate)) +
+        row('Avg Premium',            `${tName(d.siTemplate)} @ ${fcc(d.aov)}`,                                fcc(d.siAvgP)) +
+        row('Projected Attach',       '',                                                                       pct(d.siAttachP)) +
+        row('Protected Orders',       `${fn(d.orders)} × ${pct(d.siAttachP)}`,                                 fn(d.siProtOrders)) +
+        row('Gross Premiums',         `${fn(d.siProtOrders)} × ${fcc(d.siAvgP)}`,                             fc(d.siPremiumsIn)) +
+        row('SI-Funded Claims',       `${siProtC} claims × ${fcc(d.aov)} AOV`,                                fc(d.siFunded)) +
+        row(revBaseLabel,             revBaseEq,                                                                fc(d.revShareBase)) +
+        row('Rev Share',              `${fc(d.revShareBase)} × ${pct(d.revShareP)}`,                          fc(d.siRevShare)) +
+        row('Unprotected Orders',     `${fn(d.orders)} − ${fn(d.siProtOrders)}`,                               fn(d.siUnprotOrders)) +
+        row('Unprotected Claims',     `${fn(d.siUnprotOrders)} × ${pct(d.claimsP)}`,                          `${siUnprotC} claims`) +
+        row('Unprotected Claims Cost',`${siUnprotC} × ${fc(d.costPerClaim)}`,                                  fc(d.siUnprotCost));
+    if (d.returnsEnabled && d.siTotalReturnsOffset > 0)
+        siHTML += row('Returns Offset (Savings)', 'covered by SI from premiums',                               fc(d.siTotalReturnsOffset));
+    const siFormula = `${fc(d.siRevShare)} − ${fc(d.siUnprotCost)}` +
+        (d.returnsEnabled && d.siTotalReturnsOffset > 0 ? ` + ${fc(d.siTotalReturnsOffset)}` : '');
+    siHTML += row('Your Net w/ SI', siFormula, fc(d.siNetPnl), 'sep');
+    document.getElementById('cb-si').innerHTML = siHTML;
+}
 </script>
 </body>
 </html>
