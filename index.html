@@ -75,6 +75,7 @@
         .field.orange input:focus, .field.orange select:focus { border-color:var(--self-orange); box-shadow:0 0 0 3px var(--self-orange-dim); }
         .field input::placeholder { color:var(--muted); opacity:0.55; }
         .field select { cursor:pointer; }
+        .inline-select { width:auto !important; padding:2px 6px !important; font-size:0.72em !important; font-family:'DM Sans',sans-serif !important; border-radius:5px !important; color:var(--si-blue) !important; border-color:var(--si-blue-dim) !important; background:var(--si-blue-dim) !important; font-weight:600; }
         .subdiv { border:none; border-top:1px dashed var(--border); margin:14px 0 12px; }
         .sublabel { font-size:0.67em; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:11px; }
 
@@ -394,7 +395,7 @@
                     <div class="iw"><input type="text" id="siAttach" value="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
                 <div class="field">
-                    <label>Rev Share % (Gross)</label>
+                    <label style="display:flex;align-items:center;gap:8px;">Rev Share % <select id="revShareType" class="inline-select"><option value="gross">Gross</option><option value="net">Net</option></select></label>
                     <div class="iw"><input type="text" id="revShare" value="30" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
@@ -737,9 +738,10 @@ function calculate() {
     const diyClaimsResolved = Math.round(totalClaims);
 
     // ── SI ──
-    const siTemplate  = document.getElementById('siTemplate').value;
-    const siAttachP   = gv('siAttach') / 100;
-    const revShareP   = gv('revShare') / 100;
+    const siTemplate    = document.getElementById('siTemplate').value;
+    const siAttachP     = gv('siAttach') / 100;
+    const revShareP     = gv('revShare') / 100;
+    const revShareType  = document.getElementById('revShareType').value;
 
     const siAvgP         = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), 0);
     const siProtOrders   = orders * siAttachP;
@@ -748,12 +750,11 @@ function calculate() {
     const siProtClaims   = siProtOrders * claimsP;
     const siUnprotClaims = siUnprotOrders * claimsP;
     const siFunded       = siProtClaims * aov;
-    const siRevShare     = siPremiumsIn * revShareP;  // gross
     const siUnprotCost   = siUnprotClaims * costPerClaim;
     // Merchant only handles unprotected claims
     const siClaimsResolved = Math.round(siUnprotClaims);
 
-    // ── RETURNS ──
+    // ── RETURNS ── (calculated before rev share so net base is available)
     // Returns — DIY pays full cost on ALL returns, SI offsets only protected returns from premiums
     let diyReturnLabelsCost = 0, diyPortalCost = 0, diyTotalReturnsCost = 0;
     let siReturnLabelsCovered = 0, siPortalCovered = 0, siTotalReturnsOffset = 0;
@@ -763,7 +764,6 @@ function calculate() {
         const returnsRateP  = gv('returnsRate') / 100;
         const monthlyPortal = gv('returnsPortalCost');
         const labelCost     = gv('returnsLabelCost');
-        const optinRateP    = gv('returnsOptinRate') / 100;
         const periodPortal  = monthlyPortal * mult;
 
         // DIY: pays for ALL returns at full cost (no offset program)
@@ -776,23 +776,29 @@ function calculate() {
             diyPortalCost   = periodPortal;
             siPortalCovered = periodPortal;
         } else if (coverage === 'labels_optin') {
-            // Opt-in labels: DIY pays for all orders that opt in, SI covers only protected that opt in
-            diyReturnLabelsCost   = totalReturns  * optinRateP * labelCost;
-            siReturnLabelsCovered = siProtReturns * optinRateP * labelCost;
+            // Opt-in = SI attach rate; DIY scoped by DIY attach, SI covers all protected returns
+            diyReturnLabelsCost   = totalReturns  * selfAttachP * labelCost;
+            siReturnLabelsCovered = siProtReturns * labelCost;
         } else if (coverage === 'labels_all') {
             // All return labels: DIY pays for all returns, SI covers protected returns
             diyReturnLabelsCost   = totalReturns  * labelCost;
             siReturnLabelsCovered = siProtReturns * labelCost;
         } else if (coverage === 'portal_labels') {
             diyPortalCost         = periodPortal;
-            diyReturnLabelsCost   = totalReturns  * optinRateP * labelCost;
+            diyReturnLabelsCost   = totalReturns  * selfAttachP * labelCost;
             siPortalCovered       = periodPortal;
-            siReturnLabelsCovered = siProtReturns * optinRateP * labelCost;
+            siReturnLabelsCovered = siProtReturns * labelCost;
         }
 
         diyTotalReturnsCost  = diyReturnLabelsCost + diyPortalCost;
         siTotalReturnsOffset = siReturnLabelsCovered + siPortalCovered;
     }
+
+    // ── REV SHARE (gross or net base) ──
+    const revShareBase = revShareType === 'net'
+        ? Math.max(0, siPremiumsIn - siFunded - siTotalReturnsOffset)
+        : siPremiumsIn;
+    const siRevShare = revShareBase * revShareP;
 
     // ── NET P&L ──
     const diyNetPnl = diyPremiumsIn - diyTotalClaims - diyTotalReturnsCost;
@@ -936,7 +942,7 @@ function toggleReturnsCoverageFields() {
     const c = document.getElementById('returnsCoverage').value;
     show('returnsPortalCostField', ['portal','portal_labels'].includes(c));
     show('returnsLabelCostField',  ['labels_optin','labels_all','portal_labels'].includes(c));
-    show('returnsOptinRateField',  ['labels_optin','portal_labels'].includes(c));
+    show('returnsOptinRateField',  false);  // opt-in rate = SI attach rate; no separate input needed
 }
 
 // Returns toggle
@@ -979,6 +985,7 @@ document.getElementById('selfTemplate').addEventListener('change', () => { toggl
 document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
 document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
 document.getElementById('returnsCoverage').addEventListener('change', () => { toggleReturnsCoverageFields(); calculate(); });
+document.getElementById('revShareType').addEventListener('change', calculate);
 
 // Share link
 document.getElementById('generateLink').addEventListener('click', () => {
@@ -1000,6 +1007,7 @@ document.getElementById('generateLink').addEventListener('click', () => {
         sipp:   rc(document.getElementById('siPremiumPct').value),
         sia:    rc(document.getElementById('siAttach').value),
         rs:     rc(document.getElementById('revShare').value),
+        rst:    document.getElementById('revShareType').value,
         tf:     document.getElementById('timeframe').value,
         ren:    returnsEnabled ? '1' : '0',
         rc:     document.getElementById('returnsCoverage').value,
@@ -1040,7 +1048,7 @@ function loadFromUrl() {
     s('claimsHours','hrs','5'); s('claimsHourlyRate','hrate','35');
     s('siTemplate','sitm','percentage');
     s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
-    s('revShare','rs','30'); s('timeframe','tf','monthly');
+    s('revShare','rs','30'); s('revShareType','rst','gross'); s('timeframe','tf','monthly');
     s('returnsCoverage','rc','portal');
     s('returnsRate','rr','8'); s('returnsPortalCost','rpc','300');
     s('returnsLabelCost','rlc','8'); s('returnsOptinRate','ror','60');
