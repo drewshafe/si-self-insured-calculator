@@ -468,6 +468,13 @@
             <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
             <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
         </div>
+        <div class="plus-sign" id="imp-returnsPlusSign" style="display:none;">+</div>
+        <div class="impact-divider" id="imp-returnsDivider" style="display:none;"></div>
+        <div class="impact-item" id="imp-returnsItem" style="display:none;">
+            <div class="i-label">Returns Offset</div>
+            <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
+            <div class="i-sub">covered from premiums</div>
+        </div>
         <div class="impact-divider"></div>
         <div class="impact-item total">
             <div class="i-label">Total SI Advantage</div>
@@ -789,14 +796,14 @@ function calculate() {
 
     // ── NET P&L ──
     const diyNetPnl = diyPremiumsIn - diyTotalClaims - diyTotalReturnsCost;
-    const siNetPnl  = siRevShare - siUnprotCost - siTotalReturnsOffset;  // what merchant keeps
+    const siNetPnl  = siRevShare - siUnprotCost + siTotalReturnsOffset;  // what merchant keeps (returns offset = cost savings)
 
     // ── COMBINED IMPACT ──
     const attachLiftOrders  = Math.max(0, siProtOrders - diyProtOrders);
     const attachLiftRevenue = attachLiftOrders * siAvgP;
     const overheadSaved     = timeCost;
     const revShareGained    = siRevShare;
-    const totalAdvantage    = attachLiftRevenue + overheadSaved + revShareGained;
+    const totalAdvantage    = attachLiftRevenue + overheadSaved + revShareGained + siTotalReturnsOffset;
 
     // ── RENDER IMPACT BANNER ──
     set('imp-attachLift',    fc(attachLiftRevenue));
@@ -805,6 +812,11 @@ function calculate() {
     set('imp-overheadSub',   weeklyHours > 0 ? `${weeklyHours} hrs/wk × ${fc(hourlyRate)}/hr` : 'claims mgmt eliminated');
     set('imp-revShare',      fc(revShareGained));
     set('imp-revSharePct',   (revShareP*100).toFixed(0));
+    const showReturnsImp = returnsEnabled && siTotalReturnsOffset > 0;
+    show('imp-returnsPlusSign', showReturnsImp);
+    show('imp-returnsDivider',  showReturnsImp);
+    show('imp-returnsItem',     showReturnsImp);
+    if (showReturnsImp) set('imp-returns', fc(siTotalReturnsOffset));
     set('imp-total',         fc(totalAdvantage));
     set('imp-totalSub',      `${period} advantage vs. DIY`);
 
