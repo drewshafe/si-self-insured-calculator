@@ -636,10 +636,16 @@
 
     <!-- RETURNS OFFSET BANNER — only visible when Returns Offset is enabled -->
     <div class="impact-banner" id="impactBanner" style="display:none;">
+        <div class="impact-item">
+            <div class="i-label">Returns Cost Without SI</div>
+            <div class="i-value" id="imp-diyReturnsCost" style="color:var(--self-orange);">$0</div>
+            <div class="i-sub">you'd absorb this under DIY</div>
+        </div>
+        <div class="impact-divider"></div>
         <div class="impact-item total">
-            <div class="i-label">Returns Offset</div>
+            <div class="i-label">Covered by SI Premiums</div>
             <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
-            <div class="i-sub" id="imp-returnsSub">covered from SI premiums</div>
+            <div class="i-sub" id="imp-returnsSub">funded from premiums</div>
         </div>
     </div>
 
@@ -837,8 +843,9 @@ function calculate() {
     const showReturnsBanner = returnsEnabled && siTotalReturnsOffset > 0;
     show('impactBanner', showReturnsBanner);
     if (showReturnsBanner) {
-        set('imp-returns',    fc(siTotalReturnsOffset));
-        set('imp-returnsSub', `${period} · covered from SI premiums`);
+        set('imp-diyReturnsCost', fc(diyTotalReturnsCost));
+        set('imp-returns',        fc(siTotalReturnsOffset));
+        set('imp-returnsSub',     `${period} · funded from premiums`);
     }
 
     // ── RENDER COMPARISON TABLE ──
