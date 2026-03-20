@@ -224,6 +224,7 @@
         .ct-row:last-child { border-bottom:none; }
         .ct-row.ct-section { border-top:1px solid var(--border); background:rgba(255,255,255,0.015); }
         .ct-row.ct-dfi { background:var(--surface2); border-top:2px solid var(--border); }
+        .ct-callout { padding:8px 16px 10px; font-size:0.71em; color:var(--self-orange); line-height:1.6; background:var(--self-orange-dim); border-left:3px solid var(--self-orange); }
         .ct-cell { padding:9px 20px; font-family:'DM Mono',monospace; font-size:0.83em; }
         .ct-cell.ct-lbl { font-family:'DM Sans',sans-serif; font-size:0.77em; color:var(--muted); font-weight:500; line-height:1.35; }
         .ct-cell.ct-lbl strong { color:var(--text); font-weight:600; }
@@ -556,6 +557,9 @@
             <div class="ct-cell ct-si" id="ct-protOrders-si">—</div>
             <div class="ct-cell ct-diy" id="ct-protOrders-diy">—</div>
         </div>
+        <div class="ct-callout" id="ct-attachCallout" style="display:none;">
+            &#42; <strong><span id="ct-attachGapPct">0</span>% lower DIY adoption</strong> driven by: (1) Self-insure won't appear in the Shop App, reducing adoption by ~2.5% and compounding over time. (2) Tech burdens — Shopify changes, theme adjustments, continuous testing — account for ~2%.
+        </div>
 
         <!-- Claims -->
         <div class="ct-row ct-section">
@@ -887,6 +891,9 @@ function calculate() {
     set('ct-attach-diy',         (selfAttachP * 100).toFixed(1) + '%');
     set('ct-protOrders-si',      fn(Math.round(siProtOrders)));
     set('ct-protOrders-diy',     fn(Math.round(diyProtOrders)));
+    const attachGap = (siAttachP - selfAttachP) * 100;
+    show('ct-attachCallout', attachGap > 0);
+    if (attachGap > 0) set('ct-attachGapPct', attachGap.toFixed(1).replace(/\.0$/, ''));
     set('ct-premPerOrder-si',    fcc(siAvgP));
     set('ct-premPerOrder-diy',   fcc(diyAvgP));
     set('ct-revSharePct-si',     (revShareP * 100).toFixed(0) + '% (' + revShareType + ')');
