@@ -286,7 +286,7 @@
             <label>Timeframe</label>
             <select id="timeframe">
                 <option value="monthly">Monthly</option>
-                <option value="annual">Annual</option>
+                <option value="annual" selected>Annual</option>
             </select>
         </div>
         <button class="btn-share" id="generateLink">📋 Share Link</button>
@@ -341,7 +341,56 @@
 
         <div class="vdiv"></div>
 
-        <!-- COL 2: DIY -->
+        <!-- COL 2: ShipInsure -->
+        <div class="inputs-col">
+            <div class="col-tag si">ShipInsure</div>
+            <div class="col-heading">ShipInsure Program</div>
+            <div class="frow">
+                <div class="field">
+                    <label>Pricing Template</label>
+                    <select id="siTemplate">
+                        <option value="percentage">%-Based</option>
+                        <option value="1.5_accurate">1.5% Acc</option>
+                        <option value="2_accurate">2% Acc</option>
+                        <option value="2_round_50">2% Round</option>
+                        <option value="2.5_accurate">2.5% Acc</option>
+                        <option value="3_accurate">3% Acc</option>
+                        <option value="3.5_accurate">3.5% Acc</option>
+                        <option value="static_1.50_300_2.00">Static $1.50/$2</option>
+                        <option value="flat_1.50">Flat $1.50</option>
+                        <option value="flat_5.95">Flat $5.95</option>
+                        <option value="2_flat_0.98">2% Min $0.98</option>
+                        <option value="3_accurate_100_1.95">3% Min $1.95</option>
+                        <option value="3.25_1.55">3.25% Min $1.55</option>
+                        <option value="2.5_1.95">2.5% Min $1.95</option>
+                        <option value="born_primitive">Born Prim</option>
+                        <option value="og_6.5_19.99_3">OG 6.5%/$19.99/3%</option>
+                    </select>
+                </div>
+                <div class="field" id="siPctField">
+                    <label>Premium %</label>
+                    <div class="iw"><input type="text" id="siPremiumPct" value="3.00" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+            </div>
+            <div class="frow">
+                <div class="field">
+                    <label>Projected Attach Rate %</label>
+                    <div class="iw"><input type="text" id="siAttach" value="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+                <div class="field">
+                    <label style="display:flex;align-items:center;gap:8px;">Rev Share % <select id="revShareType" class="inline-select"><option value="gross">Gross</option><option value="net" selected>Net</option></select></label>
+                    <div class="iw"><input type="text" id="revShare" value="30" inputmode="decimal" class="sp"><span class="suf">%</span></div>
+                </div>
+            </div>
+            <hr class="subdiv">
+            <div style="font-size:0.76em; color:var(--muted); line-height:1.55;">
+                SI proactively receives and resolves all claims directly with customers. No merchant involvement on protected orders.
+            </div>
+        </div>
+
+        <div class="vdiv"></div>
+
+        <!-- COL 3: DIY -->
         <div class="inputs-col">
             <div class="col-tag diy">DIY</div>
             <div class="col-heading">DIY Insurance Program</div>
@@ -409,55 +458,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="vdiv"></div>
-
-        <!-- COL 3: ShipInsure -->
-        <div class="inputs-col">
-            <div class="col-tag si">ShipInsure</div>
-            <div class="col-heading">ShipInsure Program</div>
-            <div class="frow">
-                <div class="field">
-                    <label>Pricing Template</label>
-                    <select id="siTemplate">
-                        <option value="percentage">%-Based</option>
-                        <option value="1.5_accurate">1.5% Acc</option>
-                        <option value="2_accurate">2% Acc</option>
-                        <option value="2_round_50">2% Round</option>
-                        <option value="2.5_accurate">2.5% Acc</option>
-                        <option value="3_accurate">3% Acc</option>
-                        <option value="3.5_accurate">3.5% Acc</option>
-                        <option value="static_1.50_300_2.00">Static $1.50/$2</option>
-                        <option value="flat_1.50">Flat $1.50</option>
-                        <option value="flat_5.95">Flat $5.95</option>
-                        <option value="2_flat_0.98">2% Min $0.98</option>
-                        <option value="3_accurate_100_1.95">3% Min $1.95</option>
-                        <option value="3.25_1.55">3.25% Min $1.55</option>
-                        <option value="2.5_1.95">2.5% Min $1.95</option>
-                        <option value="born_primitive">Born Prim</option>
-                        <option value="og_6.5_19.99_3">OG 6.5%/$19.99/3%</option>
-                    </select>
-                </div>
-                <div class="field" id="siPctField">
-                    <label>Premium %</label>
-                    <div class="iw"><input type="text" id="siPremiumPct" value="3.00" inputmode="decimal" class="sp"><span class="suf">%</span></div>
-                </div>
-            </div>
-            <div class="frow">
-                <div class="field">
-                    <label>Projected Attach Rate %</label>
-                    <div class="iw"><input type="text" id="siAttach" value="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
-                </div>
-                <div class="field">
-                    <label style="display:flex;align-items:center;gap:8px;">Rev Share % <select id="revShareType" class="inline-select"><option value="gross">Gross</option><option value="net">Net</option></select></label>
-                    <div class="iw"><input type="text" id="revShare" value="30" inputmode="decimal" class="sp"><span class="suf">%</span></div>
-                </div>
-            </div>
-            <hr class="subdiv">
-            <div style="font-size:0.76em; color:var(--muted); line-height:1.55;">
-                SI proactively receives and resolves all claims directly with customers. No merchant involvement on protected orders. Rev share on <strong style="color:var(--si-blue);">gross premiums</strong>.
-            </div>
-        </div>
     </div>
 
     <!-- RETURNS TOGGLE BAR -->
@@ -508,17 +508,6 @@
         <div class="attach-bars">
             <div>
                 <div class="ab-top">
-                    <span class="ab-label diy">DIY Current</span>
-                    <span class="ab-pct" id="ab-diyPct" style="color:var(--self-orange);">0%</span>
-                </div>
-                <div class="ab-track"><div class="ab-fill orange" id="ab-diyBar" style="width:0%;"></div></div>
-                <div class="ab-stats">
-                    <div class="ab-stat">Opt-ins: <span id="ab-diyOrders">0</span></div>
-                    <div class="ab-stat">Premiums: <span id="ab-diyPremiums">$0</span></div>
-                </div>
-            </div>
-            <div>
-                <div class="ab-top">
                     <span class="ab-label si">ShipInsure Projected</span>
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span class="lift-badge" id="ab-liftBadge" style="display:none;">↑ +0pts</span>
@@ -530,6 +519,17 @@
                     <div class="ab-stat">Opt-ins: <span id="ab-siOrders">0</span></div>
                     <div class="ab-stat">Premiums: <span id="ab-siPremiums">$0</span></div>
                     <div class="ab-stat">Additional vs. DIY: <span id="ab-extraPremiums" style="color:var(--green);">$0</span></div>
+                </div>
+            </div>
+            <div>
+                <div class="ab-top">
+                    <span class="ab-label diy">DIY Current</span>
+                    <span class="ab-pct" id="ab-diyPct" style="color:var(--self-orange);">0%</span>
+                </div>
+                <div class="ab-track"><div class="ab-fill orange" id="ab-diyBar" style="width:0%;"></div></div>
+                <div class="ab-stats">
+                    <div class="ab-stat">Opt-ins: <span id="ab-diyOrders">0</span></div>
+                    <div class="ab-stat">Premiums: <span id="ab-diyPremiums">$0</span></div>
                 </div>
             </div>
         </div>
@@ -621,7 +621,7 @@
         <!-- Claims costs -->
         <div class="ct-row ct-section">
             <div class="ct-cell ct-lbl">Claims Cost — SI Funds
-                <span class="ct-sub">claims × (AOV + shipping)</span>
+                <span class="ct-sub">claims × AOV</span>
             </div>
             <div class="ct-cell ct-red ct-bold" id="ct-claimsCostSI">—</div>
             <div class="ct-cell ct-muted">n/a</div>
@@ -705,12 +705,12 @@
             </div>
             <div class="calc-cols">
                 <div class="cb-col">
-                    <div class="cb-title diy">DIY Insurance Program</div>
-                    <div id="cb-diy"></div>
-                </div>
-                <div class="cb-col">
                     <div class="cb-title si">ShipInsure Program</div>
                     <div id="cb-si"></div>
+                </div>
+                <div class="cb-col">
+                    <div class="cb-title diy">DIY Insurance Program</div>
+                    <div id="cb-diy"></div>
                 </div>
             </div>
         </div>
@@ -885,7 +885,7 @@ function calculate() {
     // ── COMPARISON TABLE CALCS (boss model) ──
     // Claims: use total orders × claim rate (both programs see same total claim universe)
     const ctTotalClaims    = totalClaims;  // = orders × claimsP
-    const ctSiClaimsCost   = ctTotalClaims * (aov + avgShippingCost);      // SI funds full AOV+shipping
+    const ctSiClaimsCost   = ctTotalClaims * aov;                           // SI funds full AOV replacement
     const ctDiyClaimsCost  = ctTotalClaims * (cogsAmount + avgShippingCost + csPerClaim); // merchant pays COGS+ship+CS
     const ctSiPremLess     = siPremiumsIn - ctSiClaimsCost;
     const ctDiyPremLess    = diyPremiumsIn - ctDiyClaimsCost;
@@ -987,7 +987,7 @@ function calculate() {
         liftBadge.style.display = 'none';
     }
 
-    document.getElementById('ordersLabel').textContent = tf === 'annual' ? 'Annual Orders' : 'Monthly Orders';
+    // orders input is always monthly — timeframe only affects output period display
 
     // ── STORE BREAKDOWN DATA & RE-RENDER IF OPEN ──
     _breakdownData = {
@@ -1131,7 +1131,7 @@ function loadFromUrl() {
     s('claimsHours','hrs','5'); s('claimsHourlyRate','hrate','35');
     s('siTemplate','sitm','percentage');
     s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
-    s('revShare','rs','30'); s('revShareType','rst','gross'); s('timeframe','tf','monthly');
+    s('revShare','rs','30'); s('revShareType','rst','net'); s('timeframe','tf','annual');
     s('returnsCoverage','rc','portal');
     s('returnsRate','rr','8'); s('returnsPortalCost','rpc','300');
     s('returnsLabelCost','rlc','8'); s('returnsOptinRate','ror','60');
