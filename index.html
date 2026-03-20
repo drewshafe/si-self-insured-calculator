@@ -391,7 +391,7 @@
             <div class="field" style="margin-bottom:14px;">
                 <label>Claims Coverage</label>
                 <select id="siCoverageMode">
-                    <option value="protected_only" selected>Protected Claims (Opt-in)</option>
+                    <option value="protected_only" selected>Opt-in</option>
                     <option value="full_merchant">All Claims (Opt-in)</option>
                     <option value="full_no_optout">All Claims (Full Coverage)</option>
                 </select>
@@ -457,10 +457,10 @@
                 <div class="field teal">
                     <label>Returns Coverage</label>
                     <select id="returnsCoverage">
-                        <option value="portal">Returns Portal</option>
-                        <option value="labels_optin">Return Labels (Opt-in)</option>
-                        <option value="labels_all">All Return Labels</option>
-                        <option value="portal_labels">Portal + Labels (Opt-in)</option>
+                        <option value="portal_only">Offset Returns Portal Cost</option>
+                        <option value="labels_optin">Free Return Label (Opt-in Customers)</option>
+                        <option value="portal_labels_optin">Portal + Free Return Label (Opt-in)</option>
+                        <option value="labels_all">Free Return/Exchange (All Customers)</option>
                     </select>
                 </div>
                 <div class="field teal">
@@ -478,8 +478,9 @@
                 <div class="field teal" id="diyLabelScopeField" style="display:none;">
                     <label>DIY Label Scope</label>
                     <select id="diyLabelScope">
-                        <option value="optin_only" selected>Opted-in Only</option>
-                        <option value="all_customers">All Customers</option>
+                        <option value="none" selected>None (customers pay own)</option>
+                        <option value="optin_only">Merchant Covers (Opt-in)</option>
+                        <option value="all_customers">Merchant Covers (All Customers)</option>
                     </select>
                 </div>
                 <div class="field teal" id="returnsOptinRateField" style="display:none;">
@@ -813,24 +814,37 @@ function calculate() {
 
         const totalReturns   = orders * returnsRateP;
         siProtReturns = siProtOrders * returnsRateP;
-        // DIY label scope: opted-in only (default) or all customers regardless of opt-in
+        // DIY label scope: none (default — customers pay own), optin_only, or all_customers
         const diyLabelScope  = document.getElementById('diyLabelScope').value;
         const diyLabelOrders = diyLabelScope === 'all_customers' ? totalReturns : totalReturns * selfAttachP;
 
-        if (coverage === 'portal') {
+        if (coverage === 'portal_only') {
+            // SI covers portal cost from premiums; DIY pays portal; no labels involved
             diyPortalCost   = periodPortal;
             siPortalCovered = periodPortal;
         } else if (coverage === 'labels_optin') {
-            diyReturnLabelsCost   = diyLabelOrders * labelCost;
-            siReturnLabelsCovered = siProtReturns  * labelCost;
+            // SI gives opted-in customers free return labels from premiums
+            // DIY: baseline = $0 (customers pay own), unless scope overridden
+            siReturnLabelsCovered = siProtReturns * labelCost;
+            if (diyLabelScope !== 'none') {
+                diyReturnLabelsCost = diyLabelOrders * labelCost;
+            }
+        } else if (coverage === 'portal_labels_optin') {
+            // SI covers portal + labels for opted-in customers
+            // DIY: pays portal + optional labels based on scope
+            diyPortalCost   = periodPortal;
+            siPortalCovered = periodPortal;
+            siReturnLabelsCovered = siProtReturns * labelCost;
+            if (diyLabelScope !== 'none') {
+                diyReturnLabelsCost = diyLabelOrders * labelCost;
+            }
         } else if (coverage === 'labels_all') {
-            diyReturnLabelsCost   = diyLabelOrders * labelCost;
-            siReturnLabelsCovered = siProtReturns  * labelCost;
-        } else if (coverage === 'portal_labels') {
-            diyPortalCost         = periodPortal;
-            diyReturnLabelsCost   = diyLabelOrders * labelCost;
-            siPortalCovered       = periodPortal;
-            siReturnLabelsCovered = siProtReturns  * labelCost;
+            // SI covers return labels for ALL customers from premiums
+            // DIY: baseline = $0, unless scope overridden
+            siReturnLabelsCovered = totalReturns * labelCost;
+            if (diyLabelScope !== 'none') {
+                diyReturnLabelsCost = diyLabelOrders * labelCost;
+            }
         }
 
         diyTotalReturnsCost  = diyReturnLabelsCost + diyPortalCost;
@@ -974,11 +988,11 @@ function toggleSiFields() {
 }
 function toggleReturnsCoverageFields() {
     const c = document.getElementById('returnsCoverage').value;
-    show('returnsPortalCostField', ['portal','portal_labels'].includes(c));
-    const hasLabels = ['labels_optin','labels_all','portal_labels'].includes(c);
+    show('returnsPortalCostField', ['portal_only','portal_labels_optin'].includes(c));
+    const hasLabels = ['labels_optin','labels_all','portal_labels_optin'].includes(c);
     show('returnsLabelCostField',  hasLabels);
     show('diyLabelScopeField',     hasLabels);
-    show('returnsOptinRateField',  false);  // opt-in rate = SI attach rate; no separate input needed
+    show('returnsOptinRateField',  false);
 }
 
 // Returns toggle
@@ -1049,7 +1063,8 @@ document.getElementById('generateLink').addEventListener('click', () => {
         rr:     rc(document.getElementById('returnsRate').value),
         rpc:    rc(document.getElementById('returnsPortalCost').value),
         rlc:    rc(document.getElementById('returnsLabelCost').value),
-        ror:    rc(document.getElementById('returnsOptinRate').value)
+        ror:    rc(document.getElementById('returnsOptinRate').value),
+        dls:    document.getElementById('diyLabelScope').value
     });
     document.getElementById('shareableLink').value = `${location.origin}${location.pathname}?${p}`;
     document.getElementById('linkBox').classList.add('visible');
@@ -1064,27 +1079,28 @@ document.getElementById('copyLink').addEventListener('click', function() {
     });
 });
 
-// URL load
+// URL load — always applies Born Primitive defaults, overrides with URL params if present
 function loadFromUrl() {
     const p = new URLSearchParams(location.search);
-    if (!p.toString()) return;
     const s = (id, key, def='') => {
         const el = document.getElementById(id); if (!el) return;
         const v = p.get(key) !== null ? p.get(key) : def;
         if (el.tagName === 'SELECT') el.value = v;
         else el.value = id === 'orders' ? fmtC(v) : v;
     };
-    s('orders','orders'); s('aov','aov'); s('cogs','cogs');
-    s('claimsRate','cr'); s('csPerClaim','cs'); s('avgShippingCost','asc');
-    s('selfTemplate','stmpl','percentage');
-    s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
-    s('selfAttach','sa','55');
-    s('siTemplate','sitm','percentage');
-    s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
-    s('revShare','rs','30'); s('revShareType','rst','net'); s('timeframe','tf','annual');
-    s('returnsCoverage','rc','portal');
+    // Born Primitive baseline defaults
+    s('orders','orders','30000'); s('aov','aov','135'); s('cogs','cogs','38');
+    s('claimsRate','cr','0.50'); s('csPerClaim','cs','12'); s('avgShippingCost','asc','8');
+    s('selfTemplate','stmpl','born_primitive');
+    s('selfPremiumPct','spp','2.41'); s('selfPremiumFlat','spf','2.50');
+    s('selfAttach','sa','63.5');
+    s('siTemplate','sitm','born_primitive');
+    s('siPremiumPct','sipp','2.41'); s('siAttach','sia','68');
+    s('revShare','rs','85'); s('revShareType','rst','net'); s('timeframe','tf','annual');
+    s('returnsCoverage','rc','portal_only');
     s('returnsRate','rr','8'); s('returnsPortalCost','rpc','300');
     s('returnsLabelCost','rlc','8'); s('returnsOptinRate','ror','60');
+    s('diyLabelScope','dls','none');
     if (p.get('ren') === '1') {
         returnsEnabled = false; // force toggle
         document.getElementById('returnsToggleBtn').click();
