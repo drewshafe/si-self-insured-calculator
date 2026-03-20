@@ -890,8 +890,8 @@ function calculate() {
     set('ct-dfi-diy',            fc(ctDiyDFI));
 
     // ── ATTACH BARS ──
-    set('ab-diyPct',  (selfAttachP*100).toFixed(0)+'%');
-    set('ab-siPct',   (siAttachP*100).toFixed(0)+'%');
+    set('ab-diyPct',  (selfAttachP*100).toFixed(1).replace(/\.0$/,'')+'%');
+    set('ab-siPct',   (siAttachP*100).toFixed(1).replace(/\.0$/,'')+'%');
     document.getElementById('ab-diyBar').style.width = Math.min(selfAttachP*100,100)+'%';
     document.getElementById('ab-siBar').style.width  = Math.min(siAttachP*100,100)+'%';
     set('ab-diyOrders',     fn(diyProtOrders));
@@ -904,13 +904,13 @@ function calculate() {
     const liftPts = (siAttachP - selfAttachP) * 100;
     if (liftPts > 0) {
         liftBadge.style.display = 'inline-flex';
-        liftBadge.textContent = `↑ +${liftPts.toFixed(0)}pts`;
+        liftBadge.textContent = `↑ +${liftPts.toFixed(1).replace(/\.0$/,'')}pts`;
         liftBadge.style.background = 'var(--green-dim)';
         liftBadge.style.borderColor = 'var(--green)';
         liftBadge.style.color = 'var(--green)';
     } else if (liftPts < 0) {
         liftBadge.style.display = 'inline-flex';
-        liftBadge.textContent = `↓ ${liftPts.toFixed(0)}pts`;
+        liftBadge.textContent = `↓ ${liftPts.toFixed(1).replace(/\.0$/,'')}pts`;
         liftBadge.style.background = 'var(--red-dim)';
         liftBadge.style.borderColor = 'var(--red)';
         liftBadge.style.color = 'var(--red)';
