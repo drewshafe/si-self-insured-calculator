@@ -636,16 +636,10 @@
 
     <!-- RETURNS OFFSET BANNER — only visible when Returns Offset is enabled -->
     <div class="impact-banner" id="impactBanner" style="display:none;">
-        <div class="impact-item">
-            <div class="i-label">Returns Cost Without SI</div>
-            <div class="i-value" id="imp-diyReturnsCost" style="color:var(--self-orange);">$0</div>
-            <div class="i-sub">you'd absorb this under DIY</div>
-        </div>
-        <div class="impact-divider"></div>
         <div class="impact-item total">
-            <div class="i-label">Covered by SI Premiums</div>
+            <div class="i-label">Returns Offset</div>
             <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
-            <div class="i-sub" id="imp-returnsSub">funded from premiums</div>
+            <div class="i-sub" id="imp-returnsSub">covered from SI premiums</div>
         </div>
     </div>
 
@@ -780,10 +774,11 @@ function calculate() {
     // Returns — DIY pays full cost on ALL returns, SI offsets only protected returns from premiums
     let diyReturnLabelsCost = 0, diyPortalCost = 0, diyTotalReturnsCost = 0;
     let siReturnLabelsCovered = 0, siPortalCovered = 0, siTotalReturnsOffset = 0;
+    let siProtReturns = 0, returnsRateP = 0;
 
     if (returnsEnabled) {
         const coverage      = document.getElementById('returnsCoverage').value;
-        const returnsRateP  = gv('returnsRate') / 100;
+        returnsRateP = gv('returnsRate') / 100;
         const monthlyPortal = gv('returnsPortalCost');
         const labelCost     = gv('returnsLabelCost');
         const periodPortal  = monthlyPortal * mult;
@@ -791,7 +786,7 @@ function calculate() {
         // DIY: pays for ALL returns at full cost (no offset program)
         const totalReturns   = orders * returnsRateP;
         // SI: only offsets protected orders' returns from premiums
-        const siProtReturns  = siProtOrders * returnsRateP;
+        siProtReturns = siProtOrders * returnsRateP;
 
         if (coverage === 'portal') {
             // Portal is a fixed monthly cost — DIY pays it, SI covers it
@@ -842,9 +837,8 @@ function calculate() {
     const showReturnsBanner = returnsEnabled && siTotalReturnsOffset > 0;
     show('impactBanner', showReturnsBanner);
     if (showReturnsBanner) {
-        set('imp-diyReturnsCost', fc(diyTotalReturnsCost));
-        set('imp-returns',        fc(siTotalReturnsOffset));
-        set('imp-returnsSub',     `${period} · funded from premiums`);
+        set('imp-returns',    fc(siTotalReturnsOffset));
+        set('imp-returnsSub', `${period} · covered from SI premiums`);
     }
 
     // ── RENDER COMPARISON TABLE ──
@@ -931,7 +925,8 @@ function calculate() {
         siTemplate, siAvgP, siAttachP, siProtOrders, siUnprotOrders,
         siPremiumsIn, siProtClaims, siUnprotClaims, siFunded,
         revShareP, revShareType, revShareBase, siRevShare, siUnprotCost,
-        siTotalReturnsOffset, siNetPnl, returnsEnabled
+        siTotalReturnsOffset, siNetPnl, returnsEnabled,
+        siProtReturns, siReturnLabelsCovered, siPortalCovered, returnsRateP
     };
     if (document.getElementById('calcBreakdown').classList.contains('visible')) renderBreakdown();
 }
@@ -1121,10 +1116,7 @@ function renderBreakdown() {
         row('Protected Orders',       `${fn(d.orders)} × ${pct(d.selfAttachP)}`,                               fn(d.diyProtOrders)) +
         row('Premiums Collected',     `${fn(d.diyProtOrders)} × ${fcc(d.diyAvgP)}`,                           fc(d.diyPremiumsIn)) +
         row('Protected Claims',       `${fn(d.diyProtOrders)} × ${pct(d.claimsP)}`,                           `${diyProtC} claims`) +
-        row('Protected Claims Cost',  `${diyProtC} × ${fc(d.costPerClaim)}`,                                   fc(d.diyClaimsPaid)) +
-        row('Unprotected Orders',     `${fn(d.orders)} − ${fn(d.diyProtOrders)}`,                              fn(d.diyUnprotOrders)) +
-        row('Unprotected Claims',     `${fn(d.diyUnprotOrders)} × ${pct(d.claimsP)}`,                         `${diyUnprotC} claims`) +
-        row('Unprotected Claims Cost',`${diyUnprotC} × ${fc(d.costPerClaim)}`,                                 fc(d.diyUnprotCost));
+        row('Protected Claims Cost',  `${diyProtC} × ${fc(d.costPerClaim)}`,                                   fc(d.diyClaimsPaid));
     if (d.returnsEnabled && d.diyTotalReturnsCost > 0)
         diyHTML += row('Returns Cost (Out-of-Pocket)', 'portal + labels',                                      fc(d.diyTotalReturnsCost));
     const diyFormula = `${fc(d.diyPremiumsIn)} − ${fc(d.diyTotalClaims)}` +
@@ -1147,12 +1139,13 @@ function renderBreakdown() {
         row('Gross Premiums',         `${fn(d.siProtOrders)} × ${fcc(d.siAvgP)}`,                             fc(d.siPremiumsIn)) +
         row('SI-Funded Claims',       `${siProtC} claims × ${fcc(d.aov)} AOV`,                                fc(d.siFunded)) +
         row(revBaseLabel,             revBaseEq,                                                                fc(d.revShareBase)) +
-        row('Rev Share',              `${fc(d.revShareBase)} × ${pct(d.revShareP)}`,                          fc(d.siRevShare)) +
-        row('Unprotected Orders',     `${fn(d.orders)} − ${fn(d.siProtOrders)}`,                               fn(d.siUnprotOrders)) +
-        row('Unprotected Claims',     `${fn(d.siUnprotOrders)} × ${pct(d.claimsP)}`,                          `${siUnprotC} claims`) +
-        row('Unprotected Claims Cost',`${siUnprotC} × ${fc(d.costPerClaim)}`,                                  fc(d.siUnprotCost));
-    if (d.returnsEnabled && d.siTotalReturnsOffset > 0)
-        siHTML += row('Returns Offset (Savings)', 'covered by SI from premiums',                               fc(d.siTotalReturnsOffset));
+        row('Rev Share',              `${fc(d.revShareBase)} × ${pct(d.revShareP)}`,                          fc(d.siRevShare));
+    if (d.returnsEnabled && d.siTotalReturnsOffset > 0) {
+        siHTML +=
+            row('Returns Covered by Premiums', `${fn(Math.round(d.siProtOrders))} protected orders × ${pct(d.returnsRateP)} return rate`, `${Math.round(d.siProtReturns)} returns`) +
+            (d.siReturnLabelsCovered > 0 ? row('Return Labels',        'labels covered from premiums',         fc(d.siReturnLabelsCovered)) : '') +
+            (d.siPortalCovered      > 0 ? row('Return Portal Savings', 'platform cost covered from premiums',  fc(d.siPortalCovered))       : '');
+    }
     const siFormula = `${fc(d.siRevShare)} − ${fc(d.siUnprotCost)}` +
         (d.returnsEnabled && d.siTotalReturnsOffset > 0 ? ` + ${fc(d.siTotalReturnsOffset)}` : '');
     siHTML += row('Your Net w/ SI', siFormula, fc(d.siNetPnl), 'sep');
