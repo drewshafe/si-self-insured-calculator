@@ -437,31 +437,6 @@
                     <div class="iw"><input type="text" id="selfAttach" placeholder="55" inputmode="decimal" class="sp"><span class="suf">%</span></div>
                 </div>
             </div>
-            <hr class="subdiv">
-            <div class="sublabel">Claims Management (You Handle All)</div>
-            <div class="frow">
-                <div class="field orange">
-                    <label>Who Handles Claims?</label>
-                    <select id="claimsHandler">
-                        <option value="self">Merchant (internal)</option>
-                        <option value="3p">3rd Party Processor</option>
-                    </select>
-                </div>
-                <div class="field orange" id="processorFeeField" style="display:none;">
-                    <label>Processor Fee % of Premiums</label>
-                    <div class="iw"><input type="text" id="processorFee" placeholder="70" inputmode="decimal" class="sp"><span class="suf">%</span></div>
-                </div>
-            </div>
-            <div class="frow" id="overheadRow">
-                <div class="field orange">
-                    <label>Hrs/Week on Claims</label>
-                    <div class="iw"><input type="text" id="claimsHours" placeholder="5" inputmode="decimal" class="sp"><span class="suf">hrs</span></div>
-                </div>
-                <div class="field orange">
-                    <label>Avg Hourly Rate</label>
-                    <div class="iw"><span class="pre">$</span><input type="text" id="claimsHourlyRate" placeholder="35" inputmode="decimal" class="pp"></div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -663,13 +638,6 @@
         <div class="plus-sign">+</div>
         <div class="impact-divider"></div>
         <div class="impact-item">
-            <div class="i-label">Time Savings</div>
-            <div class="i-value" id="imp-overhead" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-overheadSub">claims mgmt eliminated</div>
-        </div>
-        <div class="plus-sign">+</div>
-        <div class="impact-divider"></div>
-        <div class="impact-item">
             <div class="i-label">Rev Share Gained</div>
             <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
             <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
@@ -785,12 +753,6 @@ function calculate() {
     // ── DIY ──
     const selfTemplate  = document.getElementById('selfTemplate').value;
     const selfAttachP   = gv('selfAttach') / 100;
-    const claimsHandler = document.getElementById('claimsHandler').value;
-    const processorFeeP = gv('processorFee') / 100;
-    const weeklyHours   = gv('claimsHours');
-    const hourlyRate    = gv('claimsHourlyRate');
-    const monthlyTimeCost = weeklyHours * hourlyRate * 4.33;
-    const timeCost      = monthlyTimeCost * mult;
 
     const diyAvgP         = getAvgPremium(aov, selfTemplate, gv('selfPremiumPct'), gv('selfPremiumFlat'));
     const diyProtOrders   = orders * selfAttachP;
@@ -799,14 +761,7 @@ function calculate() {
     const diyProtClaims   = diyProtOrders * claimsP;
     const diyUnprotClaims = diyUnprotOrders * claimsP;
 
-    let diyClaimsPaid, processorAmt;
-    if (claimsHandler === 'self') {
-        diyClaimsPaid = diyProtClaims * costPerClaim;
-        processorAmt  = 0;
-    } else {
-        processorAmt  = diyPremiumsIn * processorFeeP;
-        diyClaimsPaid = processorAmt;
-    }
+    const diyClaimsPaid = diyProtClaims * costPerClaim;
     const diyUnprotCost   = diyUnprotClaims * costPerClaim;
     const diyTotalClaims  = diyClaimsPaid + diyUnprotCost;
     // DIY resolves ALL claims (protected + unprotected)
@@ -893,16 +848,12 @@ function calculate() {
     // ── COMBINED IMPACT ──
     const attachLiftOrders  = Math.max(0, siProtOrders - diyProtOrders);
     const attachLiftRevenue = attachLiftOrders * siAvgP;
-    const siTimeFraction    = totalClaims > 0 ? siUnprotClaims / totalClaims : 0;
-    const overheadSaved     = timeCost * (1 - siTimeFraction);
     const revShareGained    = siRevShare;
-    const totalAdvantage    = attachLiftRevenue + overheadSaved + revShareGained + siTotalReturnsOffset;
+    const totalAdvantage    = attachLiftRevenue + revShareGained + siTotalReturnsOffset;
 
     // ── RENDER IMPACT BANNER ──
     set('imp-attachLift',    fc(attachLiftRevenue));
     set('imp-attachLiftSub', `${fn(attachLiftOrders)} more opt-in orders`);
-    set('imp-overhead',      fc(overheadSaved));
-    set('imp-overheadSub',   weeklyHours > 0 ? `${weeklyHours} hrs/wk × ${fc(hourlyRate)}/hr` : 'claims mgmt eliminated');
     set('imp-revShare',      fc(revShareGained));
     set('imp-revSharePct',   (revShareP*100).toFixed(0));
     const showReturnsImp = returnsEnabled && siTotalReturnsOffset > 0;
@@ -1011,11 +962,6 @@ function toggleSelfFields() {
 function toggleSiFields() {
     show('siPctField', document.getElementById('siTemplate').value === 'percentage');
 }
-function toggleProcessorField() {
-    const is3p = document.getElementById('claimsHandler').value === '3p';
-    show('processorFeeField', is3p);
-    show('overheadRow', !is3p);
-}
 function toggleReturnsCoverageFields() {
     const c = document.getElementById('returnsCoverage').value;
     show('returnsPortalCostField', ['portal','portal_labels'].includes(c));
@@ -1061,7 +1007,6 @@ document.querySelectorAll('input[type="text"]').forEach(inp => {
 document.getElementById('timeframe').addEventListener('change', calculate);
 document.getElementById('selfTemplate').addEventListener('change', () => { toggleSelfFields(); calculate(); });
 document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
-document.getElementById('claimsHandler').addEventListener('change', () => { toggleProcessorField(); calculate(); });
 document.getElementById('returnsCoverage').addEventListener('change', () => { toggleReturnsCoverageFields(); calculate(); });
 document.getElementById('revShareType').addEventListener('change', calculate);
 document.getElementById('avgShippingCost').addEventListener('input', calculate);
@@ -1079,10 +1024,6 @@ document.getElementById('generateLink').addEventListener('click', () => {
         spp:    rc(document.getElementById('selfPremiumPct').value),
         spf:    rc(document.getElementById('selfPremiumFlat').value),
         sa:     rc(document.getElementById('selfAttach').value),
-        ch:     document.getElementById('claimsHandler').value,
-        pf:     rc(document.getElementById('processorFee').value),
-        hrs:    rc(document.getElementById('claimsHours').value),
-        hrate:  rc(document.getElementById('claimsHourlyRate').value),
         sitm:   document.getElementById('siTemplate').value,
         sipp:   rc(document.getElementById('siPremiumPct').value),
         sia:    rc(document.getElementById('siAttach').value),
@@ -1124,8 +1065,6 @@ function loadFromUrl() {
     s('selfTemplate','stmpl','percentage');
     s('selfPremiumPct','spp','3.00'); s('selfPremiumFlat','spf','2.50');
     s('selfAttach','sa','55');
-    s('claimsHandler','ch','self'); s('processorFee','pf','70');
-    s('claimsHours','hrs','5'); s('claimsHourlyRate','hrate','35');
     s('siTemplate','sitm','percentage');
     s('siPremiumPct','sipp','3.00'); s('siAttach','sia','60');
     s('revShare','rs','30'); s('revShareType','rst','net'); s('timeframe','tf','annual');
@@ -1141,7 +1080,6 @@ function loadFromUrl() {
 loadFromUrl();
 toggleSelfFields();
 toggleSiFields();
-toggleProcessorField();
 toggleReturnsCoverageFields();
 calculate();
 
