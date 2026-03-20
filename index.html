@@ -634,32 +634,18 @@
         </div><!-- /comparisonTableBody -->
     </div>
 
-    <!-- COMBINED IMPACT BANNER -->
-    <div class="impact-banner">
+    <!-- RETURNS OFFSET BANNER — only visible when Returns Offset is enabled -->
+    <div class="impact-banner" id="impactBanner" style="display:none;">
         <div class="impact-item">
-            <div class="i-label">Attach Lift Revenue</div>
-            <div class="i-value" id="imp-attachLift" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub" id="imp-attachLiftSub">more opt-in orders</div>
-        </div>
-        <div class="plus-sign">+</div>
-        <div class="impact-divider"></div>
-        <div class="impact-item">
-            <div class="i-label">Rev Share Gained</div>
-            <div class="i-value" id="imp-revShare" style="color:var(--si-blue);">$0</div>
-            <div class="i-sub">gross premiums × <span id="imp-revSharePct">30</span>%</div>
-        </div>
-        <div class="plus-sign" id="imp-returnsPlusSign" style="display:none;">+</div>
-        <div class="impact-divider" id="imp-returnsDivider" style="display:none;"></div>
-        <div class="impact-item" id="imp-returnsItem" style="display:none;">
-            <div class="i-label">Returns Offset</div>
-            <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
-            <div class="i-sub">covered from premiums</div>
+            <div class="i-label">Returns Cost Without SI</div>
+            <div class="i-value" id="imp-diyReturnsCost" style="color:var(--self-orange);">$0</div>
+            <div class="i-sub">you'd absorb this under DIY</div>
         </div>
         <div class="impact-divider"></div>
         <div class="impact-item total">
-            <div class="i-label">Total SI Advantage</div>
-            <div class="i-value" id="imp-total">$0</div>
-            <div class="i-sub" id="imp-totalSub">vs. DIY program</div>
+            <div class="i-label">Covered by SI Premiums</div>
+            <div class="i-value" id="imp-returns" style="color:var(--teal);">$0</div>
+            <div class="i-sub" id="imp-returnsSub">funded from premiums</div>
         </div>
     </div>
 
@@ -851,24 +837,14 @@ function calculate() {
     const ctSiDFI          = siRevShare + ctSiClaimsCost;
     const ctDiyDFI         = Math.max(0, ctDiyPremLess);
 
-    // ── COMBINED IMPACT ──
-    const attachLiftOrders  = Math.max(0, siProtOrders - diyProtOrders);
-    const attachLiftRevenue = attachLiftOrders * siAvgP;
-    const revShareGained    = siRevShare;
-    const totalAdvantage    = attachLiftRevenue + revShareGained + siTotalReturnsOffset;
-
-    // ── RENDER IMPACT BANNER ──
-    set('imp-attachLift',    fc(attachLiftRevenue));
-    set('imp-attachLiftSub', `${fn(attachLiftOrders)} more opt-in orders`);
-    set('imp-revShare',      fc(revShareGained));
-    set('imp-revSharePct',   (revShareP*100).toFixed(0));
-    const showReturnsImp = returnsEnabled && siTotalReturnsOffset > 0;
-    show('imp-returnsPlusSign', showReturnsImp);
-    show('imp-returnsDivider',  showReturnsImp);
-    show('imp-returnsItem',     showReturnsImp);
-    if (showReturnsImp) set('imp-returns', fc(siTotalReturnsOffset));
-    set('imp-total',         fc(totalAdvantage));
-    set('imp-totalSub',      `${period} advantage vs. DIY`);
+    // ── RENDER RETURNS OFFSET BANNER (only when enabled) ──
+    const showReturnsBanner = returnsEnabled && siTotalReturnsOffset > 0;
+    show('impactBanner', showReturnsBanner);
+    if (showReturnsBanner) {
+        set('imp-diyReturnsCost', fc(diyTotalReturnsCost));
+        set('imp-returns',        fc(siTotalReturnsOffset));
+        set('imp-returnsSub',     `${period} · funded from premiums`);
+    }
 
     // ── RENDER COMPARISON TABLE ──
     const periodLbl = tf === 'annual' ? 'annual' : 'monthly';
