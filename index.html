@@ -475,6 +475,13 @@
                     <label>Avg Return Label Cost</label>
                     <div class="iw"><span class="pre">$</span><input type="text" id="returnsLabelCost" placeholder="8" inputmode="decimal" class="pp"></div>
                 </div>
+                <div class="field teal" id="diyLabelScopeField" style="display:none;">
+                    <label>DIY Label Scope</label>
+                    <select id="diyLabelScope">
+                        <option value="optin_only" selected>Opted-in Only</option>
+                        <option value="all_customers">All Customers</option>
+                    </select>
+                </div>
                 <div class="field teal" id="returnsOptinRateField" style="display:none;">
                     <label>Return Label Opt-in Rate %</label>
                     <div class="iw"><input type="text" id="returnsOptinRate" placeholder="60" inputmode="decimal" class="sp"><span class="suf">%</span></div>
@@ -804,28 +811,26 @@ function calculate() {
         const labelCost     = gv('returnsLabelCost');
         const periodPortal  = monthlyPortal * mult;
 
-        // DIY: pays for ALL returns at full cost (no offset program)
         const totalReturns   = orders * returnsRateP;
-        // SI: only offsets protected orders' returns from premiums
         siProtReturns = siProtOrders * returnsRateP;
+        // DIY label scope: opted-in only (default) or all customers regardless of opt-in
+        const diyLabelScope  = document.getElementById('diyLabelScope').value;
+        const diyLabelOrders = diyLabelScope === 'all_customers' ? totalReturns : totalReturns * selfAttachP;
 
         if (coverage === 'portal') {
-            // Portal is a fixed monthly cost — DIY pays it, SI covers it
             diyPortalCost   = periodPortal;
             siPortalCovered = periodPortal;
         } else if (coverage === 'labels_optin') {
-            // Opt-in = SI attach rate; DIY scoped by DIY attach, SI covers all protected returns
-            diyReturnLabelsCost   = totalReturns  * selfAttachP * labelCost;
-            siReturnLabelsCovered = siProtReturns * labelCost;
+            diyReturnLabelsCost   = diyLabelOrders * labelCost;
+            siReturnLabelsCovered = siProtReturns  * labelCost;
         } else if (coverage === 'labels_all') {
-            // All return labels: DIY pays for all returns, SI covers protected returns
-            diyReturnLabelsCost   = totalReturns  * labelCost;
-            siReturnLabelsCovered = siProtReturns * labelCost;
+            diyReturnLabelsCost   = diyLabelOrders * labelCost;
+            siReturnLabelsCovered = siProtReturns  * labelCost;
         } else if (coverage === 'portal_labels') {
             diyPortalCost         = periodPortal;
-            diyReturnLabelsCost   = totalReturns  * selfAttachP * labelCost;
+            diyReturnLabelsCost   = diyLabelOrders * labelCost;
             siPortalCovered       = periodPortal;
-            siReturnLabelsCovered = siProtReturns * labelCost;
+            siReturnLabelsCovered = siProtReturns  * labelCost;
         }
 
         diyTotalReturnsCost  = diyReturnLabelsCost + diyPortalCost;
@@ -970,7 +975,9 @@ function toggleSiFields() {
 function toggleReturnsCoverageFields() {
     const c = document.getElementById('returnsCoverage').value;
     show('returnsPortalCostField', ['portal','portal_labels'].includes(c));
-    show('returnsLabelCostField',  ['labels_optin','labels_all','portal_labels'].includes(c));
+    const hasLabels = ['labels_optin','labels_all','portal_labels'].includes(c);
+    show('returnsLabelCostField',  hasLabels);
+    show('diyLabelScopeField',     hasLabels);
     show('returnsOptinRateField',  false);  // opt-in rate = SI attach rate; no separate input needed
 }
 
@@ -1014,6 +1021,7 @@ document.getElementById('selfTemplate').addEventListener('change', () => { toggl
 document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
 document.getElementById('siCoverageMode').addEventListener('change', calculate);
 document.getElementById('returnsCoverage').addEventListener('change', () => { toggleReturnsCoverageFields(); calculate(); });
+document.getElementById('diyLabelScope').addEventListener('change', calculate);
 document.getElementById('revShareType').addEventListener('change', calculate);
 document.getElementById('avgShippingCost').addEventListener('input', calculate);
 
