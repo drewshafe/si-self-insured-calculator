@@ -1162,30 +1162,28 @@ function renderBreakdown() {
     const diyProtC = Math.round(d.diyProtClaims);
     const diyUnprotC = Math.round(d.diyUnprotClaims);
     let diyHTML =
-        row('Pricing Template',       '',                                                                       tName(d.selfTemplate)) +
-        row('Avg Premium',            `${tName(d.selfTemplate)} @ ${fcc(d.aov)}`,                              fcc(d.diyAvgP)) +
+        row('Avg Premium',            `AOV @ ${fc(d.aov)}`,                                                    fcc(d.diyAvgP)) +
         row('Attach Rate',            '',                                                                       pct(d.selfAttachP)) +
         row('Protected Orders',       `${fn(d.orders)} × ${pct(d.selfAttachP)}`,                               fn(d.diyProtOrders)) +
-        row('Premiums Collected',     `${fn(d.diyProtOrders)} × ${fcc(d.diyAvgP)}`,                           fc(d.diyPremiumsIn)) +
+        row('Gross Premiums',         `${fn(d.diyProtOrders)} × ${fcc(d.diyAvgP)}`,                           fc(d.diyPremiumsIn)) +
         row('Protected Claims',       `${fn(d.diyProtOrders)} × ${pct(d.claimsP)}`,                           `${diyProtC} claims`) +
         row('Protected Claims Cost',  `${diyProtC} × ${fc(d.costPerClaim)}`,                                   fc(d.diyClaimsPaid));
     if (d.returnsEnabled && d.diyTotalReturnsCost > 0)
         diyHTML += row('Returns Cost (Out-of-Pocket)', 'portal + labels',                                      fc(d.diyTotalReturnsCost));
-    const diyFormula = `${fc(d.diyPremiumsIn)} − ${fc(d.diyTotalClaims)}` +
+    const diyDFIFormula = `${fn(diyProtC)} claims × (${fcc(d.cogsAmount)} + ${fcc(d.csPerClaim)} + ${fcc(d.avgShippingCost)})` +
         (d.returnsEnabled && d.diyTotalReturnsCost > 0 ? ` − ${fc(d.diyTotalReturnsCost)}` : '');
-    diyHTML += row('DIY Net P&L', diyFormula, fc(d.diyNetPnl), 'sep');
+    diyHTML += row('Direct Financial Impact', diyDFIFormula, fc(d.ctDiyDFI), 'sep');
     document.getElementById('cb-diy').innerHTML = diyHTML;
 
     // SI
     const siProtC  = Math.round(d.siProtClaims);
     const siUnprotC = Math.round(d.siUnprotClaims);
-    const revBaseLabel = d.revShareType === 'net' ? 'Rev Share Base (Net)' : 'Rev Share Base (Gross)';
+    const revBaseLabel = d.revShareType === 'net' ? 'Premiums Less Claims' : 'Rev Share Base (Gross)';
     const revBaseEq    = d.revShareType === 'net'
         ? `${fc(d.siPremiumsIn)} − ${fc(d.siFunded)} − ${fc(d.siTotalReturnsOffset)}`
         : 'Gross premiums';
     let siHTML =
-        row('Pricing Template',       '',                                                                       tName(d.siTemplate)) +
-        row('Avg Premium',            `${tName(d.siTemplate)} @ ${fcc(d.aov)}`,                                fcc(d.siAvgP)) +
+        row('Avg Premium',            `AOV @ ${fc(d.aov)}`,                                                    fcc(d.siAvgP)) +
         row('Projected Attach',       '',                                                                       pct(d.siAttachP)) +
         row('Protected Orders',       `${fn(d.orders)} × ${pct(d.siAttachP)}`,                                 fn(d.siProtOrders)) +
         row('Gross Premiums',         `${fn(d.siProtOrders)} × ${fcc(d.siAvgP)}`,                             fc(d.siPremiumsIn)) +
@@ -1198,9 +1196,9 @@ function renderBreakdown() {
             (d.siReturnLabelsCovered > 0 ? row('Return Labels',        'labels covered from premiums',         fc(d.siReturnLabelsCovered)) : '') +
             (d.siPortalCovered      > 0 ? row('Return Portal Savings', 'platform cost covered from premiums',  fc(d.siPortalCovered))       : '');
     }
-    const siFormula = `${fc(d.siRevShare)} − ${fc(d.siUnprotCost)}` +
+    const siDFIFormula = `${fc(d.ctSiClaimsCost)} + ${fc(d.siRevShare)}` +
         (d.returnsEnabled && d.siTotalReturnsOffset > 0 ? ` + ${fc(d.siTotalReturnsOffset)}` : '');
-    siHTML += row('Your Net w/ SI', siFormula, fc(d.siNetPnl), 'sep');
+    siHTML += row('Direct Financial Impact', siDFIFormula, fc(d.ctSiDFI), 'sep');
     document.getElementById('cb-si').innerHTML = siHTML;
 }
 </script>
