@@ -387,6 +387,14 @@
             <div style="font-size:0.76em; color:var(--muted); line-height:1.55; margin-bottom:12px;">
                 SI proactively receives and resolves all claims directly with customers. No merchant involvement on protected orders.
             </div>
+            <div class="field" style="margin-bottom:14px;">
+                <label>Claims Coverage</label>
+                <select id="siCoverageMode">
+                    <option value="protected_only" selected>Protected Orders Only</option>
+                    <option value="full_merchant">Full Coverage (Merchant Funded)</option>
+                    <option value="full_no_optout">Full Coverage (No Opt-Out)</option>
+                </select>
+            </div>
             <button class="returns-toggle-btn" id="returnsToggleBtn" style="font-size:0.72em; padding:7px 13px;">
                 <span id="returnsToggleIcon">＋</span> Returns Offset
             </button>
@@ -556,7 +564,7 @@
             <div class="ct-cell ct-val" id="ct-claimRate-diy">—</div>
         </div>
         <div class="ct-row">
-            <div class="ct-cell ct-lbl">Claims <span id="ct-claimsPeriodLabel" style="font-size:0.82em;color:var(--border);">(monthly)</span></div>
+            <div class="ct-cell ct-lbl"><span id="ct-claimsLabel">Protected Claims</span> <span id="ct-claimsPeriodLabel" style="font-size:0.82em;color:var(--border);">(monthly)</span></div>
             <div class="ct-cell ct-val" id="ct-claims-si">—</div>
             <div class="ct-cell ct-val" id="ct-claims-diy">—</div>
         </div>
@@ -760,20 +768,23 @@ function calculate() {
     const diyClaimsResolved = Math.round(totalClaims);
 
     // ── SI ──
+    const siCoverageMode = document.getElementById('siCoverageMode').value;
+    const isFullCoverage = siCoverageMode !== 'protected_only';
     const siTemplate    = document.getElementById('siTemplate').value;
     const siAttachP     = gv('siAttach') / 100;
     const revShareP     = gv('revShare') / 100;
     const revShareType  = document.getElementById('revShareType').value;
 
     const siAvgP         = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), 0);
-    const siProtOrders   = orders * siAttachP;
+    // full_no_optout = all orders enrolled (100% effective attach for premiums + claims)
+    const siProtOrders   = siCoverageMode === 'full_no_optout' ? orders : orders * siAttachP;
     const siUnprotOrders = orders - siProtOrders;
     const siPremiumsIn   = siProtOrders * siAvgP;
     const siProtClaims   = siProtOrders * claimsP;
     const siUnprotClaims = siUnprotOrders * claimsP;
-    const siFunded       = siProtClaims * aov;
+    // full coverage: SI funds ALL claims from premiums; protected only: SI funds opted-in claims
+    const siFunded       = isFullCoverage ? totalClaims * aov : siProtClaims * aov;
     const siUnprotCost   = siUnprotClaims * costPerClaim;
-    // Merchant only handles unprotected claims
     const siClaimsResolved = Math.round(siUnprotClaims);
 
     // ── RETURNS ── (calculated before rev share so net base is available)
@@ -827,11 +838,12 @@ function calculate() {
     const diyNetPnl = diyPremiumsIn - diyTotalClaims - diyTotalReturnsCost;
     const siNetPnl  = siRevShare - siUnprotCost + siTotalReturnsOffset;  // what merchant keeps (returns offset = cost savings)
 
-    // ── COMPARISON TABLE CALCS (boss model) ──
-    // Claims: use total orders × claim rate (both programs see same total claim universe)
-    const ctTotalClaims    = totalClaims;  // = orders × claimsP
-    const ctSiClaimsCost   = ctTotalClaims * aov;                           // SI funds full AOV replacement
-    const ctDiyClaimsCost  = ctTotalClaims * (cogsAmount + avgShippingCost + csPerClaim); // merchant pays COGS+ship+CS
+    // ── COMPARISON TABLE CALCS ──
+    // Coverage mode determines which claims universe each column reflects
+    const ctSiClaims       = isFullCoverage ? totalClaims : siProtClaims;
+    const ctDiyClaims      = isFullCoverage ? totalClaims : diyProtClaims;
+    const ctSiClaimsCost   = ctSiClaims * aov;
+    const ctDiyClaimsCost  = ctDiyClaims * (cogsAmount + avgShippingCost + csPerClaim);
     const ctSiPremLess     = siPremiumsIn - ctSiClaimsCost;
     const ctDiyPremLess    = diyPremiumsIn - ctDiyClaimsCost;
     // DFI: SI = rev share + SI-funded claims + returns covered from premiums
@@ -861,8 +873,9 @@ function calculate() {
     set('ct-gmv-diy',            fc(gmv));
     set('ct-claimRate-si',       (claimsP * 100).toFixed(2) + '%');
     set('ct-claimRate-diy',      (claimsP * 100).toFixed(2) + '%');
-    set('ct-claims-si',          fn(Math.round(ctTotalClaims)));
-    set('ct-claims-diy',         fn(Math.round(ctTotalClaims)));
+    set('ct-claimsLabel',        isFullCoverage ? 'Total Claims' : 'Protected Claims');
+    set('ct-claims-si',          fn(Math.round(ctSiClaims)));
+    set('ct-claims-diy',         fn(Math.round(ctDiyClaims)));
     set('ct-cogs-si',            fcc(cogsAmount));
     set('ct-cogs-diy',           fcc(cogsAmount));
     set('ct-ticket-si',          fcc(csPerClaim));
@@ -992,6 +1005,7 @@ document.querySelectorAll('input[type="text"]').forEach(inp => {
 document.getElementById('timeframe').addEventListener('change', calculate);
 document.getElementById('selfTemplate').addEventListener('change', () => { toggleSelfFields(); calculate(); });
 document.getElementById('siTemplate').addEventListener('change', () => { toggleSiFields(); calculate(); });
+document.getElementById('siCoverageMode').addEventListener('change', calculate);
 document.getElementById('returnsCoverage').addEventListener('change', () => { toggleReturnsCoverageFields(); calculate(); });
 document.getElementById('revShareType').addEventListener('change', calculate);
 document.getElementById('avgShippingCost').addEventListener('input', calculate);
