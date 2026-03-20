@@ -833,9 +833,10 @@ function calculate() {
     const ctDiyClaimsCost  = ctTotalClaims * (cogsAmount + avgShippingCost + csPerClaim); // merchant pays COGS+ship+CS
     const ctSiPremLess     = siPremiumsIn - ctSiClaimsCost;
     const ctDiyPremLess    = diyPremiumsIn - ctDiyClaimsCost;
-    // DFI: SI = rev share cash + value of SI-funded claims; DIY = net premiums kept
-    const ctSiDFI          = siRevShare + ctSiClaimsCost;
-    const ctDiyDFI         = Math.max(0, ctDiyPremLess);
+    // DFI: SI = rev share + SI-funded claims + returns covered from premiums
+    //      DIY = net premiums kept minus returns platform/label costs
+    const ctSiDFI          = siRevShare + ctSiClaimsCost + siTotalReturnsOffset;
+    const ctDiyDFI         = Math.max(0, ctDiyPremLess - diyTotalReturnsCost);
 
     // ── RENDER RETURNS OFFSET BANNER (only when enabled) ──
     const showReturnsBanner = returnsEnabled && siTotalReturnsOffset > 0;
