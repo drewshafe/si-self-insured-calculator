@@ -306,7 +306,7 @@
 
         <!-- COL 1: Shared -->
         <div class="inputs-col">
-            <div class="col-tag shared">Shared Inputs</div>
+            <div class="col-tag shared">Merchant Inputs</div>
             <div class="col-heading">Business Baseline</div>
             <div class="frow">
                 <div class="field">
@@ -595,13 +595,19 @@
             <div class="ct-cell ct-diy ct-bold" id="ct-premiums-diy">—</div>
         </div>
 
-        <!-- Claims costs — single row, both programs shown for direct comparison -->
+        <!-- Claims costs — separate rows per program -->
         <div class="ct-row ct-section">
-            <div class="ct-cell ct-lbl"><strong>Claims Resolved from Premiums</strong>
+            <div class="ct-cell ct-lbl">Claims Resolved from Premiums
                 <span class="ct-sub" style="color:var(--si-blue-light);">SI: claims × AOV (full replacement)</span>
-                <span class="ct-sub" style="color:var(--self-orange);">DIY: claims × COGS + ship + CS</span>
             </div>
             <div class="ct-cell ct-red ct-bold" id="ct-claimsCostSI">—</div>
+            <div class="ct-cell ct-val">—</div>
+        </div>
+        <div class="ct-row ct-section">
+            <div class="ct-cell ct-lbl">Claims Resolved from Premiums
+                <span class="ct-sub" style="color:var(--self-orange);">DIY: claims × COGS + ship + CS</span>
+            </div>
+            <div class="ct-cell ct-val">—</div>
             <div class="ct-cell ct-red ct-bold" id="ct-claimsCostDIY">—</div>
         </div>
 
@@ -665,7 +671,7 @@
         </button>
         <div class="calc-body" id="calcBreakdown">
             <div class="calc-shared-wrap">
-                <div class="cb-title shared">Shared Inputs &amp; Derived Values</div>
+                <div class="cb-title shared">Merchant Inputs &amp; Derived Values</div>
                 <div id="cb-shared"></div>
             </div>
             <div class="calc-cols">
