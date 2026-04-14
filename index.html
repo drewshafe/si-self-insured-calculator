@@ -629,7 +629,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="adv-item"><div class="adv-item-label">SI Total Value</div><div class="adv-item-val" style="color:var(--si-blue);" id="ap-siTotal">—</div></div>
       <div class="adv-item"><div class="adv-item-label">Competitor Value</div><div class="adv-item-val" style="color:var(--comp);" id="ap-compTotal">—</div></div>
       <div class="adv-item"><div class="adv-item-label">Attach Difference</div><div class="adv-item-val" id="ap-attachDiff">—</div></div>
-      <div class="adv-item"><div class="adv-item-label">SI Rev Share</div><div class="adv-item-val" style="color:var(--green);" id="ap-siRevShare">—</div></div>
+      <div class="adv-item"><div class="adv-item-label">Gross Premium Diff</div><div class="adv-item-val" id="ap-grossPremDiff">—</div></div>
     </div>
   </div>
 
@@ -1056,7 +1056,12 @@ function calculateAnotherProvider() {
   set('ap-compName', compProvider);
   set('ap-siTotal', fc(siTotalValue));
   set('ap-compTotal', fc(compTotalValue));
-  set('ap-siRevShare', fc(siRevShare));
+  const grossPremDiff = siPremiumsIn - compPremiumsIn;
+  const grossPremDiffEl = document.getElementById('ap-grossPremDiff');
+  if (grossPremDiffEl) {
+    grossPremDiffEl.textContent = (grossPremDiff >= 0 ? '+' : '') + fc(grossPremDiff);
+    grossPremDiffEl.style.color = grossPremDiff >= 0 ? 'var(--si-blue)' : 'var(--muted)';
+  }
 
   const attachDiff = (siAttachP - compAttachP) * 100;
   const attachDiffEl = document.getElementById('ap-attachDiff');
