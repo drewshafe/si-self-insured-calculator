@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ShipInsure | Self-Insure vs. ShipInsure Calculator</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/drewshafe/si-roi-calculator/main/si_lock.png">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -24,7 +25,7 @@ body {
   gap: 12px; flex-wrap: wrap; justify-content: space-between;
 }
 .logo-area { display:flex; align-items:center; gap:10px; flex-shrink:0; cursor:pointer; user-select:none; }
-.logo-img { height:26px; }
+.logo-img { height:42px; }
 .app-title { font-size:1em; font-weight:700; color:white; white-space:nowrap; }
 .app-sub { font-size:0.72em; color:rgba(255,255,255,0.75); white-space:nowrap; }
 .ctrl-group {
@@ -177,6 +178,28 @@ body {
 .ret-btn.active { background:#14a596; color:white; }
 .returns-section { display:none; }
 .returns-section.visible { display:block; }
+.cb-btn {
+  display:inline-flex; align-items:center; gap:5px; padding:6px 12px;
+  font-size:0.78em; font-weight:600; border:1.5px solid #d63384; border-radius:6px;
+  background:white; color:#d63384; cursor:pointer; white-space:nowrap;
+}
+.cb-btn.active { background:#d63384; color:white; }
+.cashback-section { display:none; }
+.cashback-section.visible { display:block; }
+.gr-btn {
+  display:inline-flex; align-items:center; gap:5px; padding:6px 12px;
+  font-size:0.78em; font-weight:600; border:1.5px solid #764ba2; border-radius:6px;
+  background:white; color:#764ba2; cursor:pointer; white-space:nowrap;
+}
+.gr-btn.active { background:#764ba2; color:white; }
+.guarantee-section { display:none; }
+.guarantee-section.visible { display:block; }
+.ig.accent-pink input, .ig.accent-pink select { border-color:#f0a9cd; }
+.ig.accent-pink input:focus, .ig.accent-pink select:focus { border-color:#d63384; box-shadow:0 0 0 2px rgba(214,51,132,0.12); }
+.ig.accent-purple input, .ig.accent-purple select { border-color:#c3a9e0; }
+.ig.accent-purple input:focus, .ig.accent-purple select:focus { border-color:#764ba2; box-shadow:0 0 0 2px rgba(118,75,162,0.12); }
+.input-section-label.lbl-pink   { color:#d63384; }
+.input-section-label.lbl-purple { color:#764ba2; }
 
 /* Primary button */
 .btn-gen {
@@ -271,7 +294,7 @@ body {
   <!-- ── Top strip ── -->
   <div class="top-strip">
     <div class="logo-area" id="logoArea" title="Click to reset">
-      <img src="https://shipinsure.io/wp-content/uploads/2023/01/SI_Logo_White.svg"
+      <img src="https://raw.githubusercontent.com/drewshafe/si-roi-calculator/main/impactlogo.png"
            class="logo-img" alt="ShipInsure" onerror="this.style.display='none'">
       <div>
         <div class="app-title">Self-Insure vs. ShipInsure</div>
@@ -329,6 +352,12 @@ body {
         <button class="ret-btn" id="returnsToggleBtn" onclick="toggleReturns()">
           <span id="retIcon">＋</span> Returns Offset
         </button>
+        <button class="cb-btn" id="cashbackToggleBtn" onclick="toggleCashback()">
+          <span id="cbIcon">＋</span> Customer Cashback
+        </button>
+        <button class="gr-btn" id="guaranteeToggleBtn" onclick="toggleGuarantee()">
+          <span id="grIcon">＋</span> Guarantee
+        </button>
         <button class="btn-gen" onclick="generateLink()">Generate Link</button>
       </div>
     </div>
@@ -339,7 +368,14 @@ body {
       <div class="inputs-row">
         <div class="ig"><label for="orders">Monthly Orders</label><input type="text" id="orders" value="30,000"></div>
         <div class="ig"><label for="aov">Avg Order Value $</label><input type="text" id="aov" value="135"></div>
-        <div class="ig"><label for="cogs">COGS %</label><input type="text" id="cogs" value="38"></div>
+        <div class="ig">
+          <label for="cogs" id="cogsLbl">Product Cost %</label>
+          <div class="prem-wrap">
+            <input type="text" id="cogs" value="38">
+            <button class="ptype-btn active" id="cogsPctBtn" onclick="setCogsType('pct')">%</button>
+            <button class="ptype-btn" id="cogsFlatBtn" onclick="setCogsType('flat')">$</button>
+          </div>
+        </div>
         <div class="ig"><label for="avgShippingCost">Avg Shipping Cost $</label><input type="text" id="avgShippingCost" value="8"></div>
         <div class="ig">
           <label for="claimsRate" id="claimsLbl">Claims Rate %</label>
@@ -349,7 +385,7 @@ body {
             <button class="ptype-btn" id="claimsNumBtn" onclick="setClaimsType('num')">#</button>
           </div>
         </div>
-        <div class="ig"><label for="csPerClaim">CS Cost / Claim $</label><input type="text" id="csPerClaim" value="12"></div>
+        <div class="ig"><label for="csPerClaim">Avg Ticket Cost $</label><input type="text" id="csPerClaim" value="12"></div>
       </div>
     </div>
 
@@ -382,8 +418,15 @@ body {
         <div class="ig accent-diy" id="selfPctField" style="display:none;"><label for="selfPremiumPct">Premium %</label><input type="text" id="selfPremiumPct" value="2.41"></div>
         <div class="ig accent-diy" id="selfFlatField" style="display:none;"><label for="selfPremiumFlat">Flat Premium $</label><input type="text" id="selfPremiumFlat" value="2.50"></div>
         <div class="ig accent-diy"><label for="selfAttach">Current Attach %</label><input type="text" id="selfAttach" value="63.5"></div>
+        <div class="ig accent-diy" style="max-width:210px;">
+          <label for="selfClaimRes">Claim Resolution</label>
+          <select id="selfClaimRes">
+            <option value="cogs" selected>Reship @ COGS</option>
+            <option value="2ndsale">Reship = 2nd Sale</option>
+          </select>
+        </div>
         <div class="ig" style="flex:2 1 0;min-width:200px;justify-content:flex-end;">
-          <div class="field-hint">Merchant keeps 100% of premiums and self-funds claims at COGS + shipping + CS cost.</div>
+          <div class="field-hint">Merchant keeps 100% of premiums and self-funds claims at the selected resolution.</div>
         </div>
       </div>
     </div>
@@ -411,10 +454,19 @@ body {
             <option value="flat_1.50">Flat $1.50</option>
             <option value="flat_5.95">Flat $5.95</option>
             <option value="percentage">Custom %</option>
+            <option value="flat_custom">Custom Flat $</option>
           </select>
         </div>
         <div class="ig" id="siPctField" style="display:none;"><label for="siPremiumPct">Premium %</label><input type="text" id="siPremiumPct" value="2.41"></div>
+        <div class="ig" id="siFlatField" style="display:none;"><label for="siPremiumFlat">Flat Premium $</label><input type="text" id="siPremiumFlat" value="2.50"></div>
         <div class="ig"><label for="siAttach">Projected Attach %</label><input type="text" id="siAttach" value="68"></div>
+        <div class="ig" style="max-width:210px;">
+          <label for="siClaimRes">Claim Resolution</label>
+          <select id="siClaimRes">
+            <option value="2ndsale" selected>Reship = 2nd Sale</option>
+            <option value="cogs">Reship @ COGS</option>
+          </select>
+        </div>
         <div class="ig" style="max-width:210px;">
           <label for="siCoverageMode">Coverage Mode (SI)</label>
           <select id="siCoverageMode">
@@ -468,6 +520,24 @@ body {
       </div>
     </div>
 
+    <!-- Customer Cashback Inputs (toggled) — same program modeled under both sides -->
+    <div class="input-section cashback-section" id="cashbackInputsBlock">
+      <div class="input-section-label lbl-pink">🎁 Customer Cashback — SI funds redemptions from premiums · Self-Insure pays out-of-pocket</div>
+      <div class="inputs-row">
+        <div class="ig accent-pink"><label for="cashbackRate">Customer Cashback %</label><input type="text" id="cashbackRate" value="5"></div>
+        <div class="ig accent-pink"><label for="minCashback">Min Cashback Amount $</label><input type="text" id="minCashback" value="5"></div>
+        <div class="ig accent-pink"><label for="cashbackRedemptionRate">Est. Redemption Rate %</label><input type="text" id="cashbackRedemptionRate" value="10"></div>
+      </div>
+    </div>
+
+    <!-- Guarantee Inputs (toggled) — increased claim rate applied to both sides -->
+    <div class="input-section guarantee-section" id="guaranteeInputsBlock">
+      <div class="input-section-label lbl-purple">✔ Quality / Satisfaction Guarantee — SI funds the extra claims · Self-Insure absorbs them</div>
+      <div class="inputs-row">
+        <div class="ig accent-purple" style="max-width:280px;"><label for="guaranteeClaimRate">Increased Claim Rate with Guarantee %</label><input type="text" id="guaranteeClaimRate" placeholder="auto (1.5× claims rate)"></div>
+      </div>
+    </div>
+
     <!-- Link output -->
     <div class="link-row" id="linkRow">
       <input type="text" id="shareableLink" readonly>
@@ -501,8 +571,10 @@ body {
       <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Customer Protection Cost / Order</div><div class="ct-cell ct-si" id="ct-premPerOrder-si">—</div><div class="ct-cell ct-diy" id="ct-premPerOrder-diy">—</div></div>
       <div class="ct-row"><div class="ct-cell ct-lbl">Rev Share %</div><div class="ct-cell ct-si" id="ct-revSharePct-si">—</div><div class="ct-cell ct-diy">100%</div></div>
       <div class="ct-row"><div class="ct-cell ct-lbl ct-bold" style="color:#212529;">Total Premiums</div><div class="ct-cell ct-si ct-bold" id="ct-premiums-si">—</div><div class="ct-cell ct-diy ct-bold" id="ct-premiums-diy">—</div></div>
-      <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Claims Resolved from Premiums<span class="ct-sub" style="color:#4a5fc1;">SI: claims × AOV (full replacement)</span></div><div class="ct-cell ct-red ct-bold" id="ct-claimsCostSI">—</div><div class="ct-cell ct-val">—</div></div>
-      <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Claims Resolved from Premiums<span class="ct-sub" style="color:#e67e22;">Self-Insure: claims × COGS + ship + CS</span></div><div class="ct-cell ct-val">—</div><div class="ct-cell ct-red ct-bold" id="ct-claimsCostDIY">—</div></div>
+      <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Claims Resolved from Premiums<span class="ct-sub" style="color:#4a5fc1;" id="ct-claimsResSubSI">SI: claims × AOV (full replacement)</span></div><div class="ct-cell ct-red ct-bold" id="ct-claimsCostSI">—</div><div class="ct-cell ct-val">—</div></div>
+      <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Claims Resolved from Premiums<span class="ct-sub" style="color:#e67e22;" id="ct-claimsResSubDIY">Self-Insure: claims × COGS + ship + CS</span></div><div class="ct-cell ct-val">—</div><div class="ct-cell ct-red ct-bold" id="ct-claimsCostDIY">—</div></div>
+      <div class="ct-row" id="ct-guaranteeRow" style="display:none;"><div class="ct-cell ct-lbl">Guarantee — Additional Claims<span class="ct-sub">SI: funded from premiums · Self-Insure: out-of-pocket</span></div><div class="ct-cell ct-green ct-bold" id="ct-guarantee-si">—</div><div class="ct-cell ct-red ct-bold" id="ct-guarantee-diy">—</div></div>
+      <div class="ct-row" id="ct-cashbackRow" style="display:none;"><div class="ct-cell ct-lbl">Cashback Redeemed<span class="ct-sub">SI: funded from premiums · Self-Insure: out-of-pocket</span></div><div class="ct-cell ct-green ct-bold" id="ct-cashback-si">—</div><div class="ct-cell ct-red ct-bold" id="ct-cashback-diy">—</div></div>
       <div class="ct-row ct-section"><div class="ct-cell ct-lbl">Premiums Less Claims</div><div class="ct-cell ct-val" id="ct-premLessClaims-si">—</div><div class="ct-cell ct-val" id="ct-premLessClaims-diy">—</div></div>
       <div class="ct-row"><div class="ct-cell ct-lbl">Rev Share $'s</div><div class="ct-cell ct-si" id="ct-revShareDollars-si">—</div><div class="ct-cell ct-muted">$0</div></div>
       <div class="ct-row" id="ct-returnsRow" style="display:none;"><div class="ct-cell ct-lbl">Returns Offset<span class="ct-sub">SI: covered from premiums · Self-Insure: out-of-pocket</span></div><div class="ct-cell ct-green ct-bold" id="ct-returns-si">—</div><div class="ct-cell ct-red ct-bold" id="ct-returns-diy">—</div></div>
@@ -542,8 +614,11 @@ body {
 
 <script>
 // ── State ──
-let returnsEnabled = false;
+let returnsEnabled   = false;
+let cashbackEnabled  = false;
+let guaranteeEnabled = false;
 let _claimsType = 'pct';   // 'pct' | 'num'
+let _cogsType   = 'pct';   // 'pct' | 'flat'
 let _bd = {};
 
 // ── Pricing templates (tiered) ──
@@ -620,6 +695,15 @@ function setClaimsType(t) {
   recalc();
 }
 
+// ── Product cost type toggle (% vs flat $) ──
+function setCogsType(t) {
+  _cogsType = t;
+  el('cogsPctBtn').classList.toggle('active', t === 'pct');
+  el('cogsFlatBtn').classList.toggle('active', t === 'flat');
+  el('cogsLbl').textContent = t === 'flat' ? 'Product Cost $' : 'Product Cost %';
+  recalc();
+}
+
 // ── Field visibility toggles ──
 function toggleSelfFields() {
   const t = el('selfTemplate').value;
@@ -627,7 +711,9 @@ function toggleSelfFields() {
   show('selfFlatField', t === 'flat_custom');
 }
 function toggleSiFields() {
-  show('siPctField', el('siTemplate').value === 'percentage');
+  const t = el('siTemplate').value;
+  show('siPctField', t === 'percentage');
+  show('siFlatField', t === 'flat_custom');
 }
 function toggleReturnsCoverageFields() {
   const c = el('returnsCoverage').value;
@@ -645,6 +731,20 @@ function toggleReturns() {
   el('returnsInputsBlock').classList.toggle('visible', returnsEnabled);
   recalc();
 }
+function toggleCashback() {
+  cashbackEnabled = !cashbackEnabled;
+  el('cashbackToggleBtn').classList.toggle('active', cashbackEnabled);
+  el('cbIcon').textContent = cashbackEnabled ? '✓' : '＋';
+  el('cashbackInputsBlock').classList.toggle('visible', cashbackEnabled);
+  recalc();
+}
+function toggleGuarantee() {
+  guaranteeEnabled = !guaranteeEnabled;
+  el('guaranteeToggleBtn').classList.toggle('active', guaranteeEnabled);
+  el('grIcon').textContent = guaranteeEnabled ? '✓' : '＋';
+  el('guaranteeInputsBlock').classList.toggle('visible', guaranteeEnabled);
+  recalc();
+}
 
 // ── Main calculation (ported intact from the self-insured calculator) ──
 function recalc() {
@@ -654,7 +754,9 @@ function recalc() {
 
   const monthlyOrders   = gv('orders');
   const aov             = gv('aov');
-  const cogsP           = gv('cogs') / 100;
+  const cogsRaw         = gv('cogs');
+  const cogsPerOrder    = _cogsType === 'flat' ? cogsRaw : aov * (cogsRaw / 100);
+  const cogsP           = aov > 0 ? cogsPerOrder / aov : 0;
   const csPerClaim      = gv('csPerClaim');
   const avgShippingCost = gv('avgShippingCost');
   const orders          = monthlyOrders * mult;
@@ -662,9 +764,15 @@ function recalc() {
   const claimsP         = _claimsType === 'num' ? (orders > 0 ? claimsRaw / orders : 0) : claimsRaw / 100;
   const claimsNum       = _claimsType === 'num' ? claimsRaw : orders * claimsP;
   const totalClaims     = orders * claimsP;
-  const costPerClaim    = (aov * cogsP) + csPerClaim;
   const gmv             = orders * aov;
-  const cogsAmount      = aov * cogsP;
+  const cogsAmount      = cogsPerOrder;
+  // Claim resolution values (per ROI calc): 2nd Sale = full AOV, COGS = product cost + ship + CS
+  const costPerClaimCogs = cogsPerOrder + avgShippingCost + csPerClaim;
+  const selfClaimRes  = el('selfClaimRes').value;
+  const siClaimRes    = el('siClaimRes').value;
+  const selfClaimVal  = selfClaimRes === '2ndsale' ? aov : costPerClaimCogs;
+  const siClaimVal    = siClaimRes   === '2ndsale' ? aov : costPerClaimCogs;
+  const costPerClaim  = costPerClaimCogs;
 
   // Self-Insure
   const selfTemplate  = el('selfTemplate').value;
@@ -673,7 +781,7 @@ function recalc() {
   const diyProtOrders = orders * selfAttachP;
   const diyPremiumsIn = diyProtOrders * diyAvgP;
   const diyProtClaims = diyProtOrders * claimsP;
-  const diyClaimsPaid = diyProtClaims * costPerClaim;
+  const diyClaimsPaid = diyProtClaims * selfClaimVal;
 
   // ShipInsure
   const siCoverageMode = el('siCoverageMode').value;
@@ -682,11 +790,38 @@ function recalc() {
   const siAttachP     = gv('siAttach') / 100;
   const revShareP     = gv('revShare') / 100;
   const revShareType  = el('revShareType').value;
-  const siAvgP        = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), 0);
+  const siAvgP        = getAvgPremium(aov, siTemplate, gv('siPremiumPct'), gv('siPremiumFlat'));
   const siProtOrders  = siCoverageMode === 'full_no_optout' ? orders : orders * siAttachP;
   const siPremiumsIn  = siProtOrders * siAvgP;
   const siProtClaims  = siProtOrders * claimsP;
-  const siFunded      = isFullCoverage ? totalClaims * aov : siProtClaims * aov;
+  const siFunded      = isFullCoverage ? totalClaims * siClaimVal : siProtClaims * siClaimVal;
+
+  // Guarantee — increased claim rate applied to both programs (default 1.5× claims rate)
+  let gClaimsRate = 0, gAddlClaimsSi = 0, gFundedSi = 0, gAddlClaimsDiy = 0, gCostDiy = 0;
+  if (guaranteeEnabled) {
+    const gRateRaw = gv('guaranteeClaimRate');
+    gClaimsRate = gRateRaw > 0 ? gRateRaw / 100 : claimsP * 1.5;
+    const gDelta = Math.max(0, gClaimsRate - claimsP);
+    gAddlClaimsSi  = siProtOrders  * gDelta;
+    gFundedSi      = gAddlClaimsSi * siClaimVal;
+    gAddlClaimsDiy = diyProtOrders * gDelta;
+    gCostDiy       = gAddlClaimsDiy * selfClaimVal;
+  }
+
+  // Customer Cashback — same program under both sides; SI funds it from premiums,
+  // the self-insuring merchant pays redemptions out of the premiums they keep
+  let cbPerOrder = 0, siCbIssued = 0, siCbRedeemed = 0, diyCbIssued = 0, diyCbRedeemed = 0;
+  if (cashbackEnabled) {
+    const cbRate = (gv('cashbackRate') || 5) / 100;
+    const cbMin  = gv('minCashback') || 5;
+    const cbRedRaw = el('cashbackRedemptionRate').value.trim();
+    const cbRed  = (cbRedRaw === '' ? 10 : gv('cashbackRedemptionRate')) / 100;
+    cbPerOrder    = Math.max(aov * cbRate, cbMin);
+    siCbIssued    = siProtOrders  * cbPerOrder;
+    siCbRedeemed  = siCbIssued    * cbRed;
+    diyCbIssued   = diyProtOrders * cbPerOrder;
+    diyCbRedeemed = diyCbIssued   * cbRed;
+  }
 
   // Returns offset
   let diyTotalReturnsCost = 0, siTotalReturnsOffset = 0;
@@ -727,20 +862,20 @@ function recalc() {
   }
   const siNetReturnsOffset = siTotalReturnsOffset - siNonOptLabCost;
 
-  // Rev share
+  // Rev share — all SI-funded costs deducted from the premium pool before net rev share (per ROI calc)
   const revShareBase = revShareType === 'net'
-    ? Math.max(0, siPremiumsIn - siFunded - siTotalReturnsOffset)
+    ? Math.max(0, siPremiumsIn - siFunded - gFundedSi - siTotalReturnsOffset - siCbRedeemed)
     : siPremiumsIn;
   const siRevShare = revShareBase * revShareP;
 
   // Bottom-line metrics
   const ctSiClaims  = isFullCoverage ? totalClaims : siProtClaims;
   const ctDiyClaims = isFullCoverage ? totalClaims : diyProtClaims;
-  const ctSiClaimsCost  = ctSiClaims * aov;
-  const ctDiyClaimsCost = ctDiyClaims * (cogsAmount + avgShippingCost + csPerClaim);
-  const ctSiPremLess  = siPremiumsIn - ctSiClaimsCost;
-  const ctDiyPremLess = diyPremiumsIn - ctDiyClaimsCost;
-  const ctSiDFI  = siRevShare + ctSiClaimsCost + siNetReturnsOffset;
+  const ctSiClaimsCost  = ctSiClaims * siClaimVal;
+  const ctDiyClaimsCost = ctDiyClaims * selfClaimVal;
+  const ctSiPremLess  = siPremiumsIn - ctSiClaimsCost - gFundedSi - siCbRedeemed;
+  const ctDiyPremLess = diyPremiumsIn - ctDiyClaimsCost - gCostDiy - diyCbRedeemed;
+  const ctSiDFI  = siRevShare + ctSiClaimsCost + gFundedSi + siCbRedeemed + siNetReturnsOffset;
   const ctDiyDFI = Math.max(0, ctDiyPremLess - diyTotalReturnsCost);
   const advantage = ctSiDFI - ctDiyDFI;
   const attachGap = (siAttachP - selfAttachP) * 100;
@@ -767,10 +902,13 @@ function recalc() {
       : `↓ Self-Insure has <strong>${Math.abs(attachGap).toFixed(1)}pt</strong> higher attach rate in this scenario.`;
     hbSub += `<div class="hb-callout">${lbl}</div>`;
   }
+  const siResLbl = siClaimRes === '2ndsale' ? 'at full AOV' : 'at COGS + ship + CS';
   hbSub += `<div class="hb-badges">
-    <div class="hb-badge">↑ ${fc(ctSiClaimsCost)} claims funded by SI at full AOV</div>
+    <div class="hb-badge">↑ ${fc(ctSiClaimsCost)} claims funded by SI ${siResLbl}</div>
     <div class="hb-badge">↑ ${fc(siRevShare)} rev share to merchant</div>
     ${returnsEnabled && siTotalReturnsOffset > 0 ? `<div class="hb-badge">↩ ${fc(siNetReturnsOffset)} net returns offset from premiums</div>` : ''}
+    ${guaranteeEnabled && gFundedSi > 0 ? `<div class="hb-badge">✔ ${fc(gFundedSi)} guarantee claims funded by SI</div>` : ''}
+    ${cashbackEnabled && siCbRedeemed > 0 ? `<div class="hb-badge">🎁 ${fc(siCbRedeemed)} cashback funded by SI</div>` : ''}
   </div>`;
   el('hbSub').innerHTML = hbSub;
 
@@ -793,13 +931,17 @@ function recalc() {
       mi('Net Returns Offset', fc(siNetReturnsOffset), siNetReturnsOffset >= 0 ? 'pos' : 'neg');
   }
 
+  const diyResLbl = selfClaimRes === '2ndsale' ? 'AOV / 2nd Sale' : 'COGS+Ship+CS';
+  const siResLbl2 = siClaimRes === '2ndsale' ? 'full AOV' : 'COGS+Ship+CS';
   el('lcTotal').textContent = fc(ctDiyDFI);
   el('lcTotal').className   = 'card-ttl ' + (ctDiyDFI > 0 ? 'c-diy' : 'c-neg');
   el('lcRows').innerHTML =
     mi('Avg Premium / Order',            fcc(diyAvgP)) +
     mi('Gross Premiums (100% kept)',     fc(diyPremiumsIn)) +
     mi(claimsLbl,                        fn(Math.round(ctDiyClaims))) +
-    mi('Claims Cost (COGS+Ship+CS)',     '−' + fc(ctDiyClaimsCost), 'neg') +
+    mi(`Claims Cost (${diyResLbl})`,     '−' + fc(ctDiyClaimsCost), 'neg') +
+    (guaranteeEnabled ? mi(`Guarantee Claims (+${fn(Math.round(gAddlClaimsDiy))})`, '−' + fc(gCostDiy), 'neg') : '') +
+    (cashbackEnabled  ? mi('Cashback Redeemed (Out-of-Pocket)', '−' + fc(diyCbRedeemed), 'neg') : '') +
     diyRetRows +
     mi('Premiums Less Claims',           fc(ctDiyPremLess), ctDiyPremLess >= 0 ? 'pos' : 'neg');
 
@@ -808,7 +950,9 @@ function recalc() {
     mi('Avg Premium / Order',                fcc(siAvgP)) +
     mi('Gross Premiums Collected',           fc(siPremiumsIn)) +
     mi(claimsLbl,                            fn(Math.round(ctSiClaims))) +
-    mi('Claims Funded by SI (full AOV)',     fc(ctSiClaimsCost), 'pos') +
+    mi(`Claims Funded by SI (${siResLbl2})`, fc(ctSiClaimsCost), 'pos') +
+    (guaranteeEnabled ? mi(`Guarantee Claims Funded (+${fn(Math.round(gAddlClaimsSi))})`, fc(gFundedSi), 'pos') : '') +
+    (cashbackEnabled  ? mi('Cashback Funded by SI', fc(siCbRedeemed), 'pos') : '') +
     siRetRows +
     mi(`Rev Share (${(revShareP*100).toFixed(0)}% ${revShareType})`, fc(siRevShare), 'pos');
 
@@ -830,7 +974,13 @@ function recalc() {
   set('ct-premPerOrder-si', fcc(siAvgP)); set('ct-premPerOrder-diy', fcc(diyAvgP));
   set('ct-revSharePct-si', (revShareP*100).toFixed(0)+'% ('+revShareType+')');
   set('ct-premiums-si', fc(siPremiumsIn)); set('ct-premiums-diy', fc(diyPremiumsIn));
+  set('ct-claimsResSubSI',  siClaimRes === '2ndsale' ? 'SI: claims × AOV (full replacement)' : 'SI: claims × COGS + ship + CS');
+  set('ct-claimsResSubDIY', selfClaimRes === '2ndsale' ? 'Self-Insure: claims × AOV (full replacement)' : 'Self-Insure: claims × COGS + ship + CS');
   set('ct-claimsCostSI', fc(ctSiClaimsCost)); set('ct-claimsCostDIY', fc(ctDiyClaimsCost));
+  show('ct-guaranteeRow', guaranteeEnabled);
+  if (guaranteeEnabled) { set('ct-guarantee-si', '+' + fc(gFundedSi)); set('ct-guarantee-diy', '−' + fc(gCostDiy)); }
+  show('ct-cashbackRow', cashbackEnabled);
+  if (cashbackEnabled) { set('ct-cashback-si', '+' + fc(siCbRedeemed)); set('ct-cashback-diy', '−' + fc(diyCbRedeemed)); }
   const plSi = el('ct-premLessClaims-si'), plDiy = el('ct-premLessClaims-diy');
   if (plSi)  { plSi.textContent = fc(ctSiPremLess);  plSi.style.color  = ctSiPremLess  >= 0 ? '#212529' : '#dc3545'; }
   if (plDiy) { plDiy.textContent = fc(ctDiyPremLess); plDiy.style.color = ctDiyPremLess >= 0 ? '#212529' : '#dc3545'; }
@@ -848,7 +998,10 @@ function recalc() {
     siAvgP, siAttachP, siProtOrders, siPremiumsIn, siProtClaims, siFunded,
     revShareP, revShareType, revShareBase, siRevShare, siTotalReturnsOffset,
     siPortalCovered, siReturnLabelsCovered, returnsEnabled,
-    siNonOptRet, siNonOptLabCost, siNetReturnsOffset
+    siNonOptRet, siNonOptLabCost, siNetReturnsOffset,
+    selfClaimRes, siClaimRes, selfClaimVal, siClaimVal, costPerClaimCogs,
+    guaranteeEnabled, gClaimsRate, gAddlClaimsSi, gFundedSi, gAddlClaimsDiy, gCostDiy,
+    cashbackEnabled, cbPerOrder, siCbIssued, siCbRedeemed, diyCbIssued, diyCbRedeemed
   };
   if (el('bdBody').classList.contains('open')) renderBd();
 }
@@ -873,40 +1026,48 @@ function renderBd() {
   el('bdShared').innerHTML =
     r('Orders (period)', '', fn(d.orders)) +
     r('Avg Order Value', '', fcc(d.aov)) +
-    r('COGS %', '', pct(d.cogsP)) +
+    r('Product Cost / Order', '', fcc(d.cogsAmount) + ` (${pct(d.cogsP)})`) +
     r('Claims Rate', '', pct(d.claimsP)) +
     r('Total Claims', 'Orders × Rate', fn(d.claimsNum)) +
     r('Avg Shipping Cost', '', fc(d.avgShippingCost)) +
-    r('CS Cost / Claim', '', fc(d.csPerClaim)) +
-    r('Self-Insure Cost / Claim', `(${fcc(d.aov)} × ${pct(d.cogsP)}) + ${fc(d.avgShippingCost)} + ${fc(d.csPerClaim)}`, fc(d.cogsAmount + d.avgShippingCost + d.csPerClaim), 'sep');
+    r('Avg Ticket Cost', '', fc(d.csPerClaim)) +
+    r('Cost / Claim @ COGS', `${fcc(d.cogsAmount)} + ${fc(d.avgShippingCost)} + ${fc(d.csPerClaim)}`, fcc(d.costPerClaimCogs)) +
+    r('Self-Insure Claim Value', d.selfClaimRes === '2ndsale' ? 'Reship = 2nd Sale (AOV)' : 'Reship @ COGS', fcc(d.selfClaimVal)) +
+    r('ShipInsure Claim Value', d.siClaimRes === '2ndsale' ? 'Reship = 2nd Sale (AOV)' : 'Reship @ COGS', fcc(d.siClaimVal), 'sep');
 
   const diyProtC = Math.round(d.diyProtClaims);
+  const diyResEq = d.selfClaimRes === '2ndsale' ? 'claims × AOV' : 'claims × (COGS + ship + CS)';
   let diyHTML =
     r('Avg Premium', `AOV @ ${fc(d.aov)}`, fcc(d.diyAvgP)) +
     r('Attach Rate', '', pct(d.selfAttachP)) +
     r('Protected Orders', `${fn(d.orders)} × ${pct(d.selfAttachP)}`, fn(d.diyProtOrders)) +
     r('Gross Premiums', `${fn(d.diyProtOrders)} × ${fcc(d.diyAvgP)}`, fc(d.diyPremiumsIn)) +
     r('Protected Claims', `${fn(d.diyProtOrders)} × ${pct(d.claimsP)}`, `${diyProtC} claims`) +
-    r('Claims Cost', `claims × (COGS + ship + CS)`, fc(d.ctDiyClaimsCost));
+    r('Claims Cost', diyResEq, fc(d.ctDiyClaimsCost));
+  if (d.guaranteeEnabled) diyHTML += r('Guarantee Claims Cost', `${fn(d.gAddlClaimsDiy)} addl claims × ${fcc(d.selfClaimVal)}`, '−' + fc(d.gCostDiy));
+  if (d.cashbackEnabled)  diyHTML += r('Cashback Redeemed', `${fc(d.diyCbIssued)} issued × redemption`, '−' + fc(d.diyCbRedeemed));
   if (d.returnsEnabled && d.diyTotalReturnsCost > 0) {
     if (d.diyPortalCost > 0)       diyHTML += r('Returns Portal Cost', '', fc(d.diyPortalCost));
     if (d.diyReturnLabelsCost > 0) diyHTML += r('Return Labels (Your Scope)', '', fc(d.diyReturnLabelsCost));
     diyHTML += r('Returns Cost (Out-of-Pocket)', 'portal + labels', fc(d.diyTotalReturnsCost));
   }
-  diyHTML += r('Direct Financial Impact', 'net premiums kept − claims cost', fc(d.ctDiyDFI), 'sep');
+  diyHTML += r('Direct Financial Impact', 'net premiums kept − claims & program costs', fc(d.ctDiyDFI), 'sep');
   el('bdLeft').innerHTML = diyHTML;
 
   const siProtC = Math.round(d.siProtClaims);
-  const revBaseLabel = d.revShareType === 'net' ? 'Premiums Less Claims' : 'Rev Share Base (Gross)';
+  const siResEq = d.siClaimRes === '2ndsale' ? 'AOV' : 'COGS+ship+CS';
+  const revBaseLabel = d.revShareType === 'net' ? 'Net Premium Pool' : 'Rev Share Base (Gross)';
   const revBaseEq = d.revShareType === 'net'
-    ? `${fc(d.siPremiumsIn)} − ${fc(d.siFunded)} − ${fc(d.siTotalReturnsOffset)}`
+    ? `${fc(d.siPremiumsIn)} − ${fc(d.siFunded)}${d.guaranteeEnabled ? ' − ' + fc(d.gFundedSi) : ''}${d.cashbackEnabled ? ' − ' + fc(d.siCbRedeemed) : ''} − ${fc(d.siTotalReturnsOffset)}`
     : 'Gross premiums';
   let siHTML =
     r('Avg Premium', `AOV @ ${fc(d.aov)}`, fcc(d.siAvgP)) +
     r('Projected Attach', '', pct(d.siAttachP)) +
     r('Protected Orders', `${fn(d.orders)} × ${pct(d.siAttachP)}`, fn(d.siProtOrders)) +
     r('Gross Premiums', `${fn(d.siProtOrders)} × ${fcc(d.siAvgP)}`, fc(d.siPremiumsIn)) +
-    r('SI-Funded Claims', `${siProtC} claims × ${fcc(d.aov)} AOV`, fc(d.siFunded)) +
+    r('SI-Funded Claims', `${siProtC} claims × ${fcc(d.siClaimVal)} ${siResEq}`, fc(d.siFunded)) +
+    (d.guaranteeEnabled ? r('Guarantee Claims Funded', `${fn(d.gAddlClaimsSi)} addl claims × ${fcc(d.siClaimVal)}`, fc(d.gFundedSi)) : '') +
+    (d.cashbackEnabled  ? r('Cashback Funded by SI', `${fc(d.siCbIssued)} issued × redemption`, fc(d.siCbRedeemed)) : '') +
     r(revBaseLabel, revBaseEq, fc(d.revShareBase)) +
     r('Rev Share', `${fc(d.revShareBase)} × ${pct(d.revShareP)}`, fc(d.siRevShare));
   if (d.returnsEnabled && d.siTotalReturnsOffset > 0) {
@@ -919,9 +1080,10 @@ function renderBd() {
     }
     siHTML += r('Net Returns Offset', 'covered − non-opt-in burden', fc(d.siNetReturnsOffset));
   }
-  const dfiEq = d.returnsEnabled && d.siTotalReturnsOffset > 0
-    ? `${fc(d.ctSiClaimsCost)} + ${fc(d.siRevShare)} + ${fc(d.siNetReturnsOffset)}`
-    : `${fc(d.ctSiClaimsCost)} + ${fc(d.siRevShare)}`;
+  let dfiEq = `${fc(d.ctSiClaimsCost)} + ${fc(d.siRevShare)}`;
+  if (d.guaranteeEnabled) dfiEq += ` + ${fc(d.gFundedSi)}`;
+  if (d.cashbackEnabled)  dfiEq += ` + ${fc(d.siCbRedeemed)}`;
+  if (d.returnsEnabled && d.siTotalReturnsOffset > 0) dfiEq += ` + ${fc(d.siNetReturnsOffset)}`;
   siHTML += r('Direct Financial Impact', dfiEq, fc(d.ctSiDFI), 'sep');
   el('bdRight').innerHTML = siHTML;
 }
@@ -941,12 +1103,22 @@ function generateLink() {
     sa: rcm(el('selfAttach').value),
     sitm: el('siTemplate').value,
     sipp: rcm(el('siPremiumPct').value),
+    sipf: rcm(el('siPremiumFlat').value),
     sia: rcm(el('siAttach').value),
     cm: el('siCoverageMode').value,
     rs: rcm(el('revShare').value),
     rst: el('revShareType').value,
+    scr: el('selfClaimRes').value,
+    sicr: el('siClaimRes').value,
     tf: el('timeframe').value,
     clt: _claimsType,
+    cgt: _cogsType,
+    cben: cashbackEnabled ? '1' : '0',
+    cbr: rcm(el('cashbackRate').value),
+    cbm: rcm(el('minCashback').value),
+    cbrr: rcm(el('cashbackRedemptionRate').value),
+    gen: guaranteeEnabled ? '1' : '0',
+    gcr: rcm(el('guaranteeClaimRate').value),
     ren: returnsEnabled ? '1' : '0',
     rc2: el('returnsCoverage').value,
     rr: rcm(el('returnsRate').value),
@@ -984,15 +1156,21 @@ function loadFromUrl() {
   s('selfPremiumPct','spp','2.41'); s('selfPremiumFlat','spf','2.50');
   s('selfAttach','sa','63.5');
   s('siTemplate','sitm','born_primitive');
-  s('siPremiumPct','sipp','2.41'); s('siAttach','sia','68');
+  s('siPremiumPct','sipp','2.41'); s('siPremiumFlat','sipf','2.50'); s('siAttach','sia','68');
   s('siCoverageMode','cm','protected_and_unprotected');
   s('revShare','rs','85'); s('revShareType','rst','net'); s('timeframe','tf','annual');
+  s('selfClaimRes','scr','cogs'); s('siClaimRes','sicr','2ndsale');
+  s('cashbackRate','cbr','5'); s('minCashback','cbm','5'); s('cashbackRedemptionRate','cbrr','10');
+  s('guaranteeClaimRate','gcr','');
   s('returnsCoverage','rc2','portal_only');
   s('returnsRate','rr','8'); s('returnsPortalCost','rpc','300');
   s('returnsLabelCost','rlc','8'); s('diyLabelScope','dls','none');
   s('siNonOptPayer','snp','customers');
   if (p.get('clt') === 'num' && _claimsType !== 'num') setClaimsType('num');
+  if (p.get('cgt') === 'flat' && _cogsType !== 'flat') setCogsType('flat');
   if (p.get('ren') === '1' && !returnsEnabled) toggleReturns();
+  if (p.get('cben') === '1' && !cashbackEnabled) toggleCashback();
+  if (p.get('gen') === '1' && !guaranteeEnabled) toggleGuarantee();
 }
 
 // ── Reset (logo click) ──
@@ -1003,16 +1181,22 @@ function resetAll() {
   el('selfPremiumPct').value = '2.41'; el('selfPremiumFlat').value = '2.50';
   el('selfAttach').value = '63.5';
   el('siTemplate').value = 'born_primitive';
-  el('siPremiumPct').value = '2.41'; el('siAttach').value = '68';
+  el('siPremiumPct').value = '2.41'; el('siPremiumFlat').value = '2.50'; el('siAttach').value = '68';
   el('siCoverageMode').value = 'protected_and_unprotected';
   el('revShare').value = '85'; el('revShareType').value = 'net';
+  el('selfClaimRes').value = 'cogs'; el('siClaimRes').value = '2ndsale';
+  el('cashbackRate').value = '5'; el('minCashback').value = '5'; el('cashbackRedemptionRate').value = '10';
+  el('guaranteeClaimRate').value = '';
   el('timeframe').value = 'annual';
   el('returnsCoverage').value = 'portal_only';
   el('returnsRate').value = '8'; el('returnsPortalCost').value = '300';
   el('returnsLabelCost').value = '8'; el('diyLabelScope').value = 'none';
   el('siNonOptPayer').value = 'customers';
   if (returnsEnabled) toggleReturns();
+  if (cashbackEnabled) toggleCashback();
+  if (guaranteeEnabled) toggleGuarantee();
   if (_claimsType !== 'pct') setClaimsType('pct');
+  if (_cogsType !== 'pct') setCogsType('pct');
   el('linkRow').classList.remove('visible');
   toggleSelfFields(); toggleSiFields(); toggleReturnsCoverageFields();
   recalc();
